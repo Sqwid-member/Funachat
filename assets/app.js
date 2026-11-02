@@ -1723,13 +1723,22 @@ function isNewer(code, curCode, version, curVersion) {
   return false;
 }
 
-/* Публічний канал на GitHub Releases: працює навіть коли тунель вимкнено. */
-const UPD_FALLBACK = 'https://raw.githubusercontent.com/Sqwid-member/Funachat/main/latest.json';
+/* Публічний канал на GitHub Releases: працює навіть коли тунель вимкнено.
+   raw.githubusercontent інколи довго віддає старий latest.json із кешу,
+   тому другим джерелом іде jsDelivr — він оновлюється швидше. */
+const UPD_FALLBACKS = [
+  'https://raw.githubusercontent.com/Sqwid-member/Funachat/main/latest.json',
+  'https://cdn.jsdelivr.net/gh/Sqwid-member/Funachat@main/latest.json'
+];
 
-function updManifestUrl() {
-  if (S.updUrl) return String(S.updUrl);
+function updManifestUrls() {
+  const out = [];
+  const add = (u) => { u = String(u || ''); if (u && out.indexOf(u) < 0) out.push(u); };
+  if (S.updUrl) add(S.updUrl);
   const b = pubBase();
-  return b ? b + '/updates/latest.json' : UPD_FALLBACK;
+  if (b) add(b + '/updates/latest.json');
+  for (const u of UPD_FALLBACKS) add(u);
+  return out;
 }
 
 let UPD = null;
@@ -1737,8 +1746,8 @@ let UPD = null;
 async function checkUpdates(silent) {  const st = $('updStatus');
   const btn = $('updGet');
   if (!st) return;
-  const m = updManifestUrl();
-  if (!m) {
+  const urls = updManifestUrls();
+  if (!urls.length) {
     st.textContent = t('updNone'); st.className = 'status bad';
     if (btn) btn.hidden = true;
     UPD = null;
@@ -1746,31 +1755,41 @@ async function checkUpdates(silent) {  const st = $('updStatus');
   }
   st.textContent = t('updChecking'); st.className = 'status';
   if (btn) btn.hidden = true;
-  try {
-    const r = await fetchT(m, {}, 10000);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const man = parseManifest(await r.json());
-    if (!man) { st.textContent = t('updBadJson'); st.className = 'status bad'; return; }
-    if (isNewer(man.code, S.code, man.version, S.version)) {
-      UPD = man;
-      st.textContent = t('updAvail') + ' ' + man.version;
-      st.className = 'status bad';
-      if (btn) { btn.hidden = false; btn.querySelector('span').textContent = t('updDownload') + ' · ' + man.version; }
-      if (silent) toast(t('updAvail') + ' ' + man.version);
-    } else {
-      UPD = null;
-      st.textContent = t('updLatest') + ' · v' + (S.version || '');
-      st.className = 'status ok';
-    }
-  } catch (e) {
+  let man = null, badJson = false;
+  // Йдемо по джерелах, доки якесь не віддасть валідний маніфест:
+  // тунель може бути вимкнений, а raw — закешований.
+  for (const m of urls) {
+    try {
+      const r = await fetchT(m, {}, 10000);
+      if (!r.ok) continue;
+      const parsed = parseManifest(await r.json());
+      if (!parsed) { badJson = true; continue; }
+      man = parsed;
+      break;
+    } catch (e) { /* наступне джерело */ }
+  }
+  if (!man) {
     UPD = null;
-    st.textContent = t('updFail'); st.className = 'status bad';
-    if (!silent) toast(t('updFail'));
+    st.textContent = badJson ? t('updBadJson') : t('updFail');
+    st.className = 'status bad';
+    if (!badJson && !silent) toast(t('updFail'));
+    return;
+  }
+  if (isNewer(man.code, S.code, man.version, S.version)) {
+    UPD = man;
+    st.textContent = t('updAvail') + ' ' + man.version;
+    st.className = 'status bad';
+    if (btn) { btn.hidden = false; btn.querySelector('span').textContent = t('updDownload') + ' · ' + man.version; }
+    if (silent) toast(t('updAvail') + ' ' + man.version);
+  } else {
+    UPD = null;
+    st.textContent = t('updLatest') + ' · v' + (S.version || '');
+    st.className = 'status ok';
   }
 }
 
 // тести в jsdom: чиста логіка маніфесту без мережі
-window.__funaUpd = { parseManifest, isNewer };
+window.__funaUpd = { parseManifest, isNewer, updManifestUrls };
 
 
 function syncGuard() {
@@ -4362,6 +4381,15 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v99", name: "2.42.24", title: "Надійніший канал оновлень",
+      p: "Перевірка оновлень перебирає кілька джерел, якщо основне віддає старий маніфест.",
+      li: [
+        "Порядок: заданий канал → адреса тунелю → GitHub raw → jsDelivr.",
+        "Якщо raw віддає закешований latest.json, застосунок візьме свіжий із jsDelivr.",
+        "Невалідний маніфест більше не зупиняє перевірку — пробується наступне джерело."
+      ]
+    },
+    {
       code: "v98", name: "2.42.23", title: "Аудит злитих ключів",
       p: "Секретний endpoint показує власника злитого API-ключа, дозволяє його відкликати й повідомити власника.",
       li: [
@@ -4389,7 +4417,7 @@ const UPDATES = {
       code: "v96", name: "2.42.21", title: "Канал оновлень на GitHub",
       p: "Перевірка оновлень працює навіть без тунелю — маніфест лежить у репозиторії Funachat.",
       li: [
-        "Типовий канал — latest.json у Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "Типовий канал — latest.json у Sqwid-member/Funachat; якщо raw віддає кеш, використовується jsDelivr.",
         "Публічна адреса тунелю, якщо задана, має пріоритет над GitHub.",
         "Релізи публікуються скриптом tunnel/release-gh.sh: APK + latest.json, тег v<code>.",
         "v95 лишається внутрішньою збіркою: її канал оновлень не мав CORS."
@@ -4484,6 +4512,15 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v99", name: "2.42.24", title: "More reliable update channel",
+      p: "The update check walks several sources when the primary one serves a stale manifest.",
+      li: [
+        "Order: configured channel → tunnel URL → GitHub raw → jsDelivr.",
+        "If raw serves a cached latest.json, the app takes a fresh one from jsDelivr.",
+        "An invalid manifest no longer stops the check — the next source is tried."
+      ]
+    },
+    {
       code: "v98", name: "2.42.23", title: "Leaked key audit",
       p: "A secret endpoint shows the owner of a leaked API key and can revoke it and notify the owner.",
       li: [
@@ -4511,7 +4548,7 @@ const UPDATES = {
       code: "v96", name: "2.42.21", title: "Update channel on GitHub",
       p: "Update checks work even without the tunnel — the manifest lives in the Funachat repository.",
       li: [
-        "Default channel: latest.json in Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "Default channel: latest.json in Sqwid-member/Funachat; jsDelivr is used when raw serves a cached copy.",
         "A configured tunnel URL takes priority over GitHub.",
         "Releases are published by tunnel/release-gh.sh: APK + latest.json, tag v<code>.",
         "v95 remains an internal build: its update channel had no CORS."
@@ -4606,6 +4643,15 @@ const UPDATES = {
   ],
   ru: [
     {
+      code: "v99", name: "2.42.24", title: "Надёжнее канал обновлений",
+      p: "Проверка обновлений перебирает несколько источников, если основной отдаёт старый манифест.",
+      li: [
+        "Порядок: заданный канал → адрес туннеля → GitHub raw → jsDelivr.",
+        "Если raw отдаёт закешированный latest.json, приложение возьмёт свежий из jsDelivr.",
+        "Невалидный манифест больше не останавливает проверку — пробуется следующий источник."
+      ]
+    },
+    {
       code: "v98", name: "2.42.23", title: "Аудит утёкших ключей",
       p: "Секретный endpoint показывает владельца утёкшего API-ключа и позволяет отозвать его и уведомить владельца.",
       li: [
@@ -4633,7 +4679,7 @@ const UPDATES = {
       code: "v96", name: "2.42.21", title: "Канал обновлений на GitHub",
       p: "Проверка обновлений работает даже без туннеля — манифест лежит в репозитории Funachat.",
       li: [
-        "Канал по умолчанию — latest.json в Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "Канал по умолчанию — latest.json в Sqwid-member/Funachat; если raw отдаёт кеш, используется jsDelivr.",
         "Публичный адрес туннеля, если задан, имеет приоритет над GitHub.",
         "Релизы публикуются скриптом tunnel/release-gh.sh: APK + latest.json, тег v<code>.",
         "v95 остаётся внутренней сборкой: у её канала обновлений не было CORS."
