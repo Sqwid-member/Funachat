@@ -442,6 +442,18 @@
     <div id="diagList" class="diaglist"></div>
 
     <div class="sect">
+      <div class="slabel" data-i18n="teleTitle"></div>
+      <label class="switch"><span data-i18n="teleToggle"></span><input type="checkbox" id="fTelemetry"><i></i></label>
+      <p class="muted small" data-i18n="teleHint"></p>
+      <div class="status" id="teleStatus">—</div>
+      <div class="srow">
+        <button class="btn text" id="telePreview"><span data-i18n="telePreview"></span></button>
+        <span class="grow"></span>
+        <button class="btn text" id="teleSend"><span data-i18n="teleSend"></span></button>
+      </div>
+    </div>
+
+    <div class="sect">
       <div class="slabel" data-i18n="updatesTitle"></div>
       <button class="btn tonal" id="helpUpdates"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="updatesOpen"></span></button>
     </div>
@@ -705,6 +717,17 @@
       <button class="btn tonal" id="repShare"><svg class="ic"><use href="#i-share"/></svg><span data-i18n="logShare"></span></button>
     </div>
     <button class="sheetbtn cancel" id="repClose" data-i18n="close"></button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="teleSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" data-i18n="teleTitle"></div>
+    <pre class="reptext" id="teleText"></pre>
+    <div class="srow">
+      <button class="btn tonal" id="teleCopy"><svg class="ic"><use href="#i-copy"/></svg><span data-i18n="copy"></span></button>
+    </div>
+    <button class="sheetbtn cancel" id="teleClose" data-i18n="close"></button>
   </div>
 </div>
 

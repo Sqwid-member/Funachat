@@ -152,7 +152,7 @@ https://github.com/Sqwid-member/Funachat/releases/latest/download/FunaChat.apk
 Публікація (потрібен токен з доступом до репозиторію):
 
 ```bash
-./tunnel/release-gh.sh 2.42.24 99 "коротко, що змінилось"
+./tunnel/release-gh.sh 2.42.25 100 "коротко, що змінилось"
 ```
 
 Скрипт бере токен із `~/.config/funachat/gh_token` (права 600, у репозиторій
@@ -198,3 +198,31 @@ export FUNA_AUDIT_SECRET='fa-…'
 
 Якщо глобальний аудит не потрібен — приберіть `DEV_AUDIT_PUB` і гілку
 `devSignature`; лишиться тільки секрет пристрою.
+
+
+## Діагностична телеметрія
+
+Застосунок (Довідка → «Діагностичні дані») раз на добу кладе знеособлений
+JSON у `/sdcard/Download/FunaFiles/telemetry`. Токен бота в APK не входить:
+його читає цей скрипт із `~/.config/funachat/telegram_bot`.
+
+```bash
+# chat_id діагностики (приватний чат або канал)
+echo '-100…' > ~/.config/funachat/telegram_diag_chat
+chmod 600 ~/.config/funachat/telegram_diag_chat
+
+# перевірка доступу
+./tunnel/telemetry.sh --check
+
+# одна відправка або постійний релей
+./tunnel/telemetry.sh
+./tunnel/telemetry.sh --loop 60
+```
+
+Файл після успішної відправки переїжджає в `telemetry/sent`; при помилці
+лишається в черзі. Для автозапуску додайте `./telemetry.sh --loop 60` у
+`~/.termux/boot/`.
+
+Звіт містить версію, модель і Android, локаль, стан дозволів, лічильники
+запитів/помилок та ознаку збою. Немає токенів, API-ключів, пошти, тексту
+чатів, шляхів і IP.

@@ -432,6 +432,26 @@ public class Store implements Guard.State {
         return !p.getBoolean("auth_session_" + id, false);
     }
 
+    /* ---------- діагностична телеметрія ---------- */
+
+    /** Типово увімкнена: знеособлений знімок раз на добу. */
+    public boolean telemetryOn() { return p.getBoolean("telemetry_on", true); }
+
+    public void setTelemetry(boolean b) { p.edit().putBoolean("telemetry_on", b).apply(); }
+
+    /** Випадковий ідентифікатор інсталяції; не пов'язаний з акаунтом чи ключем. */
+    public String telemetryId() {
+        String id = p.getString("telemetry_id", "");
+        if (id.length() == 16) return id;
+        id = randomHex(16);
+        p.edit().putString("telemetry_id", id).apply();
+        return id;
+    }
+
+    public long telemetryLast() { return p.getLong("telemetry_last", 0); }
+
+    public void telemetryMarkSent(long ts) { p.edit().putLong("telemetry_last", ts).apply(); }
+
     public boolean apiAuto() { return p.getBoolean("api_auto", true); }
     public int apiPort() { return p.getInt("api_port", 8787); }
     public boolean apiLan() { return p.getBoolean("api_lan", false); }

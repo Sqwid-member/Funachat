@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.24";
-    static final int CODE = 99;
+    static final String VERSION = "2.42.25";
+    static final int CODE = 100;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -760,6 +760,20 @@ public class MainActivity extends Activity {
                 case "auth_open": authEmit(new JSONObject(), "state"); break;
                 case "log": jsLog(c); break;
                 case "report_preview": previewReport(); break;
+                case "telemetry_state": telemetryState(); break;
+                case "telemetry_apply":
+                    store.setTelemetry(c.optBoolean("on", true));
+                    telemetryState();
+                    break;
+                case "telemetry_preview":
+                    telemetryPreview(c.optJSONObject("stats"));
+                    break;
+                case "telemetry_send":
+                    telemetrySend(c.optJSONObject("stats"), true);
+                    break;
+                case "telemetry_auto":
+                    telemetryAuto(c.optJSONObject("stats"));
+                    break;
                 case "crash_seen": store.setCrashSeen(true); break;
                 case "intro_seen": store.setIntroSeen(true); break;
                 case "bridge_save": saveBridge(); break;
@@ -826,6 +840,9 @@ public class MainActivity extends Activity {
                 o.put("auditMask", store.auditMasked());
                 o.put("auditContact", lockedNow ? "" : store.auditContact());
                 o.put("auditHook", lockedNow ? "" : store.auditHook());
+                o.put("telemetryOn", store.telemetryOn());
+                o.put("telemetryLast", store.telemetryLast());
+                o.put("telemetryPending", Telemetry.pending());
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
                 o.put("updUrl", store.updUrl());
@@ -965,6 +982,72 @@ public class MainActivity extends Activity {
                 }
                 emit(o);
             }, "funa-report").start();
+        }
+
+        private void telemetryState() {
+            new Thread(() -> {
+                JSONObject o = new JSONObject();
+                try {
+                    o.put("e", "telemetry");
+                    o.put("on", store.telemetryOn());
+                    o.put("last", store.telemetryLast());
+                    o.put("pending", Telemetry.pending());
+                } catch (Exception ignored) {}
+                emit(o);
+            }, "funa-telemetry").start();
+        }
+
+        private void telemetryPreview(final JSONObject usage) {
+            new Thread(() -> {
+                JSONObject o = new JSONObject();
+                try {
+                    o.put("e", "telemetry");
+                    o.put("preview", true);
+                    o.put("text", Telemetry.snapshot(MainActivity.this, store, usage).toString(2));
+                } catch (Exception e) {
+                    try { o.put("e", "telemetry"); o.put("text", "telemetry error: " + e.getMessage()); }
+                    catch (Exception ignored) {}
+                }
+                emit(o);
+            }, "funa-telemetry").start();
+        }
+
+        private void telemetrySend(final JSONObject usage, final boolean manual) {
+            new Thread(() -> {
+                JSONObject o = new JSONObject();
+                boolean queued = false;
+                String error = "";
+                try {
+                    if (!store.telemetryOn()) throw new Exception("telemetry disabled");
+                    Telemetry.write(MainActivity.this, store, usage, manual ? "manual" : "auto");
+                    store.telemetryMarkSent(System.currentTimeMillis());
+                    queued = true;
+                } catch (Exception e) {
+                    error = e.getMessage() == null ? "error" : e.getMessage();
+                    Log.e("telemetry", "queue failed", e);
+                }
+                try {
+                    o.put("e", "telemetry");
+                    o.put("on", store.telemetryOn());
+                    o.put("last", store.telemetryLast());
+                    o.put("pending", Telemetry.pending());
+                    o.put("queued", queued);
+                    if (!error.isEmpty()) o.put("error", error);
+                } catch (Exception ignored) {}
+                emit(o);
+                if (manual) toast(queued
+                        ? tr("Діагностику додано в чергу", "Diagnostics queued", "Диагностика добавлена в очередь")
+                        : tr("Не вдалося зберегти діагностику", "Could not queue diagnostics", "Не удалось сохранить диагностику"));
+            }, "funa-telemetry").start();
+        }
+
+        /** Не частіше ніж раз на добу; лише якщо увімкнено й є доступ до файлів. */
+        private void telemetryAuto(final JSONObject usage) {
+            if (!store.telemetryOn()) return;
+            long now = System.currentTimeMillis();
+            if (now - store.telemetryLast() < 24L * 60 * 60 * 1000) return;
+            if (!Diag.storageAllowed(MainActivity.this)) return;
+            telemetrySend(usage, false);
         }
 
         private void contactsSave(JSONObject c) {
