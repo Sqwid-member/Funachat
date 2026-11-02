@@ -8,8 +8,10 @@ import org.json.JSONObject;
 
 public class Store implements Guard.State {
     private final SharedPreferences p;
+    private final Context ctx;
 
     public Store(Context c) {
+        ctx = c.getApplicationContext();
         p = c.getSharedPreferences("funa", Context.MODE_PRIVATE);
     }
 
@@ -445,23 +447,19 @@ public class Store implements Guard.State {
     private static final int KEY_HEX = 48;
     private final Object keyLock = new Object();
 
-    private static String randomKey() {
+    private static String randomHex(int n) {
         // ключ до локального API — це пароль до акаунта DeepSeek:
         // звичайний Random із часовим зерном тут непридатний
         java.security.SecureRandom r = new java.security.SecureRandom();
         String hex = "0123456789abcdef";
-        StringBuilder b = new StringBuilder("fk-");
-        for (int i = 0; i < KEY_HEX; i++) b.append(hex.charAt(r.nextInt(16)));
+        StringBuilder b = new StringBuilder(n);
+        for (int i = 0; i < n; i++) b.append(hex.charAt(r.nextInt(16)));
         return b.toString();
     }
 
-    private static String randomId() {
-        java.security.SecureRandom r = new java.security.SecureRandom();
-        String hex = "0123456789abcdef";
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < 8; i++) b.append(hex.charAt(r.nextInt(16)));
-        return b.toString();
-    }
+    private static String randomKey() { return "fk-" + randomHex(KEY_HEX); }
+
+    private static String randomId() { return randomHex(8); }
 
     private static JSONObject makeKey(String name, String key, long ttlMs) {
         JSONObject o = new JSONObject();
@@ -473,6 +471,8 @@ public class Store implements Guard.State {
             o.put("created", now);
             o.put("exp", ttlMs > 0 ? now + ttlMs : 0L);
             o.put("used", 0L);
+            o.put("hits", 0L);
+            o.put("lastIp", "");
         } catch (Exception ignored) {}
         return o;
     }
@@ -498,6 +498,39 @@ public class Store implements Guard.State {
         p.edit().putString("api_keys", a.toString()).apply();
     }
 
+    private static String normalizeKey(String presented) {
+        if (presented == null) return "";
+        presented = presented.trim();
+        if (presented.toLowerCase(java.util.Locale.US).startsWith("bearer "))
+            presented = presented.substring(7).trim();
+        return presented;
+    }
+
+    private static String maskOf(String key) {
+        if (key == null) return "";
+        return key.length() > 12 ? key.substring(0, 7) + "…" + key.substring(key.length() - 4) : key;
+    }
+
+    /** Публічне (без самого ключа) подання запису. */
+    private static JSONObject keyInfo(JSONObject k, long now) {
+        JSONObject o = new JSONObject();
+        try {
+            String key = k.optString("key", "");
+            long exp = k.optLong("exp", 0);
+            o.put("id", k.optString("id", ""));
+            o.put("name", k.optString("name", "API"));
+            o.put("mask", maskOf(key));
+            o.put("len", key.length());
+            o.put("created", k.optLong("created", 0));
+            o.put("exp", exp);
+            o.put("used", k.optLong("used", 0));
+            o.put("hits", k.optLong("hits", 0));
+            o.put("lastIp", k.optString("lastIp", ""));
+            o.put("expired", exp > 0 && now >= exp);
+        } catch (Exception ignored) {}
+        return o;
+    }
+
     /** Публічний список без самих ключів. */
     public JSONArray apiKeyList() {
         JSONArray out = new JSONArray();
@@ -506,21 +539,7 @@ public class Store implements Guard.State {
             long now = System.currentTimeMillis();
             for (int i = 0; i < a.length(); i++) {
                 JSONObject k = a.optJSONObject(i);
-                if (k == null) continue;
-                String key = k.optString("key", "");
-                long exp = k.optLong("exp", 0);
-                JSONObject o = new JSONObject();
-                try {
-                    o.put("id", k.optString("id", ""));
-                    o.put("name", k.optString("name", "API"));
-                    o.put("mask", key.length() > 12 ? key.substring(0, 7) + "…" + key.substring(key.length() - 4) : key);
-                    o.put("len", key.length());
-                    o.put("created", k.optLong("created", 0));
-                    o.put("exp", exp);
-                    o.put("used", k.optLong("used", 0));
-                    o.put("expired", exp > 0 && now >= exp);
-                } catch (Exception ignored) {}
-                out.put(o);
+                if (k != null) out.put(keyInfo(k, now));
             }
         }
         return out;
@@ -551,6 +570,54 @@ public class Store implements Guard.State {
             if (removed) saveKeys(out);
             return removed;
         }
+    }
+
+    /** Відкликати за самим значенням ключа (аудит злитого ключа). */
+    public boolean apiKeyDeleteByValue(String presented) {
+        String value = normalizeKey(presented);
+        if (value.isEmpty()) return false;
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            JSONArray out = new JSONArray();
+            boolean removed = false;
+            byte[] got = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                String key = k.optString("key", "");
+                if (!key.isEmpty() && java.security.MessageDigest.isEqual(
+                        key.getBytes(java.nio.charset.StandardCharsets.UTF_8), got)) {
+                    removed = true;
+                    continue;
+                }
+                out.put(k);
+            }
+            if (removed) saveKeys(out);
+            return removed;
+        }
+    }
+
+    /** Довідка про ключ за самим значенням; null — не належить цьому пристрою. */
+    public JSONObject apiKeyAudit(String presented) {
+        String value = normalizeKey(presented);
+        if (value.isEmpty()) return null;
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            long now = System.currentTimeMillis();
+            byte[] got = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                String key = k.optString("key", "");
+                if (key.isEmpty()) continue;
+                if (!java.security.MessageDigest.isEqual(
+                        key.getBytes(java.nio.charset.StandardCharsets.UTF_8), got)) continue;
+                JSONObject info = keyInfo(k, now);
+                try { info.put("remaining", a.length()); } catch (Exception ignored) {}
+                return info;
+            }
+        }
+        return null;
     }
 
     /** Повний ключ за id — лише для копіювання в буфер, у UI не показується. */
@@ -591,13 +658,12 @@ public class Store implements Guard.State {
      * Перевірка пред'явленого ключа.
      * 0 — чинний, 1 — прострочений, 2 — невідомий.
      */
-    public int apiKeyCheck(String presented) {
-        if (presented == null) return 2;
-        presented = presented.trim();
-        if (presented.toLowerCase(java.util.Locale.US).startsWith("bearer "))
-            presented = presented.substring(7).trim();
-        if (presented.isEmpty()) return 2;
-        byte[] got = presented.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    public int apiKeyCheck(String presented) { return apiKeyCheck(presented, ""); }
+
+    public int apiKeyCheck(String presented, String ip) {
+        String value = normalizeKey(presented);
+        if (value.isEmpty()) return 2;
+        byte[] got = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         synchronized (keyLock) {
             JSONArray a = keysLocked();
             long now = System.currentTimeMillis();
@@ -618,13 +684,177 @@ public class Store implements Guard.State {
                 if (res == 0) {
                     long used = k.optLong("used", 0);
                     if (now - used > 60000L) {
-                        try { k.put("used", now); } catch (Exception ignored) {}
+                        try {
+                            k.put("used", now);
+                            k.put("hits", k.optLong("hits", 0) + 1);
+                            if (ip != null && !ip.isEmpty()) k.put("lastIp", ip);
+                        } catch (Exception ignored) {}
                         saveKeys(a);
                     }
                 }
             }
             return matched ? res : 2;
         }
+    }
+
+    /* ---------- аудит злитих ключів ---------- */
+
+    /** Секрет аудиту цього пристрою (fa- + 64 hex). */
+    public String ensureAuditSecret() {
+        synchronized (keyLock) {
+            String s = p.getString("audit_secret", "");
+            if (s.startsWith("fa-") && s.length() >= 32) return s;
+            s = "fa-" + randomHex(64);
+            p.edit().putString("audit_secret", s).apply();
+            return s;
+        }
+    }
+
+    public String rotateAuditSecret() {
+        synchronized (keyLock) {
+            String s = "fa-" + randomHex(64);
+            p.edit().putString("audit_secret", s).apply();
+            return s;
+        }
+    }
+
+    public boolean auditCheck(String presented) {
+        if (presented == null) return false;
+        presented = presented.trim();
+        if (presented.isEmpty()) return false;
+        String s = ensureAuditSecret();
+        return java.security.MessageDigest.isEqual(
+                s.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                presented.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    public String auditMasked() { return maskOf(ensureAuditSecret()); }
+
+    public String auditContact() { return p.getString("audit_contact", ""); }
+    public String auditHook() { return p.getString("audit_hook", ""); }
+
+    public void setAuditContacts(String contact, String hook) {
+        p.edit()
+                .putString("audit_contact", contact == null ? "" : contact.trim())
+                .putString("audit_hook", hook == null ? "" : hook.trim())
+                .apply();
+    }
+
+    /** Власник цього пристрою — для відповіді аудиту. */
+    public JSONObject ownerInfo() {
+        JSONObject o = new JSONObject();
+        try {
+            JSONObject a = activeSummary();
+            String email = a == null ? "" : a.optString("email", "");
+            String name = a == null ? "" : a.optString("name", "");
+            if (name.isEmpty()) name = email;
+            o.put("name", name);
+            o.put("email", email);
+            o.put("contact", auditContact());
+            o.put("device", android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL);
+            o.put("publicUrl", pubUrl());
+        } catch (Exception ignored) {}
+        return o;
+    }
+
+    private JSONArray readAuditLog() {
+        try { return new JSONArray(p.getString("audit_log", "[]")); }
+        catch (Exception e) { return new JSONArray(); }
+    }
+
+    /** Останні події аудиту, новіші — зверху. */
+    public JSONArray auditLog(int limit) {
+        JSONArray a = readAuditLog();
+        JSONArray out = new JSONArray();
+        for (int i = a.length() - 1; i >= 0 && out.length() < limit; i--) {
+            JSONObject o = a.optJSONObject(i);
+            if (o != null) out.put(o);
+        }
+        return out;
+    }
+
+    private void auditLogAdd(String action, JSONObject key, String note, String ip) {
+        synchronized (keyLock) {
+            JSONArray a = readAuditLog();
+            JSONObject e = new JSONObject();
+            try {
+                e.put("ts", System.currentTimeMillis());
+                e.put("action", action);
+                e.put("id", key == null ? "" : key.optString("id", ""));
+                e.put("name", key == null ? "" : key.optString("name", ""));
+                e.put("mask", key == null ? "" : key.optString("mask", ""));
+                String n = note == null ? "" : note.trim();
+                if (n.length() > 500) n = n.substring(0, 500);
+                e.put("note", n);
+                e.put("ip", ip == null ? "" : ip);
+            } catch (Exception ignored) {}
+            a.put(e);
+            // не роздумуємо сховище: тримаємо останні 100 подій
+            if (a.length() > 100) {
+                JSONArray cut = new JSONArray();
+                for (int i = a.length() - 100; i < a.length(); i++) {
+                    JSONObject o = a.optJSONObject(i);
+                    if (o != null) cut.put(o);
+                }
+                a = cut;
+            }
+            p.edit().putString("audit_log", a.toString()).apply();
+        }
+    }
+
+    /** Записати подію, показати Toast і (якщо задано) відправити webhook. */
+    public void auditNotify(String action, JSONObject key, String note, String ip) {
+        auditLogAdd(action, key, note, ip);
+        String mask = key == null ? "" : key.optString("mask", "");
+        String verb = "revoke".equals(action) ? "відкликано" : "перевірено";
+        toast("FunaChat: ключ " + mask + " " + verb + " через аудит");
+        final String hook = auditHook();
+        if (!hook.isEmpty()) {
+            final String act = action;
+            final JSONObject k = key;
+            final String n = note;
+            final String src = ip;
+            Thread t = new Thread(() -> postAuditHook(hook, act, k, n, src));
+            t.setDaemon(true);
+            t.start();
+        }
+    }
+
+    private void postAuditHook(String hook, String action, JSONObject key, String note, String ip) {
+        try {
+            java.net.URL u = new java.net.URL(hook);
+            String proto = u.getProtocol();
+            if (!"http".equals(proto) && !"https".equals(proto)) return;
+            String text = "FunaChat: аудит ключа " + (key == null ? "" : key.optString("mask", ""))
+                    + " — " + action + (note == null || note.isEmpty() ? "" : " (" + note + ")");
+            JSONObject body = new JSONObject();
+            body.put("text", text);
+            body.put("content", text);
+            body.put("message", text);
+            body.put("event", action);
+            body.put("key", key == null ? new JSONObject() : key);
+            body.put("owner", ownerInfo());
+            body.put("note", note == null ? "" : note);
+            body.put("ip", ip == null ? "" : ip);
+            body.put("ts", System.currentTimeMillis());
+            byte[] data = body.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            java.net.HttpURLConnection c = (java.net.HttpURLConnection) u.openConnection();
+            c.setConnectTimeout(5000);
+            c.setReadTimeout(5000);
+            c.setRequestMethod("POST");
+            c.setDoOutput(true);
+            c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            c.getOutputStream().write(data);
+            c.getResponseCode();
+            c.disconnect();
+        } catch (Exception ignored) {}
+    }
+
+    private void toast(String msg) {
+        try {
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() ->
+                    android.widget.Toast.makeText(ctx, msg, android.widget.Toast.LENGTH_LONG).show());
+        } catch (Exception ignored) {}
     }
 
     /** Публічна адреса API (тунель cloudflared/zrok). Порожня — доступу ззовні немає. */

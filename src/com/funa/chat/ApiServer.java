@@ -55,6 +55,15 @@ public class ApiServer {
     private static final AtomicInteger CONNS = new AtomicInteger();
     private static final Map<String, long[]> IP_STATS = new ConcurrentHashMap<>();
 
+    /**
+     * Публічний ключ розробника для аудиту злитих API-ключів.
+     * Приватна половина зберігається лише поза репозиторієм
+     * (~/.config/funachat/dev_audit_key.pem). Запит підписується нею,
+     * тому без приватного ключа аудит недоступний.
+     */
+    private static final String DEV_AUDIT_PUB =
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEvUT5MEH9ILHRT+vZnM52KaTuC+X19gkNeWd8xm4QUIPscr1SKZ3wqDJpUTnxujYbp+04Hd1MzdStmR2xPLrrzg==";
+
     /** id, опис, model_type, thinking, search. */
     private static final String[][] MODELS = {
             {"deepseek-chat", "DeepSeek V4.1 Flash", "default", "0", "0"},
@@ -195,7 +204,8 @@ public class ApiServer {
             // Ліміт рахуємо після заголовків: за тунелем усі запити приходять
             // з 127.0.0.1, і без X-Forwarded-For / CF-Connecting-IP один
             // галасливий клієнт з'їдав би квоту всіх інших.
-            if (!allowIp(clientIp(sock, h))) {
+            String ip = clientIp(sock, h);
+            if (!allowIp(ip)) {
                 OutputStream o = new BufferedOutputStream(sock.getOutputStream());
                 send(o, 429, "application/json", err("Too many requests from this address", "rate_limit_error"));
                 return;
@@ -220,7 +230,15 @@ public class ApiServer {
                 sock.close();
                 return;
             }
-            int authState = auth(h);
+            // Аудит злитих ключів: окремий секрет пристрою або підпис
+            // приватного ключа розробника. Звичайний API-ключ тут не діє.
+            if ("POST".equals(method) && ("/v1/audit/key".equals(path) || "/audit/key".equals(path))) {
+                audit(out, body, h, ip);
+                out.flush();
+                return;
+            }
+
+            int authState = auth(h, ip);
             if (authState != 0) {
                 boolean expired = authState == 1;
                 send(out, 401, "application/json",
@@ -355,11 +373,89 @@ public class ApiServer {
     }
 
     /** 0 — ключ чинний, 1 — прострочений, 2 — невідомий. */
-    private int auth(Map<String, String> h) {
+    private int auth(Map<String, String> h, String ip) {
         String got = h.get("authorization");
         if (got == null) got = h.get("x-api-key");
         if (got == null) return 2;
-        return st.apiKeyCheck(got);
+        return st.apiKeyCheck(got, ip);
+    }
+
+    /** Перевірка ECDSA-підпису тіла запиту публічним ключем розробника. */
+    private static boolean devSignature(byte[] body, String sigB64) {
+        try {
+            byte[] sig = java.util.Base64.getDecoder().decode(sigB64);
+            byte[] der = java.util.Base64.getDecoder().decode(DEV_AUDIT_PUB);
+            java.security.PublicKey pk = java.security.KeyFactory.getInstance("EC")
+                    .generatePublic(new java.security.spec.X509EncodedKeySpec(der));
+            java.security.Signature s = java.security.Signature.getInstance("SHA256withECDSA");
+            s.initVerify(pk);
+            s.update(body);
+            return s.verify(sig);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * POST /v1/audit/key
+     * {key, action: info|revoke|notify, note, ts, nonce}
+     *
+     * Доступ: X-Funa-Audit (секрет пристрою) або X-Funa-Dev-Signature
+     * (ECDSA над тілом запиту; ts у межах 3 хвилин, nonce ≥ 16 символів).
+     */
+    private void audit(OutputStream out, byte[] body, Map<String, String> h, String ip) throws IOException {
+        JSONObject req = null;
+        try { req = new JSONObject(new String(body, StandardCharsets.UTF_8)); }
+        catch (Exception ignored) {}
+        if (req == null) {
+            send(out, 400, "application/json", err("Invalid JSON", "invalid_request_error"));
+            return;
+        }
+        boolean ok = st.auditCheck(h.get("x-funa-audit"));
+        if (!ok) {
+            String sig = h.get("x-funa-dev-signature");
+            long ts = req.optLong("ts", 0);
+            String nonce = req.optString("nonce", "");
+            long skew = Math.abs(System.currentTimeMillis() - ts);
+            if (sig != null && nonce.length() >= 16 && skew <= 180000L)
+                ok = devSignature(body, sig);
+        }
+        if (!ok) {
+            send(out, 403, "application/json", err("Audit access denied", "audit_forbidden"));
+            return;
+        }
+        String key = req.optString("key", "").trim();
+        String action = req.optString("action", "info").trim().toLowerCase(Locale.US);
+        if (!"info".equals(action) && !"revoke".equals(action) && !"notify".equals(action)) {
+            send(out, 400, "application/json", err("Unknown audit action", "invalid_request_error"));
+            return;
+        }
+        JSONObject info = st.apiKeyAudit(key);
+        if (info == null) {
+            send(out, 404, "application/json", err("API key not found on this device", "key_not_found"));
+            return;
+        }
+        boolean revoked = false;
+        boolean notified = false;
+        if ("revoke".equals(action)) revoked = st.apiKeyDeleteByValue(key);
+        if ("revoke".equals(action) || "notify".equals(action)) {
+            st.auditNotify(action, info, req.optString("note", ""), ip);
+            notified = true;
+        }
+        JSONObject r = new JSONObject();
+        try {
+            r.put("ok", true);
+            r.put("action", action);
+            r.put("key", info);
+            r.put("owner", st.ownerInfo());
+            r.put("version", MainActivity.VERSION);
+            r.put("code", MainActivity.CODE);
+            r.put("revoked", revoked);
+            r.put("notified", notified);
+            r.put("remaining", st.apiKeyList().length());
+            r.put("audit", st.auditLog(8));
+        } catch (Exception ignored) {}
+        send(out, 200, "application/json", r.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private JSONObject health() {
@@ -367,7 +463,8 @@ public class ApiServer {
         try {
             JSONArray eps = new JSONArray();
             eps.put("/health").put("/v1/models").put("/v1/models/{id}").put("/v1/tools")
-                    .put("/v1/chat/completions").put("/v1/completions");
+                    .put("/v1/chat/completions").put("/v1/completions")
+                    .put("/v1/audit/key");
             JSONArray ids = new JSONArray();
             for (String[] m : MODELS) ids.put(m[0]);
             o.put("ok", true);

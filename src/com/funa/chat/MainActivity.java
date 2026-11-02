@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.22";
-    static final int CODE = 97;
+    static final String VERSION = "2.42.23";
+    static final int CODE = 98;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -720,11 +720,32 @@ public class MainActivity extends Activity {
                     break;
                 }
                 case "key_copy": {
+                    if (store.apiLocked()) break;
                     String kk = store.apiKeyById(c.optString("id", ""));
                     if (!kk.isEmpty()) copy(kk);
                     break;
                 }
                 case "api_public": store.setApiPublic(c.optBoolean("on", true)); break;
+                case "audit_copy": if (!store.apiLocked()) copy(store.ensureAuditSecret()); break;
+                case "audit_rotate":
+                    if (!store.apiLocked()) { store.rotateAuditSecret(); apiState(); }
+                    break;
+                case "audit_apply":
+                    if (!store.apiLocked()) {
+                        store.setAuditContacts(c.optString("contact", ""), c.optString("hook", ""));
+                        apiState();
+                    }
+                    break;
+                case "audit_log": {
+                    if (store.apiLocked()) break;
+                    JSONObject ae = new JSONObject();
+                    try {
+                        ae.put("e", "audit_log");
+                        ae.put("items", store.auditLog(20));
+                    } catch (Exception ignored) {}
+                    emit(ae);
+                    break;
+                }
                 case "guard_state": guardState(); break;
                 case "guard_apply": guardApply(c); break;
                 case "guard_reset": Guard.reset(store); guardState(); break;
@@ -802,6 +823,9 @@ public class MainActivity extends Activity {
                 o.put("apiLan", store.apiLan());
                 o.put("apiDel", store.apiDelete());
                 o.put("apiPublic", store.apiPublic());
+                o.put("auditMask", store.auditMasked());
+                o.put("auditContact", lockedNow ? "" : store.auditContact());
+                o.put("auditHook", lockedNow ? "" : store.auditHook());
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
                 o.put("updUrl", store.updUrl());
@@ -839,15 +863,19 @@ public class MainActivity extends Activity {
         private void apiState() {
             JSONObject o = new JSONObject();
             try {
+                boolean lockedApi = store.apiLocked();
                 o.put("e", "api");
                 o.put("running", ApiServer.running());
                 o.put("port", ApiServer.running() ? ApiServer.runningPort() : store.apiPort());
-                o.put("key", store.ensureApiKey());
+                o.put("key", lockedApi ? "" : store.ensureApiKey());
                 o.put("auto", store.apiAuto());
                 o.put("lan", store.apiLan());
                 o.put("del", store.apiDelete());
                 o.put("pub", store.apiPublic());
                 o.put("keys", store.apiKeyList().length());
+                o.put("auditMask", store.auditMasked());
+                o.put("auditContact", lockedApi ? "" : store.auditContact());
+                o.put("auditHook", lockedApi ? "" : store.auditHook());
                 o.put("host", store.apiLan() ? "0.0.0.0" : "127.0.0.1");
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());

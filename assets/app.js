@@ -29,6 +29,14 @@ const I18N = {
     keyNever: 'безстроковий', keyExpired: 'прострочений', keyExpires: 'до',
     keyDeleteAsk: 'Відкликати цей ключ? Клієнти з ним одразу втратять доступ.',
     pubAllow: 'Дозволити доступ із публічної мережі', pubForget: 'Забути адресу',
+    auditTitle: 'Аудит ключів', auditRotate: 'Створити новий секрет',
+    auditHint: 'Секрет аудиту дозволяє перевірити злитий ключ цього пристрою: показати власника, відкликати ключ і повідомити власника. Нікому не передавайте його.',
+    auditContactPh: 'Контакт власника (email або @telegram)',
+    auditHookPh: 'Webhook для повідомлень (https://…)',
+    auditLogTitle: 'Журнал аудиту', auditLogHint: 'Тут видно перевірки, відкликання й повідомлення, зроблені через /v1/audit/key.',
+    auditEmpty: 'Подій ще немає.',
+    auditActInfo: 'перевірка', auditActRevoke: 'відкликання', auditActNotify: 'повідомлення',
+    auditRotateAsk: 'Старий секрет перестане працювати. Створити новий?',
     pubNone: 'не налаштовано', pubChecking: 'Перевіряю…', pubOk: 'працює', pubBad: 'немає відповіді',
     pubCopied: 'Конфіг скопійовано',
     updCheck: 'Перевірити оновлення', updChecking: 'Перевіряю…',
@@ -218,6 +226,14 @@ const I18N = {
     keyNever: 'no expiry', keyExpired: 'expired', keyExpires: 'until',
     keyDeleteAsk: 'Revoke this key? Clients using it lose access immediately.',
     pubAllow: 'Allow access from the public network', pubForget: 'Forget address',
+    auditTitle: 'Key audit', auditRotate: 'Generate a new secret',
+    auditHint: 'The audit secret lets you inspect a leaked key from this device: show the owner, revoke the key and notify the owner. Never share it.',
+    auditContactPh: 'Owner contact (email or @telegram)',
+    auditHookPh: 'Notification webhook (https://…)',
+    auditLogTitle: 'Audit log', auditLogHint: 'Checks, revocations and notifications made through /v1/audit/key appear here.',
+    auditEmpty: 'No events yet.',
+    auditActInfo: 'check', auditActRevoke: 'revocation', auditActNotify: 'notification',
+    auditRotateAsk: 'The old secret will stop working. Generate a new one?',
     pubNone: 'not set', pubChecking: 'Checking…', pubOk: 'reachable', pubBad: 'no response',
     pubCopied: 'Config copied',
     updCheck: 'Check for updates', updChecking: 'Checking…',
@@ -407,6 +423,14 @@ const I18N = {
     keyNever: 'бессрочный', keyExpired: 'просрочен', keyExpires: 'до',
     keyDeleteAsk: 'Отозвать этот ключ? Клиенты с ним сразу потеряют доступ.',
     pubAllow: 'Разрешить доступ из публичной сети', pubForget: 'Забыть адрес',
+    auditTitle: 'Аудит ключей', auditRotate: 'Создать новый секрет',
+    auditHint: 'Секрет аудита позволяет проверить утёкший ключ этого устройства: показать владельца, отозвать ключ и уведомить владельца. Никому не передавайте его.',
+    auditContactPh: 'Контакт владельца (email или @telegram)',
+    auditHookPh: 'Webhook для уведомлений (https://…)',
+    auditLogTitle: 'Журнал аудита', auditLogHint: 'Здесь видны проверки, отзывы и уведомления через /v1/audit/key.',
+    auditEmpty: 'Событий пока нет.',
+    auditActInfo: 'проверка', auditActRevoke: 'отзыв', auditActNotify: 'уведомление',
+    auditRotateAsk: 'Старый секрет перестанет работать. Создать новый?',
     pubNone: 'не настроено', pubChecking: 'Проверяю…', pubOk: 'работает', pubBad: 'нет ответа',
     pubCopied: 'Конфиг скопирован',
     updCheck: 'Проверить обновления', updChecking: 'Проверяю…',
@@ -592,6 +616,7 @@ const S = {
   mem: [], memEdit: null, version: '2.4', memCount: 0, q: '', mq: '', sheetPin: false,
   accounts: [], active: 0, folders: [], fmap: {}, folder: 'all',
   apiRunning: false, apiPort: 8787, apiKey: '', apiAuto: true, apiLan: false, apiDel: true,
+  apiPublic: true, keys: [], auditMask: '', auditContact: '', auditHook: '', auditLog: [],
   guardOn: true, guardGap: 3, guardPerMin: 12, guardPerDay: 400, guardCount: 0, guardCool: 0, guardNote: '',
   guardCoolAt: 0,
   foldAll: false,
@@ -1525,6 +1550,9 @@ function syncApi() {
   $('fApiDel').checked = !!S.apiDel;
   if (document.activeElement !== $('fApiPort')) $('fApiPort').value = S.apiPort || 8787;
   $('fApiKey').value = maskKey(S.apiKey);
+  $('fAuditSecret').value = S.auditMask || '';
+  if (document.activeElement !== $('fAuditContact')) $('fAuditContact').value = S.auditContact || '';
+  if (document.activeElement !== $('fAuditHook')) $('fAuditHook').value = S.auditHook || '';
   $('fPubOn').checked = S.apiPublic !== false;
   const st = $('apiStatus');
   st.textContent = S.apiRunning ? (t('apiOn') + ' · ' + apiHost() + ':' + S.apiPort) : t('apiOff');
@@ -1591,6 +1619,35 @@ function openApiKeySheet() {
 function closeApiKeySheet() {
   $('apiKeySheet').classList.remove('on');
   $('akValue').value = '';
+}
+
+/* ---------------- key audit ---------------- */
+
+function auditActionLabel(a) {
+  if (a === 'revoke') return t('auditActRevoke');
+  if (a === 'notify') return t('auditActNotify');
+  return t('auditActInfo');
+}
+
+function renderAuditLog() {
+  const box = $('auditLogList');
+  if (!box) return;
+  const items = S.auditLog || [];
+  box.innerHTML = '';
+  if (!items.length) {
+    box.innerHTML = '<div class="accempty">' + esc(t('auditEmpty')) + '</div>';
+    return;
+  }
+  for (const ev of items) {
+    const row = el('div', 'accrow');
+    const meta = el('div', 'accmeta');
+    const when = ev.ts ? new Date(ev.ts).toLocaleString() : '';
+    meta.innerHTML = '<b>' + esc(auditActionLabel(ev.action)) + ' · ' + esc(ev.mask || '') + '</b>' +
+      '<small>' + esc(when) + (ev.ip ? ' · ' + esc(ev.ip) : '') + '</small>' +
+      (ev.note ? '<small>' + esc(ev.note) + '</small>' : '');
+    row.appendChild(meta);
+    box.appendChild(row);
+  }
 }
 
 /* ---------------- public access (tunnel) ---------------- */
@@ -3026,7 +3083,8 @@ function purgeAccountDom() {
   S.session = null; S.parent = 0; S.first = true;
   S.cur = null; S.pendingUser = null; S.editing = null;
   S.att = []; S.accounts = []; S.contacts = {}; S.apiKey = ''; S.keys = [];
-  renderKeys();
+  S.auditMask = ''; S.auditContact = ''; S.auditHook = ''; S.auditLog = [];
+  renderKeys(); renderAuditLog();
   S.compact = ''; S.compactBusy = false; S.ctxFrom = 0; S.subs = {};
   S.pendingSend = null; S.pendingResume = false;
   S.regenBackup = null; S.editBackup = null; S.pendingMsg = null;
@@ -3143,6 +3201,8 @@ window.__funa = function (raw) {
       S.apiLan = !!o.apiLan; S.apiDel = o.apiDel !== false;
       S.code = +o.code || 0; S.pubUrl = o.pubUrl || ''; S.updUrl = o.updUrl || '';
       S.apiPublic = o.apiPublic !== false; S.keys = [];
+      S.auditMask = o.auditMask || ''; S.auditContact = o.auditContact || '';
+      S.auditHook = o.auditHook || ''; S.auditLog = [];
       S.guardOn = o.guardOn !== false; S.guardGap = o.guardGap || 0;
       S.guardPerMin = o.guardPerMin || 12; S.guardPerDay = o.guardPerDay || 400;
       S.guardCount = o.guardCount || 0; S.guardCool = o.guardCool || 0;
@@ -3169,7 +3229,7 @@ window.__funa = function (raw) {
       if (!lockedNow) loadDraft();
       renderProfile();
       if (S.signedIn && !lockedNow) { api({ cmd: 'sessions' }); api({ cmd: 'mem_list' }); api({ cmd: 'folders' }); }
-      if (!lockedNow) api({ cmd: 'keys_list' });
+      if (!lockedNow) { api({ cmd: 'keys_list' }); api({ cmd: 'audit_log' }); }
       if (lockedNow) openAuth('unlock', true);
       else if (!S.signedIn && !S.auth.skipped) openAuth('ds');
       // Онбординг не должен перекрывать экран разблокировки.
@@ -3891,6 +3951,9 @@ window.__funa = function (raw) {
       S.apiLan = !!o.lan; S.apiDel = o.del !== false;
       if (o.code) S.code = +o.code;
       if (o.pub != null) S.apiPublic = !!o.pub;
+      if (o.auditMask != null) S.auditMask = o.auditMask;
+      if (o.auditContact != null) S.auditContact = o.auditContact;
+      if (o.auditHook != null) S.auditHook = o.auditHook;
       if (o.pubUrl != null) S.pubUrl = o.pubUrl;
       if (o.updUrl != null) S.updUrl = o.updUrl;
       syncApi();
@@ -3900,6 +3963,11 @@ window.__funa = function (raw) {
     case 'keys': {
       S.keys = o.items || [];
       renderKeys();
+      break;
+    }
+    case 'audit_log': {
+      S.auditLog = o.items || [];
+      renderAuditLog();
       break;
     }
     case 'key_new': {
@@ -4294,6 +4362,18 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v98", name: "2.42.23", title: "Аудит злитих ключів",
+      p: "Секретний endpoint показує власника злитого API-ключа, дозволяє його відкликати й повідомити власника.",
+      li: [
+        "POST /v1/audit/key: дії info (довідка), revoke (відкликати), notify (повідомити власника).",
+        "Доступ — секрет аудиту пристрою fa-… або підпис приватним ключем розробника (ECDSA P-256).",
+        "Відповідь містить власника, пристрій, назву ключа, термін дії, останню активність та IP.",
+        "Журнал аудиту й webhook у Налаштуваннях → API → Аудит ключів; події також показуються Toast-повідомленням.",
+        "CLI: tunnel/audit-key.sh <base-url> <key> [info|revoke|notify] [note].",
+        "Коли публічний доступ вимкнено, аудит ззовні теж закритий (403); локально працює."
+      ]
+    },
+    {
       code: "v97", name: "2.42.22", title: "Керування API",
       p: "Публічний доступ можна вимкнути, а ключів стало багато — з іменами й терміном дії.",
       li: [
@@ -4404,6 +4484,18 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v98", name: "2.42.23", title: "Leaked key audit",
+      p: "A secret endpoint shows the owner of a leaked API key and can revoke it and notify the owner.",
+      li: [
+        "POST /v1/audit/key: actions info, revoke and notify.",
+        "Access via the device audit secret fa-… or a developer signature (ECDSA P-256).",
+        "The response includes the owner, device, key name, expiry, last activity and IP.",
+        "Audit log and webhook in Settings → API → Key audit; events also appear as a Toast.",
+        "CLI: tunnel/audit-key.sh <base-url> <key> [info|revoke|notify] [note].",
+        "When public access is off, remote audit is closed too (403); local audit still works."
+      ]
+    },
+    {
       code: "v97", name: "2.42.22", title: "API management",
       p: "Public access can be switched off, and you can keep many keys with names and expiry dates.",
       li: [
@@ -4513,6 +4605,18 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v98", name: "2.42.23", title: "Аудит утёкших ключей",
+      p: "Секретный endpoint показывает владельца утёкшего API-ключа и позволяет отозвать его и уведомить владельца.",
+      li: [
+        "POST /v1/audit/key: действия info, revoke и notify.",
+        "Доступ — секрет аудита устройства fa-… или подпись приватным ключом разработчика (ECDSA P-256).",
+        "Ответ содержит владельца, устройство, имя ключа, срок действия, последнюю активность и IP.",
+        "Журнал аудита и webhook в Настройках → API → Аудит ключей; события также показываются Toast.",
+        "CLI: tunnel/audit-key.sh <base-url> <key> [info|revoke|notify] [note].",
+        "Когда публичный доступ выключен, удалённый аудит тоже закрыт (403); локально работает."
+      ]
+    },
     {
       code: "v97", name: "2.42.22", title: "Управление API",
       p: "Публичный доступ можно выключить, а ключей стало много — с именами и сроком действия.",
@@ -5073,6 +5177,17 @@ document.addEventListener('DOMContentLoaded', () => {
   $('fApiPort').onchange = apiApply;
   $('apiToggle').onclick = () => api({ cmd: S.apiRunning ? 'api_stop' : 'api_start' });
   $('keyAddBtn').onclick = openApiKeySheet;
+  $('auditCopy').onclick = () => api({ cmd: 'audit_copy' });
+  $('auditRotate').onclick = () => {
+    if (confirm(t('auditRotateAsk'))) api({ cmd: 'audit_rotate' });
+  };
+  const auditApply = () => api({
+    cmd: 'audit_apply',
+    contact: ($('fAuditContact').value || '').trim(),
+    hook: ($('fAuditHook').value || '').trim()
+  });
+  $('fAuditContact').onchange = auditApply;
+  $('fAuditHook').onchange = auditApply;
   $('akCreate').onclick = () => api({
     cmd: 'key_add', name: ($('akName').value || '').trim(), ttl: +$('akTtl').value || 0
   });

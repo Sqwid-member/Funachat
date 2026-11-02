@@ -6,3 +6,9 @@ tunnel/*.log
 tunnel/url*.txt
 *.keystore
 dist/release.json
+
+# приватні ключі аудиту
+*.pem
+*.b64
+audit_secret
+dev_audit_key*

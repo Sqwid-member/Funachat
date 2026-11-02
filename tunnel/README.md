@@ -152,8 +152,49 @@ https://github.com/Sqwid-member/Funachat/releases/latest/download/FunaChat.apk
 Публікація (потрібен токен з доступом до репозиторію):
 
 ```bash
-./tunnel/release-gh.sh 2.42.20 95 "коротко, що змінилось"
+./tunnel/release-gh.sh 2.42.23 98 "коротко, що змінилось"
 ```
 
 Скрипт бере токен із `~/.config/funachat/gh_token` (права 600, у репозиторій
 не потрапляє), створює тег `v<code>`, заливає APK і `latest.json`.
+
+## Аудит злитих ключів
+
+Секретний endpoint `POST /v1/audit/key` показує власника ключа, дозволяє
+його відкликати й повідомити власника. Деталі форматів — у
+[`../API.md`](../API.md).
+
+Швидко:
+
+```bash
+cd ~/downloads/funachat
+
+# секрет пристрою: Налаштування → API → Аудит ключів → копіювати
+export FUNA_AUDIT_SECRET='fa-…'
+./tunnel/audit-key.sh https://example.trycloudflare.com fk-… info
+
+# ключ розробника (працює на будь-якому пристрої)
+./tunnel/audit-key.sh https://example.trycloudflare.com fk-… revoke
+./tunnel/audit-key.sh https://example.trycloudflare.com fk-… notify "знайшов у публічному репо"
+
+# локально, без тунелю
+./tunnel/audit-key.sh http://127.0.0.1:8787 fk-… info
+```
+
+Скрипт бере секрет із `FUNA_AUDIT_SECRET` або
+`~/.config/funachat/audit_secret`, інакше підписує запит приватним ключем
+`~/.config/funachat/dev_audit_key.pem`. Для `revoke` питає підтвердження
+(`FUNA_YES=1` — без питання).
+
+### Ключ розробника
+
+```bash
+./tunnel/dev-keygen.sh          # створить ~/.config/funachat/dev_audit_key.pem
+```
+
+Скрипт друкує публічний ключ. Щоб ротувати ключ, замініть константу
+`DEV_AUDIT_PUB` у `src/com/funa/chat/ApiServer.java` на надруковане значення
+й перезберіть APK. Приватний ключ у репозиторій не потрапляє (`.gitignore`).
+
+Якщо глобальний аудит не потрібен — приберіть `DEV_AUDIT_PUB` і гілку
+`devSignature`; лишиться тільки секрет пристрою.

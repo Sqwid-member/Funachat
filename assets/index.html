@@ -290,6 +290,23 @@
       </div>
 
       <div class="sect">
+        <div class="slabel" data-i18n="auditTitle"></div>
+        <p class="muted small" data-i18n="auditHint"></p>
+        <div class="srow">
+          <input id="fAuditSecret" class="field" readonly spellcheck="false" autocomplete="off">
+          <button class="ibtn boxed" id="auditCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
+        </div>
+        <div class="srow">
+          <button class="btn text" id="auditRotate"><span data-i18n="auditRotate"></span></button>
+        </div>
+        <input id="fAuditContact" class="field" data-i18n-ph="auditContactPh" maxlength="120">
+        <input id="fAuditHook" class="field" data-i18n-ph="auditHookPh" inputmode="url" spellcheck="false" autocomplete="off">
+        <div class="slabel second" data-i18n="auditLogTitle"></div>
+        <div class="acclist" id="auditLogList"></div>
+        <p class="muted small" data-i18n="auditLogHint"></p>
+      </div>
+
+      <div class="sect">
         <div class="slabel" data-i18n="pubTitle"></div>
         <label class="switch"><span data-i18n="pubAllow"></span><input type="checkbox" id="fPubOn"><i></i></label>
         <div class="srow">
