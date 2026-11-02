@@ -1,9 +1,9 @@
 {
-  "version": "2.42.29",
-  "code": 104,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v104/FunaChat.apk",
-  "md5": "b16e77afcebece6b883729efe5e55585",
+  "version": "2.42.30",
+  "code": 105,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v105/FunaChat.apk",
+  "md5": "431afaa1daf5bb2ed8325dec690dff08",
   "size": 662869,
-  "notes": "Повідомлення містить підсумок і хвіст логу, повний JSON прикріплюється документом — логи більше не ріжуться лімітом Telegram. Кількість рядків логу рахується правильно.",
+  "notes": "URL телеметрії більше не лежить в APK відкритим рядком: байти закодовані й збираються під час роботи. Перевірено відсутність токена бота, chat_id, GitHub-токена й приватного ключа; allowBackup=false, підпис V3.",
   "date": "2026-11-02"
 }
