@@ -875,6 +875,15 @@ function md(src, streaming) {
     htmls.push(m);
     return '\n\n\u0004' + (htmls.length - 1) + '\u0004\n\n';
   });
+  // Під час стріму закритого </html> ще немає. Якщо документ почався
+  // з doctype чи <html>, ховаємо його теги за карткою очікування.
+  if (streaming) {
+    const open = src.match(/(^|\n)[ \t]*(?:<!doctype\s+html[^>]*>|<html[\s>][^>]*>)/i);
+    if (open && !/<\/(?:html|svg)\s*>/i.test(src.slice(open.index))) {
+      src = src.slice(0, open.index) + '\n\n\u0004' + htmls.length + '\u0004\n\n';
+      htmls.push('');
+    }
+  }
   src = extractMath(src);
   const lines = esc(src).split('\n');
   const out = [];
@@ -936,7 +945,8 @@ function md(src, streaming) {
     if (/^\u0004\d+\u0004$/.test(line.trim())) {
       flushAll();
       const code = htmls[+line.trim().replace(/\u0004/g, '')] || '';
-      if (code) out.push(streaming ? artifactPending() : artifactBlock(code));
+      if (streaming) out.push(artifactPending());
+      else if (code) out.push(artifactBlock(code));
       continue;
     }
 
