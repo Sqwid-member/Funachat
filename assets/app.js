@@ -1575,7 +1575,7 @@ function isNewer(code, curCode, version, curVersion) {
 }
 
 /* Публічний канал на GitHub Releases: працює навіть коли тунель вимкнено. */
-const UPD_FALLBACK = 'https://github.com/Sqwid-member/Funachat/releases/latest/download/latest.json';
+const UPD_FALLBACK = 'https://raw.githubusercontent.com/Sqwid-member/Funachat/main/latest.json';
 
 function updManifestUrl() {
   if (S.updUrl) return String(S.updUrl);
@@ -4185,6 +4185,16 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v96", name: "2.42.21", title: "Канал оновлень на GitHub",
+      p: "Перевірка оновлень працює навіть без тунелю — маніфест лежить у репозиторії Funachat.",
+      li: [
+        "Типовий канал — latest.json у Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "Публічна адреса тунелю, якщо задана, має пріоритет над GitHub.",
+        "Релізи публікуються скриптом tunnel/release-gh.sh: APK + latest.json, тег v<code>.",
+        "v95 лишається внутрішньою збіркою: її канал оновлень не мав CORS."
+      ]
+    },
+    {
       code: "v95", name: "2.42.20", title: "Публічний доступ і перевірка оновлень",
       p: "API можна відкрити в інтернет через тунель, а застосунок сам перевіряє, чи є новіша версія.",
       li: [
@@ -4273,6 +4283,16 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v96", name: "2.42.21", title: "Update channel on GitHub",
+      p: "Update checks work even without the tunnel — the manifest lives in the Funachat repository.",
+      li: [
+        "Default channel: latest.json in Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "A configured tunnel URL takes priority over GitHub.",
+        "Releases are published by tunnel/release-gh.sh: APK + latest.json, tag v<code>.",
+        "v95 remains an internal build: its update channel had no CORS."
+      ]
+    },
+    {
       code: "v95", name: "2.42.20", title: "Public access and update checks",
       p: "The API can be exposed to the internet through a tunnel, and the app now checks for newer versions itself.",
       li: [
@@ -4360,6 +4380,16 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v96", name: "2.42.21", title: "Канал обновлений на GitHub",
+      p: "Проверка обновлений работает даже без туннеля — манифест лежит в репозитории Funachat.",
+      li: [
+        "Канал по умолчанию — latest.json в Sqwid-member/Funachat (raw.githubusercontent.com, CORS *).",
+        "Публичный адрес туннеля, если задан, имеет приоритет над GitHub.",
+        "Релизы публикуются скриптом tunnel/release-gh.sh: APK + latest.json, тег v<code>.",
+        "v95 остаётся внутренней сборкой: у её канала обновлений не было CORS."
+      ]
+    },
     {
       code: "v95", name: "2.42.20", title: "Публичный доступ и проверка обновлений",
       p: "API можно открыть в интернет через туннель, а приложение само проверяет наличие новой версии.",

@@ -5,3 +5,4 @@ dist/release-body.md
 tunnel/*.log
 tunnel/url*.txt
 *.keystore
+dist/release.json

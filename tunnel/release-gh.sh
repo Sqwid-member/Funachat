@@ -1,6 +1,11 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # release-gh.sh <version> <code> [notes]
-# Публікує APK і latest.json у GitHub Releases репозиторію Funachat.
+#
+# 1. збирає dist/latest.json (md5, розмір, посилання на asset цього релізу);
+# 2. комітить latest.json у main — стабільний CORS-маніфест для застосунку
+#    (raw.githubusercontent.com віддає Access-Control-Allow-Origin: *);
+# 3. створює/оновлює GitHub Release з APK і latest.json.
+#
 # Токен — у ~/.config/funachat/gh_token (chmod 600), у репозиторій не йде.
 set -eu
 cd "$(dirname "$0")/.."
@@ -10,6 +15,7 @@ shift 2
 NOTES="${*:-FunaChat $VER}"
 
 REPO="Sqwid-member/Funachat"
+BRANCH="main"
 TOKEN_FILE="${GH_TOKEN_FILE:-$HOME/.config/funachat/gh_token}"
 [ -r "$TOKEN_FILE" ] || { echo "немає токена: $TOKEN_FILE" >&2; exit 1; }
 T=$(tr -d '\r\n' < "$TOKEN_FILE")
@@ -35,8 +41,20 @@ open("dist/release-body.md", "w").write(
 print(json.dumps(m, ensure_ascii=False))
 PY
 
+# --- маніфест у main: стабільна адреса з CORS ---
+cp -f dist/latest.json latest.json
+git add latest.json
+if ! git diff --cached --quiet -- latest.json 2>/dev/null; then
+  git commit -q -m "release: FunaChat $VER (v$CODE)"
+  git push -q "https://x-access-token:$T@github.com/$REPO.git" "$BRANCH" \
+    && echo "manifest: https://raw.githubusercontent.com/$REPO/$BRANCH/latest.json"
+else
+  echo "manifest unchanged"
+fi
+
+# --- release ---
 REL=$(python3 - "$TAG" "$VER" "$CODE" <<'PY'
-import json, os, sys
+import json, sys
 tag, ver, code = sys.argv[1:4]
 body = open("dist/release-body.md").read()
 print(json.dumps({"tag_name": tag, "name": f"FunaChat {ver} (v{code})",
@@ -46,12 +64,28 @@ PY
 
 RESP=$(curl -s -m 60 -X POST -H "Authorization: Bearer $T" -H "Accept: application/vnd.github+json" \
   "$API/releases" -d "$REL")
-RID=$(printf '%s' "$RESP" | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get("id","") if not d.get("message") else "")')
+RID=$(printf '%s' "$RESP" | python3 -c 'import sys,json
+try:
+    d=json.load(sys.stdin)
+except Exception:
+    d={}
+print(d.get("id","") if not d.get("message") else "")')
+
 if [ -z "$RID" ]; then
-  echo "release failed: $(printf '%s' "$RESP" | head -c 300)" >&2
-  exit 1
+  # реліз уже є — беремо його і перезаливаємо assets
+  RID=$(curl -s -m 30 -H "Authorization: Bearer $T" "$API/releases/tags/$TAG" \
+    | python3 -c 'import sys,json; print(json.load(sys.stdin).get("id",""))')
+  [ -n "$RID" ] || { echo "release failed: $(printf '%s' "$RESP" | head -c 300)" >&2; exit 1; }
+  echo "release exists, id $RID — replacing assets"
+  for name in FunaChat.apk latest.json; do
+    AID=$(curl -s -m 30 -H "Authorization: Bearer $T" "$API/releases/$RID/assets" \
+      | python3 -c "import sys,json
+print(next((a['id'] for a in json.load(sys.stdin) if a.get('name')=='$name'),''))")
+    [ -n "$AID" ] && curl -s -m 30 -X DELETE -H "Authorization: Bearer $T" "$API/releases/assets/$AID" >/dev/null
+  done
+else
+  echo "release id $RID"
 fi
-echo "release id $RID"
 
 UP="https://uploads.github.com/repos/$REPO/releases/$RID/assets"
 for pair in "FunaChat.apk:$APK:application/vnd.android.package-archive" \
