@@ -22,7 +22,17 @@
 2. Worker `funabot` → **Settings → Bindings → Add → KV namespace**:
    - Variable name: `STATE`
    - KV namespace: `funabot-state`
-3. Перезадеплойте Worker (bindings застосовуються після деплою).
+3. **Важливо:** binding, доданий лише в dashboard, злітає після деплою з
+   GitHub. Скопіюйте **Namespace ID** (32 hex) і впишіть у `wrangler.toml`:
+
+```toml
+[[kv_namespaces]]
+binding = "STATE"
+id = "ваш_namespace_id"
+```
+
+Після цього деплой з GitHub зберігає binding. Перевірка:
+`GET /health` → `"state":true`.
 
 Після цього:
 - кожен звіт отримує тег `#error` або `#ok` (і `#crash`, якщо був збій);

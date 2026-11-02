@@ -8,6 +8,7 @@ let telegramOk = true;
 let chatLookup = null;
 let nextMessageId = 100;
 let lastSentId = 0;
+let lastDocId = 0;
 const calls = [];
 
 function kv() {
@@ -52,10 +53,11 @@ globalThis.fetch = async (url, opt) => {
       json: async () => ({ ok: false, description: 'Bad Request: chat not found' })
     };
   }
-  const result = (isDoc || isEdit || isReaction)
+  const result = (isEdit || isReaction)
     ? true
     : { message_id: ++nextMessageId, chat: { id: Number(chatId) } };
-  if (!isDoc && !isEdit && !isReaction) lastSentId = result.message_id;
+  if (isDoc) lastDocId = result.message_id;
+  else if (!isEdit && !isReaction) lastSentId = result.message_id;
   return {
     ok: telegramOk,
     status: telegramOk ? 200 : 500,
@@ -131,6 +133,7 @@ assert.ok(docText.includes('java.lang.RuntimeException'), 'crash text missing fr
 const reportId = lastSentId;
 const saved = await env.STATE.get('r:-1001:' + reportId, 'json');
 assert.ok(saved && saved.e === 1 && saved.f === false, 'report not stored: ' + JSON.stringify(saved));
+assert.ok(saved.dm > 0, 'document message id not stored');
 
 // Реакція ❤ від власника -> #fixed, ✅ і запис у сховищі.
 const secret = await secretFor(TOKEN);
@@ -202,6 +205,28 @@ assert.equal((await env.STATE.get('r:-1001:' + secondId, 'json')).f, false);
 // Без правильного секрету webhook закритий.
 r = await worker.fetch(hook({ update_id: 5 }, 'wrong'), env);
 assert.equal(r.status, 403);
+
+// У каналах Telegram надсилає згруповані reaction_count без автора:
+// ❤ на документі теж має закрити звіт.
+r = await worker.fetch(req(payload('countreport00001', 2)), env);
+assert.equal(r.status, 200);
+const countId = lastSentId;
+const countDocId = lastDocId;
+calls.length = 0;
+r = await worker.fetch(hook({
+  update_id: 6,
+  message_reaction_count: {
+    chat: { id: -1001 },
+    message_id: countDocId,
+    reactions: [{ type: { type: 'emoji', emoji: '❤' }, total_count: 1 }]
+  }
+}, secret), env);
+assert.equal(r.status, 200);
+const counted = await env.STATE.get('r:-1001:' + countId, 'json');
+assert.equal(counted.f, true, 'reaction_count should mark fixed');
+assert.equal(counted.h, 1);
+assert.ok(calls.some(c => c.url.includes('/editMessageText') &&
+  JSON.parse(c.body).text.includes('#fixed')), 'summary not edited after doc reaction');
 
 // Дуже довгий лог: у повідомленні лише хвіст, документ містить усе.
 const longLog = Array.from({ length: 180 }, (_, i) => 'line ' + i + ' ' + 'x'.repeat(40)).join('\n');

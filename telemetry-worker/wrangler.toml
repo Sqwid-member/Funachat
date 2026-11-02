@@ -1,3 +1,9 @@
 name = "funabot"
 main = "index.js"
 compatibility_date = "2025-06-01"
+
+# KV для /review і позначок ❤. Binding у dashboard злітає після деплою
+# з GitHub, тому namespace треба тримати тут. Розкоментуйте й впишіть id:
+# [[kv_namespaces]]
+# binding = "STATE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

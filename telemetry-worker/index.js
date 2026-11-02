@@ -200,11 +200,9 @@ async function sendDocument(env, d) {
       method: 'POST',
       body: fd
     });
-    let desc = '';
-    if (!r.ok) {
-      try { desc = (await r.json()).description || ''; } catch (e) {}
-    }
-    return { ok: r.ok, desc };
+    let data = null;
+    try { data = await r.json(); } catch (e) {}
+    return { ok: r.ok, desc: (data && data.description) || '', result: data && data.result };
   });
 }
 
@@ -224,7 +222,12 @@ function recKey(chatId, messageId) {
 async function saveReport(env, rec) {
   if (!env.STATE) return false;
   try {
-    await env.STATE.put(recKey(rec.c, rec.m), JSON.stringify(rec), { expirationTtl: 365 * DAY });
+    const opts = { expirationTtl: 365 * DAY };
+    await env.STATE.put(recKey(rec.c, rec.m), JSON.stringify(rec), opts);
+    // Реакцію можуть поставити і на документ, а не на підсумок.
+    if (rec.dm) {
+      await env.STATE.put('a:' + rec.c + ':' + rec.dm, recKey(rec.c, rec.m), opts);
+    }
     return true;
   } catch (e) {
     return false;
@@ -234,7 +237,12 @@ async function saveReport(env, rec) {
 async function loadReport(env, chatId, messageId) {
   if (!env.STATE) return null;
   try {
-    return await env.STATE.get(recKey(chatId, messageId), 'json');
+    let rec = await env.STATE.get(recKey(chatId, messageId), 'json');
+    if (!rec) {
+      const alias = await env.STATE.get('a:' + chatId + ':' + messageId);
+      if (alias) rec = await env.STATE.get(alias, 'json');
+    }
+    return rec || null;
   } catch (e) {
     return null;
   }
@@ -300,6 +308,30 @@ async function handleReaction(env, update) {
   await markFixed(env, rec);
 }
 
+/**
+ * У каналах Telegram часто надсилає згруповані reaction_count без автора.
+ * Для приватного каналу цього достатньо: нове ❤ = помилку виправлено.
+ */
+async function handleReactionCount(env, update) {
+  const r = update.message_reaction_count || {};
+  const chatId = String((r.chat || {}).id || '');
+  const rec = await loadReport(env, chatId, r.message_id);
+  if (!rec) return;
+  const hearts = (Array.isArray(r.reactions) ? r.reactions : [])
+    .filter(x => x && x.type && x.type.type === 'emoji' && isHeart(x.type.emoji))
+    .reduce((sum, x) => sum + num(x.total_count), 0);
+  const before = num(rec.h);
+  rec.h = hearts;
+  if (hearts > before && !rec.f) {
+    rec.f = true;
+    rec.ft = Date.now();
+    await saveReport(env, rec);
+    await markFixed(env, rec);
+  } else {
+    await saveReport(env, rec);
+  }
+}
+
 async function handleCommand(env, update) {
   const msg = update.message || update.channel_post || {};
   const text = String(msg.text || '').trim();
@@ -363,7 +395,7 @@ export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (req.method === 'GET' && url.pathname === '/health') {
-      return json({ ok: true, app: 'funachat-telemetry', state: !!env.STATE });
+      return json({ ok: true, app: 'funachat-telemetry', state: !!env.STATE, features: ['reaction', 'reaction_count', 'review'] });
     }
     if (req.method === 'POST' && url.pathname === '/v1/telegram') {
       if (!env.TELEGRAM_BOT_TOKEN) return json({ ok: false, error: 'not_configured' }, 503);
@@ -375,6 +407,7 @@ export default {
       try { update = await req.json(); } catch (e) { return json({ ok: false }, 400); }
       try {
         if (update.message_reaction) await handleReaction(env, update);
+        else if (update.message_reaction_count) await handleReactionCount(env, update);
         else if (update.message || update.channel_post) await handleCommand(env, update);
       } catch (e) {}
       return json({ ok: true });
@@ -413,6 +446,8 @@ export default {
           v: str((d.app || {}).version, 24),
           e: num((d.usage || {}).err),
           x: !!(d.state || {}).crash,
+          dm: (doc.result && doc.result.message_id) || 0,
+          h: 0,
           f: false,
           text
         });
