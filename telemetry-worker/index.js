@@ -34,11 +34,27 @@ function num(v) {
   return Math.min(Math.floor(n), 1000000000);
 }
 
-function esc(v) {
-  return str(v, 4000)
+function esc(v, max = 4000) {
+  return str(v, max)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
+}
+
+/** Хвіст довгого тексту: у логах важливі останні рядки. */
+function escTail(v, max) {
+  let s = String(v == null ? '' : v);
+  if (s.length > max) s = '…\n' + s.slice(s.length - max);
+  return esc(s, max + 8);
+}
+
+/** Час у мілісекундах; старі/биті значення не перетворюються на 1970. */
+function epoch(v) {
+  const n = Number(v);
+  if (!isFinite(n) || n <= 0) return Date.now();
+  const ms = n < 100000000000 ? n * 1000 : n;
+  if (ms < 946684800000 || ms > 4102444800000) return Date.now();
+  return Math.floor(ms);
 }
 
 function rateLimited(key, limit) {
@@ -70,7 +86,7 @@ function message(d) {
   const dev = d.device || {};
   const st = d.state || {};
   const use = d.usage || {};
-  const when = new Date(num(d.ts) || Date.now()).toISOString().replace('T', ' ').slice(0, 16);
+  const when = new Date(epoch(d.ts)).toISOString().replace('T', ' ').slice(0, 16);
   const lines = [
     `<b>FunaChat ${esc(app.version)}</b> · ${esc(d.source || 'auto')}` +
       (st.crash ? ' · <b>CRASH</b>' : ''),
@@ -80,7 +96,19 @@ function message(d) {
     `accounts ${num(st.accounts)} · keys ${num((d.api || {}).keys)} · public ${((d.api || {}).public) ? 'on' : 'off'} · logs ${num(st.logLines)}`,
     `<code>${esc(d.id).slice(0, 12)}…</code> · ${esc(when)} UTC`
   ];
-  return lines.join('\n');
+  const header = lines.join('\n');
+
+  const logs = typeof d.logs === 'string' ? d.logs : '';
+  const crashText = typeof d.crashText === 'string' ? d.crashText : '';
+  let tail = '';
+  if (crashText) {
+    tail += '<b>CRASH</b>\n<pre>' + escTail(crashText, 1600) + '</pre>\n';
+  }
+  if (logs) {
+    const room = Math.max(400, 3850 - header.length - tail.length);
+    tail += '<pre>' + escTail(logs, room) + '</pre>';
+  }
+  return tail ? header + '\n' + tail : header;
 }
 
 /**

@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.26";
-    static final int CODE = 101;
+    static final String VERSION = "2.42.27";
+    static final int CODE = 102;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -774,10 +774,6 @@ public class MainActivity extends Activity {
                 case "telemetry_auto":
                     telemetryAuto(c.optJSONObject("stats"));
                     break;
-                case "telemetry_url":
-                    store.setTelemetryUrl(c.optString("url", ""));
-                    telemetryState();
-                    break;
                 case "crash_seen": store.setCrashSeen(true); break;
                 case "intro_seen": store.setIntroSeen(true); break;
                 case "bridge_save": saveBridge(); break;
@@ -847,7 +843,6 @@ public class MainActivity extends Activity {
                 o.put("telemetryOn", store.telemetryOn());
                 o.put("telemetryLast", store.telemetryLast());
                 o.put("telemetryPending", Telemetry.pending());
-                o.put("telemetryUrl", store.telemetryUrl());
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
                 o.put("updUrl", store.updUrl());
@@ -997,7 +992,6 @@ public class MainActivity extends Activity {
                     o.put("on", store.telemetryOn());
                     o.put("last", store.telemetryLast());
                     o.put("pending", Telemetry.pending());
-                    o.put("url", store.telemetryUrl());
                 } catch (Exception ignored) {}
                 emit(o);
             }, "funa-telemetry").start();
@@ -1047,7 +1041,6 @@ public class MainActivity extends Activity {
                     o.put("on", store.telemetryOn());
                     o.put("last", store.telemetryLast());
                     o.put("pending", Telemetry.pending());
-                    o.put("url", store.telemetryUrl());
                     o.put("queued", queued);
                     o.put("sent", sent);
                     if (!error.isEmpty()) o.put("error", error);

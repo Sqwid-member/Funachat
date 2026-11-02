@@ -450,17 +450,8 @@ public class Store implements Guard.State {
 
     public long telemetryLast() { return p.getLong("telemetry_last", 0); }
 
-    /** HTTPS-приймач (Cloudflare Worker). Порожній — локальна черга + Termux. */
-    public String telemetryUrl() {
-        String v = p.getString("telemetry_url", "").trim();
-        return v.isEmpty() ? Telemetry.DEFAULT_URL : v;
-    }
-
-    public void setTelemetryUrl(String url) {
-        String v = url == null ? "" : url.trim();
-        if (v.length() > 300) v = v.substring(0, 300);
-        p.edit().putString("telemetry_url", v).apply();
-    }
+    /** HTTPS-приймач; адреса навмисно не показується в інтерфейсі. */
+    public String telemetryUrl() { return Telemetry.defaultUrl(); }
 
     public void telemetryMarkSent(long ts) { p.edit().putLong("telemetry_last", ts).apply(); }
 

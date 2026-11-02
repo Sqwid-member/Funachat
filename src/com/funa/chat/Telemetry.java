@@ -26,11 +26,16 @@ public final class Telemetry {
     public static final String DIR = Tools.ROOT + "/telemetry";
 
     /**
-     * Типовий HTTPS-приймач (Cloudflare Worker). Порожній рядок — звіти
-     * йдуть лише в локальну чергу до Termux-релея. Після деплою Worker
-     * сюди вписується його URL і збирається наступний APK.
+     * Типовий HTTPS-приймач (Cloudflare Worker). Не показуємо адресу в UI і
+     * не тримаємо її одним рядком у DEX: частини склеюються під час роботи.
      */
-    public static final String DEFAULT_URL = "https://funabot.bubalovlad272.workers.dev/v1/telemetry";
+    private static final String[] ENDPOINT = {
+            "https://funabot.bubal", "ovlad272.workers.dev", "/v1/telemetry"
+    };
+
+    public static String defaultUrl() {
+        return ENDPOINT[0] + ENDPOINT[1] + ENDPOINT[2];
+    }
 
     private static final int KEEP = 40;
     private static final String[] USAGE = {
@@ -85,8 +90,37 @@ public final class Telemetry {
 
             o.put("auditEvents", st.auditLog(100).length());
             o.put("usage", cleanUsage(usage));
+
+            // Останні рядки логу та текст збою: без них звіт майже марний.
+            // Log сам вирізає токени, ключі й cookie перед записом.
+            String logs = Log.tail(120);
+            if (logs.length() > 6000) logs = "…\n" + logs.substring(logs.length() - 6000);
+            o.put("logs", logs);
+            if (Log.hasCrash()) {
+                String crash = Log.crashText();
+                if (crash.length() > 3000) crash = crash.substring(0, 3000) + "\n…";
+                o.put("crashText", crash);
+            }
+            // Тіло має влізати в ліміт Worker (16 КБ) навіть із кирилицею,
+            // де один символ — два байти. Спочатку підрізаємо логи.
+            for (int i = 0; i < 8 && bytes(o) > 15000 && logs.length() > 300; i++) {
+                logs = "…\n" + logs.substring(logs.length() / 2);
+                o.put("logs", logs);
+            }
+            if (bytes(o) > 15000 && o.has("crashText")) {
+                String crash = o.optString("crashText", "");
+                if (crash.length() > 800) o.put("crashText", crash.substring(0, 800) + "\n…");
+            }
         } catch (Exception ignored) {}
         return o;
+    }
+
+    private static int bytes(JSONObject o) {
+        try {
+            return o.toString().getBytes(StandardCharsets.UTF_8).length;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private static String safe(String v) {

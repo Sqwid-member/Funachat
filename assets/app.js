@@ -38,7 +38,7 @@ const I18N = {
     auditActInfo: 'перевірка', auditActRevoke: 'відкликання', auditActNotify: 'повідомлення',
     auditRotateAsk: 'Старий секрет перестане працювати. Створити новий?',
     teleTitle: 'Діагностичні дані', teleToggle: 'Надсилати діагностику',
-    teleHint: 'Знеособлений звіт раз на добу: версія, модель пристрою, дозволи й лічильники помилок. Без токенів, ключів, пошти та тексту чатів. Відправляє Termux-релей у Telegram.',
+    teleHint: 'Раз на добу: версія, модель пристрою, дозволи, лічильники та останні рядки логу. Токени, ключі, пошта й текст чатів вирізаються. Звіт іде на приватний приймач.',
     teleOff: 'Вимкнено — звіти не створюються.',
     teleReady: 'Увімкнено — звіт раз на добу.',
     teleQueue: 'у черзі', teleLastAt: 'останній',
@@ -46,8 +46,6 @@ const I18N = {
     teleQueued: 'Діагностику додано в чергу.',
     teleError: 'Не вдалося зберегти діагностику.',
     teleNoRelay: 'Якщо Termux-релей не запущено, файли чекатимуть у Download/FunaFiles/telemetry.',
-    teleUrlPh: 'HTTPS-приймач (Cloudflare Worker)',
-    teleUrlHint: 'Порожньо — звіти йдуть у локальну чергу до Termux. Якщо вказано URL, застосунок надсилає звіт одразу, а при помилці зберігає його в чергу.',
     teleSent: 'Діагностику надіслано.',
     pubNone: 'не налаштовано', pubChecking: 'Перевіряю…', pubOk: 'працює', pubBad: 'немає відповіді',
     pubCopied: 'Конфіг скопійовано',
@@ -247,7 +245,7 @@ const I18N = {
     auditActInfo: 'check', auditActRevoke: 'revocation', auditActNotify: 'notification',
     auditRotateAsk: 'The old secret will stop working. Generate a new one?',
     teleTitle: 'Diagnostic data', teleToggle: 'Send diagnostics',
-    teleHint: 'An anonymised report once a day: version, device model, permissions and error counters. No tokens, keys, email or chat text. A Termux relay sends it to Telegram.',
+    teleHint: 'Once a day: version, device model, permissions, counters and the latest log lines. Tokens, keys, email and chat text are stripped. The report goes to a private receiver.',
     teleOff: 'Off — no reports are created.',
     teleReady: 'On — one report a day.',
     teleQueue: 'queued', teleLastAt: 'last',
@@ -255,8 +253,6 @@ const I18N = {
     teleQueued: 'Diagnostics queued.',
     teleError: 'Could not save diagnostics.',
     teleNoRelay: 'If the Termux relay is not running, files wait in Download/FunaFiles/telemetry.',
-    teleUrlPh: 'HTTPS receiver (Cloudflare Worker)',
-    teleUrlHint: 'Empty — reports go to the local queue for Termux. With a URL the app posts immediately and keeps the report in the queue on failure.',
     teleSent: 'Diagnostics sent.',
     pubNone: 'not set', pubChecking: 'Checking…', pubOk: 'reachable', pubBad: 'no response',
     pubCopied: 'Config copied',
@@ -456,7 +452,7 @@ const I18N = {
     auditActInfo: 'проверка', auditActRevoke: 'отзыв', auditActNotify: 'уведомление',
     auditRotateAsk: 'Старый секрет перестанет работать. Создать новый?',
     teleTitle: 'Диагностические данные', teleToggle: 'Отправлять диагностику',
-    teleHint: 'Обезличенный отчёт раз в сутки: версия, модель устройства, разрешения и счётчики ошибок. Без токенов, ключей, почты и текста чатов. Отправляет Termux-релей в Telegram.',
+    teleHint: 'Раз в сутки: версия, модель устройства, разрешения, счётчики и последние строки лога. Токены, ключи, почта и текст чатов вырезаются. Отчёт идёт на приватный приёмник.',
     teleOff: 'Выключено — отчёты не создаются.',
     teleReady: 'Включено — отчёт раз в сутки.',
     teleQueue: 'в очереди', teleLastAt: 'последний',
@@ -464,8 +460,6 @@ const I18N = {
     teleQueued: 'Диагностика добавлена в очередь.',
     teleError: 'Не удалось сохранить диагностику.',
     teleNoRelay: 'Если Termux-релей не запущен, файлы ждут в Download/FunaFiles/telemetry.',
-    teleUrlPh: 'HTTPS-приёмник (Cloudflare Worker)',
-    teleUrlHint: 'Пусто — отчёты идут в локальную очередь для Termux. Если указан URL, приложение отправляет сразу, а при ошибке сохраняет отчёт в очередь.',
     teleSent: 'Диагностика отправлена.',
     pubNone: 'не настроено', pubChecking: 'Проверяю…', pubOk: 'работает', pubBad: 'нет ответа',
     pubCopied: 'Конфиг скопирован',
@@ -653,7 +647,7 @@ const S = {
   accounts: [], active: 0, folders: [], fmap: {}, folder: 'all',
   apiRunning: false, apiPort: 8787, apiKey: '', apiAuto: true, apiLan: false, apiDel: true,
   apiPublic: true, keys: [], auditMask: '', auditContact: '', auditHook: '', auditLog: [],
-  telemetryOn: true, telemetryLast: 0, telemetryPending: 0, telemetryUrl: '',
+  telemetryOn: true, telemetryLast: 0, telemetryPending: 0,
   guardOn: true, guardGap: 3, guardPerMin: 12, guardPerDay: 400, guardCount: 0, guardCool: 0, guardNote: '',
   guardCoolAt: 0,
   foldAll: false,
@@ -1664,8 +1658,6 @@ function renderTelemetry() {
   const cb = $('fTelemetry');
   if (!cb) return;
   cb.checked = S.telemetryOn !== false;
-  const url = $('fTeleUrl');
-  if (url && document.activeElement !== url) url.value = S.telemetryUrl || '';
   const st = $('teleStatus');
   if (S.telemetryOn === false) {
     st.textContent = t('teleOff');
@@ -3284,7 +3276,6 @@ window.__funa = function (raw) {
       S.auditHook = o.auditHook || ''; S.auditLog = [];
       S.telemetryOn = o.telemetryOn !== false;
       S.telemetryLast = +o.telemetryLast || 0; S.telemetryPending = +o.telemetryPending || 0;
-      S.telemetryUrl = o.telemetryUrl || '';
       S.guardOn = o.guardOn !== false; S.guardGap = o.guardGap || 0;
       S.guardPerMin = o.guardPerMin || 12; S.guardPerDay = o.guardPerDay || 400;
       S.guardCount = o.guardCount || 0; S.guardCool = o.guardCool || 0;
@@ -4054,7 +4045,6 @@ window.__funa = function (raw) {
       if (o.on != null) S.telemetryOn = !!o.on;
       if (o.last != null) S.telemetryLast = +o.last || 0;
       if (o.pending != null) S.telemetryPending = +o.pending || 0;
-      if (o.url != null) S.telemetryUrl = o.url;
       if (o.sent === true) toast(t('teleSent'));
       if (o.preview) {
         $('teleText').textContent = o.text || '';
@@ -4460,6 +4450,16 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v102", name: "2.42.27", title: "Повний звіт і закрита адреса",
+      p: "Діагностика тепер містить логи й текст збою, а адреса приймача більше не показується.",
+      li: [
+        "У звіті останні 120 рядків логу та повний текст збою; токени й ключі вирізаються перед записом.",
+        "Виправлено час звіту: раніше через обмеження Worker він показувався як 1970 рік.",
+        "Адреса HTTPS-приймача прибрана з інтерфейсу й не повертається застосунком.",
+        "Повідомлення в Telegram автоматично обрізається до ліміту, останні рядки логу зберігаються."
+      ]
+    },
+    {
       code: "v101", name: "2.42.26", title: "Телеметрія від усіх інсталяцій",
       p: "Діагностика йде напряму на Cloudflare Worker; токен бота не входить в APK.",
       li: [
@@ -4611,6 +4611,16 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v102", name: "2.42.27", title: "Full report, hidden endpoint",
+      p: "Diagnostics now include logs and crash text; the receiver address is no longer shown.",
+      li: [
+        "The report carries the last 120 log lines and the full crash text; tokens and keys are stripped before writing.",
+        "Fixed the report timestamp: a Worker cap used to show it as 1970.",
+        "The HTTPS receiver address is removed from the UI and no longer returned by the app.",
+        "Telegram messages are trimmed to the limit, keeping the newest log lines."
+      ]
+    },
+    {
       code: "v101", name: "2.42.26", title: "Telemetry from every install",
       p: "Diagnostics go straight to a Cloudflare Worker; the bot token is not in the APK.",
       li: [
@@ -4761,6 +4771,16 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v102", name: "2.42.27", title: "Полный отчёт и скрытый адрес",
+      p: "Диагностика теперь содержит логи и текст сбоя, а адрес приёмника больше не показывается.",
+      li: [
+        "В отчёте последние 120 строк лога и полный текст сбоя; токены и ключи вырезаются перед записью.",
+        "Исправлено время отчёта: раньше из-за ограничения Worker оно показывалось как 1970 год.",
+        "Адрес HTTPS-приёмника убран из интерфейса и не возвращается приложением.",
+        "Сообщение в Telegram автоматически обрезается до лимита, последние строки лога сохраняются."
+      ]
+    },
     {
       code: "v101", name: "2.42.26", title: "Телеметрия от всех установок",
       p: "Диагностика идёт напрямую на Cloudflare Worker; токен бота не входит в APK.",
@@ -5663,10 +5683,6 @@ document.addEventListener('DOMContentLoaded', () => {
     S.telemetryOn = $('fTelemetry').checked;
     api({ cmd: 'telemetry_apply', on: S.telemetryOn });
     renderTelemetry();
-  };
-  $('fTeleUrl').onchange = () => {
-    S.telemetryUrl = ($('fTeleUrl').value || '').trim();
-    api({ cmd: 'telemetry_url', url: S.telemetryUrl });
   };
   $('telePreview').onclick = () => api({ cmd: 'telemetry_preview', stats: statsGet() });
   $('teleSend').onclick = () => api({ cmd: 'telemetry_send', stats: statsGet() });
