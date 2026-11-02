@@ -851,7 +851,15 @@ function md(src, streaming) {
   const blocks = [];
   const attaches = [];
   const htmls = [];
-  src = String(src).replace(/```([^\n`]*)\n?([\s\S]*?)(?:```|$)/g, (_, lang, code) => {
+  // HTML-документ у ```html може містити всередині власні ```-приклади.
+  // Тому таку огорожу закриваємо по </html>, а не по першому ```.
+  src = String(src).replace(
+    /(^|\n)`{3,}(?:html|htm|funa-html)[ \t]*\r?\n([\s\S]*?<\/(?:html|svg)\s*>)([\s\S]*?)(?:\r?\n`{3,}[ \t]*(?=\n|$)|$)/gi,
+    (m, pre, code, tail) => {
+      htmls.push(code);
+      return pre + '\u0004' + (htmls.length - 1) + '\u0004' + '\n' + (tail || '');
+    });
+  src = String(src).replace(/```([^\n`]*)\n?([\s\S]*?)(?:\n```[ \t]*(?=\n|$)|$)/g, (_, lang, code) => {
     blocks.push({ lang: (lang || '').trim(), code: code.replace(/\n$/, '') });
     return '\u0000' + (blocks.length - 1) + '\u0000';
   });
