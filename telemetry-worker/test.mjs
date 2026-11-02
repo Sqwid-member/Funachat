@@ -3,9 +3,17 @@ import worker from './index.js';
 
 let lastTelegram = null;
 let telegramOk = true;
+let chatLookup = null;
 globalThis.fetch = async (url, opt) => {
   lastTelegram = { url, body: JSON.parse(opt.body) };
-  return { ok: telegramOk, status: telegramOk ? 200 : 500 };
+  if (chatLookup && chatLookup[lastTelegram.body.chat_id] === false) {
+    return {
+      ok: false,
+      status: 400,
+      json: async () => ({ ok: false, description: 'Bad Request: chat not found' })
+    };
+  }
+  return { ok: telegramOk, status: telegramOk ? 200 : 500, json: async () => ({ ok: telegramOk }) };
 };
 
 const env = { TELEGRAM_BOT_TOKEN: '123:secret', TELEGRAM_CHAT_ID: '-1001' };
@@ -55,5 +63,13 @@ for (let i = 0; i < 35; i++) {
   if (r.status === 429) { limited = true; break; }
 }
 assert.ok(limited, 'rate limit should trigger');
+
+// Канал без префікса -100: Worker має спробувати -100<id>.
+chatLookup = { '4311112103': false };
+const envBare = { TELEGRAM_BOT_TOKEN: '123:secret', TELEGRAM_CHAT_ID: '4311112103' };
+r = await worker.fetch(req(payload('barchannel000001')), envBare);
+assert.equal(r.status, 200);
+assert.equal(lastTelegram.body.chat_id, '-1004311112103');
+chatLookup = null;
 
 console.log('WORKER TESTS PASS');

@@ -83,21 +83,48 @@ function message(d) {
   return lines.join('\n');
 }
 
-async function sendTelegram(env, text) {
-  const url = 'https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage';
+/**
+ * Канали й супергрупи мають id виду -100<base>. У Telegram-посиланнях і
+ * налаштуваннях часто показують лише <base>, тому якщо перша спроба
+ * отримала «chat not found», пробуємо той самий id з префіксом -100.
+ */
+function chatCandidates(raw) {
+  const id = String(raw || '').trim();
+  const out = [id];
+  if (/^[0-9]{6,}$/.test(id)) out.push('-100' + id);
+  return out;
+}
+
+async function telegramOnce(token, chatId, text, silent) {
+  const url = 'https://api.telegram.org/bot' + token + '/sendMessage';
   const body = JSON.stringify({
-    chat_id: env.TELEGRAM_CHAT_ID,
+    chat_id: chatId,
     text,
     parse_mode: 'HTML',
     disable_web_page_preview: true,
-    disable_notification: env.TELEGRAM_SILENT !== '0'
+    disable_notification: silent
   });
   const r = await fetch(url, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body
   });
-  return r.ok;
+  let desc = '';
+  if (!r.ok) {
+    try { desc = (await r.json()).description || ''; } catch (e) {}
+  }
+  return { ok: r.ok, desc };
+}
+
+async function sendTelegram(env, text) {
+  const silent = env.TELEGRAM_SILENT !== '0';
+  let last = { ok: false, desc: '' };
+  for (const chatId of chatCandidates(env.TELEGRAM_CHAT_ID)) {
+    last = await telegramOnce(env.TELEGRAM_BOT_TOKEN, chatId, text, silent);
+    if (last.ok) return true;
+    if (!/chat not found/i.test(last.desc)) break;
+  }
+  return false;
 }
 
 export default {

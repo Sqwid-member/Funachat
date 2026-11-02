@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# telemetry.sh [--once|--loop [sec]|--check]
+# telemetry.sh [--once|--loop [sec]|--check|--detect]
 #
 # Надсилає знеособлені діагностичні звіти FunaChat у Telegram через
 # @funachat_bot. Токен і chat_id лежать поза репозиторієм:
@@ -23,8 +23,9 @@ SLEEP=60
 case "${1:-}" in
   --loop) MODE="loop"; [ -n "${2:-}" ] && SLEEP="$2" ;;
   --check) MODE="check" ;;
+  --detect) MODE="detect" ;;
   --once|"") ;;
-  *) echo "usage: $0 [--once|--loop [sec]|--check]" >&2; exit 2 ;;
+  *) echo "usage: $0 [--once|--loop [sec]|--check|--detect]" >&2; exit 2 ;;
 esac
 
 [ -z "$TOKEN" ] && [ -r "$CFG/telegram_bot" ] && TOKEN=$(tr -d '\r\n' < "$CFG/telegram_bot")
@@ -39,6 +40,41 @@ api() { printf '%s/bot%s/%s' "$API" "$TOKEN" "$1"; }
 if [ "$MODE" = "check" ]; then
   echo "bot:  $(curl -sS -m 20 "$(api getMe)")"
   echo "chat: $(curl -sS -m 20 "$(api "getChat?chat_id=$CHAT")")"
+  exit 0
+fi
+
+# Показати чати, у яких бот бачив активність: власник має натиснути Start
+# у @funachat_bot або додати бота в приватну групу й написати там.
+if [ "$MODE" = "detect" ]; then
+  python3 - "$(api getUpdates)" <<'PY2'
+import json, sys, urllib.request
+try:
+    d = json.load(urllib.request.urlopen(sys.argv[1], timeout=25))
+except Exception as e:
+    print("не вдалося отримати getUpdates:", e)
+    sys.exit(1)
+if not d.get("ok"):
+    print("Telegram:", d.get("description"))
+    sys.exit(1)
+seen = {}
+for u in d.get("result", []):
+    for key in ("message", "edited_message", "channel_post", "my_chat_member"):
+        m = u.get(key)
+        if not m:
+            continue
+        c = m.get("chat") or {}
+        cid = c.get("id")
+        if cid is None:
+            continue
+        name = c.get("title") or c.get("username") or c.get("first_name") or ""
+        seen[cid] = (c.get("type", ""), name)
+if not seen:
+    print("бот не бачив жодного чату. Натисніть Start у @funachat_bot або напишіть у приватній групі з ботом.")
+else:
+    for cid, (typ, name) in seen.items():
+        print(f"{cid}\t{typ}\t{name}")
+    print("\nЗапишіть потрібний id: echo '<id>' > ~/.config/funachat/telegram_diag_chat")
+PY2
   exit 0
 fi
 
