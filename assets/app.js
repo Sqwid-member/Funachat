@@ -17,7 +17,18 @@ const I18N = {
     apiHint: 'OpenAI-сумісний API: /v1/models, /v1/tools, /v1/chat/completions (стрім, tools, авто-тули, субагенти), /v1/completions',
     pubTitle: 'Публічний доступ (тунель)', pubFile: 'З файлу', pubCheck: 'Перевірити',
     pubClient: 'Копіювати конфіг клієнта',
-    pubHint: 'Тунель дає HTTPS-адресу для API й оновлень. У Termux: funachat/tunnel/start-cf.sh, потім «З файлу».',
+    pubHint: 'Адресу ставить скрипт тунелю (tunnel/start.sh) — тут вона лише для читання. Вимкнений доступ ріже запити з тунелю (403), навіть якщо він запущений.',
+    apiKeys: 'API-ключі', keyAdd: 'Створити ключ', keyNew: 'Новий API-ключ',
+    keyHint: 'Кожен ключ можна відкликати окремо; термін дії перевіряється на кожному запиті.',
+    keyNamePh: 'Назва (напр. «ноутбук»)', keyTtl: 'Термін дії',
+    ttlNever: 'Безстроково', ttl1d: '1 день', ttl7d: '7 днів', ttl30d: '30 днів',
+    ttl90d: '90 днів', ttl365d: '1 рік',
+    keyCreate: 'Створити', keyDone: 'Готово',
+    keyOnce: 'Скопіюйте ключ зараз — більше він не показується.',
+    keyNoKeys: 'Ключів немає — API недоступний, поки не створите ключ.',
+    keyNever: 'безстроковий', keyExpired: 'прострочений', keyExpires: 'до',
+    keyDeleteAsk: 'Відкликати цей ключ? Клієнти з ним одразу втратять доступ.',
+    pubAllow: 'Дозволити доступ із публічної мережі', pubForget: 'Забути адресу',
     pubNone: 'не налаштовано', pubChecking: 'Перевіряю…', pubOk: 'працює', pubBad: 'немає відповіді',
     pubCopied: 'Конфіг скопійовано',
     updCheck: 'Перевірити оновлення', updChecking: 'Перевіряю…',
@@ -195,7 +206,18 @@ const I18N = {
     apiHint: 'OpenAI-compatible API: /v1/models, /v1/tools, /v1/chat/completions (stream, tools, auto tools, subagents), /v1/completions',
     pubTitle: 'Public access (tunnel)', pubFile: 'From file', pubCheck: 'Check',
     pubClient: 'Copy client config',
-    pubHint: 'The tunnel serves HTTPS for the API and updates. In Termux: funachat/tunnel/start-cf.sh, then "From file".',
+    pubHint: 'The tunnel script (tunnel/start.sh) sets this address — it is read-only here. Turning public access off rejects tunnel requests (403) even while the tunnel runs.',
+    apiKeys: 'API keys', keyAdd: 'Create key', keyNew: 'New API key',
+    keyHint: 'Each key can be revoked separately; expiry is checked on every request.',
+    keyNamePh: 'Name (e.g. “laptop”)', keyTtl: 'Expires in',
+    ttlNever: 'Never', ttl1d: '1 day', ttl7d: '7 days', ttl30d: '30 days',
+    ttl90d: '90 days', ttl365d: '1 year',
+    keyCreate: 'Create', keyDone: 'Done',
+    keyOnce: 'Copy the key now — it will not be shown again.',
+    keyNoKeys: 'No keys — the API is unavailable until you create one.',
+    keyNever: 'no expiry', keyExpired: 'expired', keyExpires: 'until',
+    keyDeleteAsk: 'Revoke this key? Clients using it lose access immediately.',
+    pubAllow: 'Allow access from the public network', pubForget: 'Forget address',
     pubNone: 'not set', pubChecking: 'Checking…', pubOk: 'reachable', pubBad: 'no response',
     pubCopied: 'Config copied',
     updCheck: 'Check for updates', updChecking: 'Checking…',
@@ -373,7 +395,18 @@ const I18N = {
     apiHint: 'OpenAI-совместимый API: /v1/models, /v1/tools, /v1/chat/completions (стрим, tools, авто-инструменты, субагенты), /v1/completions',
     pubTitle: 'Публичный доступ (туннель)', pubFile: 'Из файла', pubCheck: 'Проверить',
     pubClient: 'Копировать конфиг клиента',
-    pubHint: 'Туннель даёт HTTPS-адрес для API и обновлений. В Termux: funachat/tunnel/start-cf.sh, затем «Из файла».',
+    pubHint: 'Адрес задаёт скрипт туннеля (tunnel/start.sh) — здесь он только для чтения. Выключенный доступ отклоняет запросы из туннеля (403), даже если он запущен.',
+    apiKeys: 'API-ключи', keyAdd: 'Создать ключ', keyNew: 'Новый API-ключ',
+    keyHint: 'Каждый ключ можно отозвать отдельно; срок действия проверяется на каждом запросе.',
+    keyNamePh: 'Название (напр. «ноутбук»)', keyTtl: 'Срок действия',
+    ttlNever: 'Бессрочно', ttl1d: '1 день', ttl7d: '7 дней', ttl30d: '30 дней',
+    ttl90d: '90 дней', ttl365d: '1 год',
+    keyCreate: 'Создать', keyDone: 'Готово',
+    keyOnce: 'Скопируйте ключ сейчас — больше он не показывается.',
+    keyNoKeys: 'Ключей нет — API недоступен, пока не создадите ключ.',
+    keyNever: 'бессрочный', keyExpired: 'просрочен', keyExpires: 'до',
+    keyDeleteAsk: 'Отозвать этот ключ? Клиенты с ним сразу потеряют доступ.',
+    pubAllow: 'Разрешить доступ из публичной сети', pubForget: 'Забыть адрес',
     pubNone: 'не настроено', pubChecking: 'Проверяю…', pubOk: 'работает', pubBad: 'нет ответа',
     pubCopied: 'Конфиг скопирован',
     updCheck: 'Проверить обновления', updChecking: 'Проверяю…',
@@ -1491,7 +1524,8 @@ function syncApi() {
   $('fApiLan').checked = !!S.apiLan;
   $('fApiDel').checked = !!S.apiDel;
   if (document.activeElement !== $('fApiPort')) $('fApiPort').value = S.apiPort || 8787;
-  $('fApiKey').value = S.apiKey || '';
+  $('fApiKey').value = maskKey(S.apiKey);
+  $('fPubOn').checked = S.apiPublic !== false;
   const st = $('apiStatus');
   st.textContent = S.apiRunning ? (t('apiOn') + ' · ' + apiHost() + ':' + S.apiPort) : t('apiOff');
   st.className = 'status ' + (S.apiRunning ? 'ok' : 'bad');
@@ -1499,6 +1533,64 @@ function syncApi() {
   $('apiHint').textContent = t('apiHint') + ' · http://' + apiHost() + ':' + (S.apiPort || 8787) + '/v1'
     + (S.apiLan ? ' · ⚠ ' + t('lanWarn') : '');
   syncPub();
+}
+
+/* ---------------- API keys ---------------- */
+
+function maskKey(k) {
+  k = String(k || '');
+  if (!k) return '';
+  return k.length > 12 ? k.slice(0, 7) + '…' + k.slice(-4) : k;
+}
+
+function keyMeta(k) {
+  if (!k.exp) return t('keyNever');
+  const d = new Date(k.exp);
+  const s = d.toLocaleDateString();
+  return k.expired ? (t('keyExpired') + ' · ' + s)
+    : (t('keyExpires') + ' ' + s);
+}
+
+function renderKeys() {
+  const box = $('keyList');
+  if (!box) return;
+  const items = S.keys || [];
+  box.innerHTML = '';
+  if (!items.length) {
+    box.innerHTML = '<div class="accempty">' + esc(t('keyNoKeys')) + '</div>';
+    return;
+  }
+  for (const k of items) {
+    const row = el('div', 'accrow' + (k.expired ? ' bad' : ''));
+    const meta = el('div', 'accmeta');
+    meta.innerHTML = '<b>' + esc(k.name || 'API') + '</b>' +
+      '<small>' + esc(k.mask || '') + '</small>' +
+      '<small>' + esc(keyMeta(k)) + '</small>';
+    const cp = el('button', 'accact');
+    cp.innerHTML = ic('i-copy');
+    cp.setAttribute('aria-label', 'copy');
+    cp.onclick = () => api({ cmd: 'key_copy', id: k.id });
+    const rm = el('button', 'accact');
+    rm.innerHTML = ic('i-trash');
+    rm.setAttribute('aria-label', 'delete');
+    rm.onclick = () => { if (confirm(t('keyDeleteAsk'))) api({ cmd: 'key_del', id: k.id }); };
+    row.append(meta, cp, rm);
+    box.appendChild(row);
+  }
+}
+
+function openApiKeySheet() {
+  $('akForm').hidden = false;
+  $('akDone').hidden = true;
+  $('akValue').value = '';
+  $('akName').value = '';
+  $('akTtl').value = '0';
+  $('apiKeySheet').classList.add('on');
+}
+
+function closeApiKeySheet() {
+  $('apiKeySheet').classList.remove('on');
+  $('akValue').value = '';
 }
 
 /* ---------------- public access (tunnel) ---------------- */
@@ -2933,7 +3025,8 @@ function stepFind(dir) {
 function purgeAccountDom() {
   S.session = null; S.parent = 0; S.first = true;
   S.cur = null; S.pendingUser = null; S.editing = null;
-  S.att = []; S.accounts = []; S.contacts = {}; S.apiKey = '';
+  S.att = []; S.accounts = []; S.contacts = {}; S.apiKey = ''; S.keys = [];
+  renderKeys();
   S.compact = ''; S.compactBusy = false; S.ctxFrom = 0; S.subs = {};
   S.pendingSend = null; S.pendingResume = false;
   S.regenBackup = null; S.editBackup = null; S.pendingMsg = null;
@@ -3049,6 +3142,7 @@ window.__funa = function (raw) {
       S.apiKey = o.apiKey || ''; S.apiAuto = !!o.apiAuto;
       S.apiLan = !!o.apiLan; S.apiDel = o.apiDel !== false;
       S.code = +o.code || 0; S.pubUrl = o.pubUrl || ''; S.updUrl = o.updUrl || '';
+      S.apiPublic = o.apiPublic !== false; S.keys = [];
       S.guardOn = o.guardOn !== false; S.guardGap = o.guardGap || 0;
       S.guardPerMin = o.guardPerMin || 12; S.guardPerDay = o.guardPerDay || 400;
       S.guardCount = o.guardCount || 0; S.guardCool = o.guardCool || 0;
@@ -3067,13 +3161,15 @@ window.__funa = function (raw) {
       // Захист у глибину: навіть якщо нативна сторона колись поверне ці
       // поля під замком, у DOM вони не потраплять.
       if (lockedNow) {
-        S.accounts = []; S.contacts = {}; S.apiKey = '';
+        S.accounts = []; S.contacts = {}; S.apiKey = ''; S.keys = [];
         $('fApiKey').value = '';
+        renderKeys();
         renderAccounts();
       }
       if (!lockedNow) loadDraft();
       renderProfile();
       if (S.signedIn && !lockedNow) { api({ cmd: 'sessions' }); api({ cmd: 'mem_list' }); api({ cmd: 'folders' }); }
+      if (!lockedNow) api({ cmd: 'keys_list' });
       if (lockedNow) openAuth('unlock', true);
       else if (!S.signedIn && !S.auth.skipped) openAuth('ds');
       // Онбординг не должен перекрывать экран разблокировки.
@@ -3794,10 +3890,23 @@ window.__funa = function (raw) {
       S.apiKey = o.key || S.apiKey; S.apiAuto = !!o.auto;
       S.apiLan = !!o.lan; S.apiDel = o.del !== false;
       if (o.code) S.code = +o.code;
+      if (o.pub != null) S.apiPublic = !!o.pub;
       if (o.pubUrl != null) S.pubUrl = o.pubUrl;
       if (o.updUrl != null) S.updUrl = o.updUrl;
       syncApi();
       if (o.err) toast(o.err);
+      break;
+    }
+    case 'keys': {
+      S.keys = o.items || [];
+      renderKeys();
+      break;
+    }
+    case 'key_new': {
+      $('akForm').hidden = true;
+      $('akDone').hidden = false;
+      $('akValue').value = o.key || '';
+      $('apiKeySheet').classList.add('on');
       break;
     }
     case 'deleted': {
@@ -4185,6 +4294,18 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v97", name: "2.42.22", title: "Керування API",
+      p: "Публічний доступ можна вимкнути, а ключів стало багато — з іменами й терміном дії.",
+      li: [
+        "«Дозволити доступ із публічної мережі»: вимкнено — запити з тунелю отримують 403, сам тунель можна не зупиняти.",
+        "API-ключі: fk- + 48 hex (192 біти). Старі короткі ключі лишаються чинними.",
+        "Кілька ключів одночасно: ім'я, термін дії, окреме відкликання й копіювання.",
+        "Прострочений ключ дає 401 expired_api_key, невідомий — 401 invalid_api_key.",
+        "Адреса тунелю тепер лише для читання; «Забути адресу» очищає її.",
+        "Новий ключ показується повністю один раз — одразу після створення."
+      ]
+    },
+    {
       code: "v96", name: "2.42.21", title: "Канал оновлень на GitHub",
       p: "Перевірка оновлень працює навіть без тунелю — маніфест лежить у репозиторії Funachat.",
       li: [
@@ -4283,6 +4404,18 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v97", name: "2.42.22", title: "API management",
+      p: "Public access can be switched off, and you can keep many keys with names and expiry dates.",
+      li: [
+        "“Allow access from the public network”: when off, tunnel requests get 403 while the tunnel itself may keep running.",
+        "API keys are now fk- + 48 hex (192 bits). Older short keys stay valid.",
+        "Multiple keys at once: name, expiry, individual revoke and copy.",
+        "An expired key returns 401 expired_api_key; an unknown one returns 401 invalid_api_key.",
+        "The tunnel address is now read-only; “Forget address” clears it.",
+        "A new key is shown in full only once, right after creation."
+      ]
+    },
+    {
       code: "v96", name: "2.42.21", title: "Update channel on GitHub",
       p: "Update checks work even without the tunnel — the manifest lives in the Funachat repository.",
       li: [
@@ -4380,6 +4513,18 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v97", name: "2.42.22", title: "Управление API",
+      p: "Публичный доступ можно выключить, а ключей стало много — с именами и сроком действия.",
+      li: [
+        "«Разрешить доступ из публичной сети»: выключено — запросы из туннеля получают 403, сам туннель можно не останавливать.",
+        "API-ключи: fk- + 48 hex (192 бита). Старые короткие ключи остаются действительными.",
+        "Несколько ключей одновременно: имя, срок действия, отдельный отзыв и копирование.",
+        "Просроченный ключ даёт 401 expired_api_key, неизвестный — 401 invalid_api_key.",
+        "Адрес туннеля теперь только для чтения; «Забыть адрес» очищает его.",
+        "Новый ключ показывается полностью один раз — сразу после создания."
+      ]
+    },
     {
       code: "v96", name: "2.42.21", title: "Канал обновлений на GitHub",
       p: "Проверка обновлений работает даже без туннеля — манифест лежит в репозитории Funachat.",
@@ -4927,8 +5072,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $('fApiDel').onchange = apiApply;
   $('fApiPort').onchange = apiApply;
   $('apiToggle').onclick = () => api({ cmd: S.apiRunning ? 'api_stop' : 'api_start' });
-  $('apiCopy').onclick = () => api({ cmd: 'copy', text: $('fApiKey').value });
-  $('apiNewKey').onclick = () => api({ cmd: 'api_key' });
+  $('keyAddBtn').onclick = openApiKeySheet;
+  $('akCreate').onclick = () => api({
+    cmd: 'key_add', name: ($('akName').value || '').trim(), ttl: +$('akTtl').value || 0
+  });
+  $('akCopy').onclick = () => api({ cmd: 'copy', text: $('akValue').value });
+  $('akOk').onclick = closeApiKeySheet;
+  $('akClose').onclick = closeApiKeySheet;
   if ($('pubFile')) {
     $('pubFile').onclick = () => api({ cmd: 'pub_file' });
     $('pubCheck').onclick = checkPublic;
@@ -4938,7 +5088,11 @@ document.addEventListener('DOMContentLoaded', () => {
       api({ cmd: 'copy', text: b });
     };
     $('pubClient').onclick = copyClientConfig;
-    $('fPubUrl').onchange = () => api({ cmd: 'pub_apply', url: $('fPubUrl').value });
+    $('pubForget').onclick = () => api({ cmd: 'pub_apply', url: '' });
+    $('fPubOn').onchange = () => {
+      S.apiPublic = $('fPubOn').checked;
+      api({ cmd: 'api_apply', pub: S.apiPublic });
+    };
     $('updCheck').onclick = () => checkUpdates(false);
     $('updGet').onclick = () => { if (UPD) api({ cmd: 'open_url', url: UPD.url }); };
   }

@@ -434,24 +434,197 @@ public class Store implements Guard.State {
     public int apiPort() { return p.getInt("api_port", 8787); }
     public boolean apiLan() { return p.getBoolean("api_lan", false); }
     public boolean apiDelete() { return p.getBoolean("api_del", true); }
-    public String apiKey() { return p.getString("api_key", ""); }
 
-    public String ensureApiKey() {
-        String k = apiKey();
-        if (k == null || k.length() < 16 || !k.startsWith("fk-")) k = newApiKey();
-        return k;
-    }
+    /** Публічний доступ до API. Вимкнений — запити з тунелю отримують 403. */
+    public boolean apiPublic() { return p.getBoolean("api_public", true); }
+    public void setApiPublic(boolean b) { p.edit().putBoolean("api_public", b).apply(); }
 
-    public String newApiKey() {
+    /* ---------- API-ключі: кілька, з терміном дії ---------- */
+
+    // 48 hex = 192 біти. Старі 32-символьні ключі лишаються валідними.
+    private static final int KEY_HEX = 48;
+    private final Object keyLock = new Object();
+
+    private static String randomKey() {
         // ключ до локального API — це пароль до акаунта DeepSeek:
         // звичайний Random із часовим зерном тут непридатний
         java.security.SecureRandom r = new java.security.SecureRandom();
-        StringBuilder b = new StringBuilder("fk-");
         String hex = "0123456789abcdef";
-        for (int i = 0; i < 32; i++) b.append(hex.charAt(r.nextInt(16)));
-        String k = b.toString();
-        p.edit().putString("api_key", k).apply();
-        return k;
+        StringBuilder b = new StringBuilder("fk-");
+        for (int i = 0; i < KEY_HEX; i++) b.append(hex.charAt(r.nextInt(16)));
+        return b.toString();
+    }
+
+    private static String randomId() {
+        java.security.SecureRandom r = new java.security.SecureRandom();
+        String hex = "0123456789abcdef";
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < 8; i++) b.append(hex.charAt(r.nextInt(16)));
+        return b.toString();
+    }
+
+    private static JSONObject makeKey(String name, String key, long ttlMs) {
+        JSONObject o = new JSONObject();
+        try {
+            long now = System.currentTimeMillis();
+            o.put("id", randomId());
+            o.put("name", name == null || name.trim().isEmpty() ? "API" : name.trim());
+            o.put("key", key);
+            o.put("created", now);
+            o.put("exp", ttlMs > 0 ? now + ttlMs : 0L);
+            o.put("used", 0L);
+        } catch (Exception ignored) {}
+        return o;
+    }
+
+    /** Масив ключів; старий одиночний ключ мігрує при першому звертанні. */
+    private JSONArray keysLocked() {
+        JSONArray a = null;
+        if (p.contains("api_keys")) {
+            try { a = new JSONArray(p.getString("api_keys", "[]")); } catch (Exception ignored) {}
+            if (a != null) return a;
+        }
+        a = new JSONArray();
+        String legacy = p.getString("api_key", "");
+        if (legacy != null && legacy.startsWith("fk-") && legacy.length() >= 16)
+            a.put(makeKey("Основний", legacy, 0));
+        else
+            a.put(makeKey("Основний", randomKey(), 0));
+        p.edit().putString("api_keys", a.toString()).apply();
+        return a;
+    }
+
+    private void saveKeys(JSONArray a) {
+        p.edit().putString("api_keys", a.toString()).apply();
+    }
+
+    /** Публічний список без самих ключів. */
+    public JSONArray apiKeyList() {
+        JSONArray out = new JSONArray();
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            long now = System.currentTimeMillis();
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                String key = k.optString("key", "");
+                long exp = k.optLong("exp", 0);
+                JSONObject o = new JSONObject();
+                try {
+                    o.put("id", k.optString("id", ""));
+                    o.put("name", k.optString("name", "API"));
+                    o.put("mask", key.length() > 12 ? key.substring(0, 7) + "…" + key.substring(key.length() - 4) : key);
+                    o.put("len", key.length());
+                    o.put("created", k.optLong("created", 0));
+                    o.put("exp", exp);
+                    o.put("used", k.optLong("used", 0));
+                    o.put("expired", exp > 0 && now >= exp);
+                } catch (Exception ignored) {}
+                out.put(o);
+            }
+        }
+        return out;
+    }
+
+    /** Створити ключ; ttlMs <= 0 — безстроковий. Повертає об'єкт із самим ключем. */
+    public JSONObject apiKeyAdd(String name, long ttlMs) {
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            JSONObject k = makeKey(name, randomKey(), ttlMs);
+            a.put(k);
+            saveKeys(a);
+            return k;
+        }
+    }
+
+    public boolean apiKeyDelete(String id) {
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            JSONArray out = new JSONArray();
+            boolean removed = false;
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                if (id != null && id.equals(k.optString("id", ""))) { removed = true; continue; }
+                out.put(k);
+            }
+            if (removed) saveKeys(out);
+            return removed;
+        }
+    }
+
+    /** Повний ключ за id — лише для копіювання в буфер, у UI не показується. */
+    public String apiKeyById(String id) {
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k != null && id != null && id.equals(k.optString("id", "")))
+                    return k.optString("key", "");
+            }
+        }
+        return "";
+    }
+
+    /** Перший чинний ключ — для показу, копіювання та /health. */
+    public String ensureApiKey() {
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            long now = System.currentTimeMillis();
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                long exp = k.optLong("exp", 0);
+                if (exp == 0 || now < exp) return k.optString("key", "");
+            }
+            // усі прострочені або список порожній — новий безстроковий
+            JSONObject k = makeKey("Основний", randomKey(), 0);
+            a.put(k);
+            saveKeys(a);
+            return k.optString("key", "");
+        }
+    }
+
+    public String newApiKey() { return apiKeyAdd("Основний", 0).optString("key", ""); }
+
+    /**
+     * Перевірка пред'явленого ключа.
+     * 0 — чинний, 1 — прострочений, 2 — невідомий.
+     */
+    public int apiKeyCheck(String presented) {
+        if (presented == null) return 2;
+        presented = presented.trim();
+        if (presented.toLowerCase(java.util.Locale.US).startsWith("bearer "))
+            presented = presented.substring(7).trim();
+        if (presented.isEmpty()) return 2;
+        byte[] got = presented.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        synchronized (keyLock) {
+            JSONArray a = keysLocked();
+            long now = System.currentTimeMillis();
+            int res = 2;
+            boolean matched = false;
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject k = a.optJSONObject(i);
+                if (k == null) continue;
+                String key = k.optString("key", "");
+                if (key.isEmpty()) continue;
+                // сталі за часом порівняння; проходимо всі ключі, щоб не
+                // зливати, який саме збігся
+                if (!java.security.MessageDigest.isEqual(
+                        key.getBytes(java.nio.charset.StandardCharsets.UTF_8), got)) continue;
+                matched = true;
+                long exp = k.optLong("exp", 0);
+                res = (exp > 0 && now >= exp) ? 1 : 0;
+                if (res == 0) {
+                    long used = k.optLong("used", 0);
+                    if (now - used > 60000L) {
+                        try { k.put("used", now); } catch (Exception ignored) {}
+                        saveKeys(a);
+                    }
+                }
+            }
+            return matched ? res : 2;
+        }
     }
 
     /** Публічна адреса API (тунель cloudflared/zrok). Порожня — доступу ззовні немає. */

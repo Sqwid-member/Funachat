@@ -212,8 +212,20 @@ public class ApiServer {
                 sock.close();
                 return;
             }
-            if (!auth(h)) {
-                send(out, 401, "application/json", err("Invalid API key", "invalid_api_key"));
+            // Публічний доступ можна вимкнути: тунель може й далі працювати,
+            // але запити, що прийшли ззовні (петля + заголовки проксі), ріжемо.
+            if (!st.apiPublic() && viaProxy(sock, h)) {
+                send(out, 403, "application/json",
+                        err("Public access is disabled in FunaChat", "public_access_disabled"));
+                sock.close();
+                return;
+            }
+            int authState = auth(h);
+            if (authState != 0) {
+                boolean expired = authState == 1;
+                send(out, 401, "application/json",
+                        err(expired ? "API key expired" : "Invalid API key",
+                                expired ? "expired_api_key" : "invalid_api_key"));
                 sock.close();
                 return;
             }
@@ -294,6 +306,17 @@ public class ApiServer {
         return v;
     }
 
+    /** Запит прийшов із тунелю: з'єднання з петлі плюс заголовки проксі. */
+    private static boolean viaProxy(Socket sock, Map<String, String> h) {
+        if (h.get("cf-connecting-ip") == null && h.get("x-forwarded-for") == null
+                && h.get("x-real-ip") == null) return false;
+        String ip;
+        try { ip = sock.getInetAddress().getHostAddress(); } catch (Exception e) { return false; }
+        if (ip == null) return false;
+        return "127.0.0.1".equals(ip) || "::1".equals(ip)
+                || "0:0:0:0:0:0:0:1".equals(ip) || ip.startsWith("127.");
+    }
+
     /** Простий ковзний ліміт на IP: perIpLimit запитів за 60 с. */
     private static boolean allowIp(String ip) {
         if (ip == null) return true;
@@ -331,16 +354,12 @@ public class ApiServer {
         }
     }
 
-    private boolean auth(Map<String, String> h) {
-        String key = st.ensureApiKey();
+    /** 0 — ключ чинний, 1 — прострочений, 2 — невідомий. */
+    private int auth(Map<String, String> h) {
         String got = h.get("authorization");
         if (got == null) got = h.get("x-api-key");
-        if (got == null) return false;
-        got = got.trim();
-        if (got.toLowerCase(Locale.US).startsWith("bearer ")) got = got.substring(7).trim();
-        // сталі за часом порівняння, щоб не зливати ключ по таймінгах
-        return MessageDigest.isEqual(key.getBytes(StandardCharsets.UTF_8),
-                got.getBytes(StandardCharsets.UTF_8));
+        if (got == null) return 2;
+        return st.apiKeyCheck(got);
     }
 
     private JSONObject health() {

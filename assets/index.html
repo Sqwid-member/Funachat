@@ -277,30 +277,35 @@
         </div>
         <label class="switch"><span data-i18n="apiLan"></span><input type="checkbox" id="fApiLan"><i></i></label>
         <label class="switch"><span data-i18n="apiDel"></span><input type="checkbox" id="fApiDel"><i></i></label>
-        <div class="slabel second" data-i18n="apiKey">API key</div>
-        <div class="srow">
-          <input id="fApiKey" class="field" readonly spellcheck="false" autocomplete="off">
-          <button class="ibtn boxed" id="apiCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
-        </div>
-        <div class="srow">
-          <button class="btn text" id="apiNewKey"><span data-i18n="apiRegen"></span></button>
-        </div>
+        <input id="fApiKey" type="hidden" readonly spellcheck="false" autocomplete="off">
         <div class="status" id="apiStatus">—</div>
         <p class="muted small" id="apiHint"></p>
       </div>
 
       <div class="sect">
+        <div class="slabel" data-i18n="apiKeys"></div>
+        <div class="acclist" id="keyList"></div>
+        <button class="btn tonal" id="keyAddBtn"><svg class="ic"><use href="#i-add"/></svg><span data-i18n="keyAdd"></span></button>
+        <p class="muted small" data-i18n="keyHint"></p>
+      </div>
+
+      <div class="sect">
         <div class="slabel" data-i18n="pubTitle"></div>
+        <label class="switch"><span data-i18n="pubAllow"></span><input type="checkbox" id="fPubOn"><i></i></label>
         <div class="srow">
-          <input id="fPubUrl" class="field" placeholder="https://…" spellcheck="false" autocomplete="off" inputmode="url">
+          <input id="fPubUrl" class="field" placeholder="https://…" spellcheck="false" autocomplete="off" readonly>
           <button class="ibtn boxed" id="pubCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
         </div>
         <div class="srow">
           <button class="btn tonal" id="pubFile"><span data-i18n="pubFile"></span></button>
           <button class="btn tonal" id="pubCheck"><span data-i18n="pubCheck"></span></button>
         </div>
+        <div class="srow">
+          <button class="btn text" id="pubForget"><span data-i18n="pubForget"></span></button>
+          <span class="grow"></span>
+          <button class="btn text" id="pubClient"><span data-i18n="pubClient"></span></button>
+        </div>
         <div class="status" id="pubStatus">—</div>
-        <button class="btn text" id="pubClient"><span data-i18n="pubClient"></span></button>
         <p class="muted small" data-i18n="pubHint"></p>
       </div>
     </div>
@@ -481,6 +486,44 @@
       <div class="srow">
         <span class="grow"></span>
         <button class="btn filled" id="keySave" data-i18n="authKeySave"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="apiKeySheet">
+  <div class="sheet">
+    <div class="sheettop">
+      <div class="ttl" data-i18n="keyNew"></div>
+      <button class="ibtn" id="akClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheetbody">
+      <div id="akForm">
+        <input id="akName" class="field" data-i18n-ph="keyNamePh" maxlength="40">
+        <div class="slabel second" data-i18n="keyTtl"></div>
+        <select id="akTtl" class="field">
+          <option value="0" data-i18n="ttlNever"></option>
+          <option value="86400000" data-i18n="ttl1d"></option>
+          <option value="604800000" data-i18n="ttl7d"></option>
+          <option value="2592000000" data-i18n="ttl30d"></option>
+          <option value="7776000000" data-i18n="ttl90d"></option>
+          <option value="31536000000" data-i18n="ttl365d"></option>
+        </select>
+        <div class="srow">
+          <span class="grow"></span>
+          <button class="btn filled" id="akCreate"><span data-i18n="keyCreate"></span></button>
+        </div>
+      </div>
+      <div id="akDone" hidden>
+        <p class="muted small" data-i18n="keyOnce"></p>
+        <div class="srow">
+          <input id="akValue" class="field" readonly spellcheck="false" autocomplete="off">
+          <button class="ibtn boxed" id="akCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
+        </div>
+        <div class="srow">
+          <span class="grow"></span>
+          <button class="btn filled" id="akOk"><span data-i18n="done"></span></button>
+        </div>
       </div>
     </div>
   </div>

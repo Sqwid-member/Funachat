@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.21";
-    static final int CODE = 96;
+    static final String VERSION = "2.42.22";
+    static final int CODE = 97;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -710,7 +710,21 @@ public class MainActivity extends Activity {
                 case "api_start": store.setApiAuto(true); apiStart(); break;
                 case "api_stop": store.setApiAuto(false);
                     ApiServer.stop(); apiState(); break;
-                case "api_key": store.newApiKey(); apiState(); break;
+                case "api_key": store.newApiKey(); apiState(); keysState(); break;
+                case "keys_list": keysState(); break;
+                case "key_add": keyAdd(c.optString("name", ""), c.optLong("ttl", 0)); break;
+                case "key_del": {
+                    store.apiKeyDelete(c.optString("id", ""));
+                    keysState();
+                    apiState();
+                    break;
+                }
+                case "key_copy": {
+                    String kk = store.apiKeyById(c.optString("id", ""));
+                    if (!kk.isEmpty()) copy(kk);
+                    break;
+                }
+                case "api_public": store.setApiPublic(c.optBoolean("on", true)); break;
                 case "guard_state": guardState(); break;
                 case "guard_apply": guardApply(c); break;
                 case "guard_reset": Guard.reset(store); guardState(); break;
@@ -787,6 +801,7 @@ public class MainActivity extends Activity {
                 o.put("apiAuto", store.apiAuto());
                 o.put("apiLan", store.apiLan());
                 o.put("apiDel", store.apiDelete());
+                o.put("apiPublic", store.apiPublic());
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
                 o.put("updUrl", store.updUrl());
@@ -794,6 +809,31 @@ public class MainActivity extends Activity {
             } catch (Exception ignored) {}
             emit(o);
             if (!store.token().isEmpty() && auth.unlocked()) whoami();
+        }
+
+        private void keysState() {
+            JSONObject o = new JSONObject();
+            try {
+                o.put("e", "keys");
+                o.put("items", store.apiKeyList());
+            } catch (Exception ignored) {}
+            emit(o);
+        }
+
+        /** Створює ключ і віддає його один раз — далі в UI лишається маска. */
+        private void keyAdd(String name, long ttlMs) {
+            JSONObject k = store.apiKeyAdd(name, ttlMs);
+            JSONObject o = new JSONObject();
+            try {
+                o.put("e", "key_new");
+                o.put("key", k.optString("key", ""));
+                o.put("id", k.optString("id", ""));
+                o.put("name", k.optString("name", ""));
+                o.put("exp", k.optLong("exp", 0));
+            } catch (Exception ignored) {}
+            emit(o);
+            keysState();
+            apiState();
         }
 
         private void apiState() {
@@ -806,6 +846,8 @@ public class MainActivity extends Activity {
                 o.put("auto", store.apiAuto());
                 o.put("lan", store.apiLan());
                 o.put("del", store.apiDelete());
+                o.put("pub", store.apiPublic());
+                o.put("keys", store.apiKeyList().length());
                 o.put("host", store.apiLan() ? "0.0.0.0" : "127.0.0.1");
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
@@ -1285,6 +1327,7 @@ public class MainActivity extends Activity {
             store.setApiAuto(c.optBoolean("auto", store.apiAuto()));
             store.setApiLan(c.optBoolean("lan", store.apiLan()));
             store.setApiDelete(c.optBoolean("del", store.apiDelete()));
+            store.setApiPublic(c.optBoolean("pub", store.apiPublic()));
             boolean restart = ApiServer.running();
             if (restart) ApiServer.stop();
             if (store.apiAuto()) apiStart();
