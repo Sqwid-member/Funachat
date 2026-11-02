@@ -13,8 +13,26 @@
    - `TELEGRAM_BOT_TOKEN` — токен від BotFather (Secret);
    - `TELEGRAM_CHAT_ID` — chat_id діагностики (Secret);
    - опційно `TELEGRAM_SILENT=0` і `MAX_PER_HOUR=30`.
-5. Скопіюйте URL виду `https://funachat-telemetry.<account>.workers.dev`.
-6. Вставте його в застосунку: **Довідка → Діагностичні дані → HTTPS-приймач**.
+5. Скопіюйте URL виду `https://funabot.<account>.workers.dev`.
+
+### Реакції та /review (потрібен KV)
+
+1. Cloudflare → **Storage & Databases → KV** → **Create namespace**,
+   назва `funabot-state`.
+2. Worker `funabot` → **Settings → Bindings → Add → KV namespace**:
+   - Variable name: `STATE`
+   - KV namespace: `funabot-state`
+3. Перезадеплойте Worker (bindings застосовуються після деплою).
+
+Після цього:
+- кожен звіт отримує тег `#error` або `#ok` (і `#crash`, якщо був збій);
+- ❤ від власника (`8080203197`) на повідомленні зі звітом позначає його
+  `#fixed`, ставить ✅ і прибирає зі списку відкритих;
+- команда `/review` (у приватному чаті з ботом або в каналі діагностики)
+  надсилає посилання на звіти з помилками, які ще не позначені ❤.
+
+Webhook уже налаштовується окремо на `/v1/telegram`; секрет обчислюється
+з `TELEGRAM_BOT_TOKEN`, додаткових змінних не потрібно.
 
 Перевірка:
 
