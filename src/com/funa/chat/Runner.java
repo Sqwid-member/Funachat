@@ -35,19 +35,21 @@ public final class Runner {
             }
             JSONArray tasks = call.optJSONArray("tasks");
             if (tasks != null && tasks.length() > 0) return parallel(call, st, p, depth, tasks);
-            return one(call.optString("task", ""), call.optString("system", ""), st, p, depth);
+            return one(call.optString("task", ""), call.optString("system", ""),
+                    call.optString("context", ""), st, p, depth);
         }
         if (Builtin.isBuiltin(name)) return Builtin.exec(call);
         return Tools.exec(call);
     }
 
-    private static JSONObject one(String task, String system, Store st, Progress p, int depth) {
+    private static JSONObject one(String task, String system, String context, Store st,
+                                  Progress p, int depth) {
         if (task == null || task.trim().isEmpty()) return Builtin.err("subagent: потрібна задача");
         try {
             SubAgent.Progress sp = p == null ? null : new SubAgent.Progress() {
                 @Override public void on(String text) { p.on(text); }
             };
-            String out = SubAgent.run(st, task, system, depth + 1, sp);
+            String out = SubAgent.run(st, task, system, context, depth + 1, sp);
             return Builtin.ok(out);
         } catch (Exception e) {
             String m = e.getMessage();
@@ -62,6 +64,7 @@ public final class Runner {
                                        final int depth, JSONArray tasks) {
         int n = Math.min(MAX_PARALLEL, tasks.length());
         final String system = call.optString("system", "");
+        final String context = call.optString("context", "");
         final String[] out = new String[n];
         final String[] err = new String[n];
         Thread[] threads = new Thread[n];
@@ -76,7 +79,7 @@ public final class Runner {
                                 p.on("[" + (idx + 1) + "] " + text);
                             }
                         };
-                        out[idx] = SubAgent.run(st, task, system, depth + 1, sp);
+                        out[idx] = SubAgent.run(st, task, system, context, depth + 1, sp);
                     } catch (Exception e) {
                         String m = e.getMessage();
                         err[idx] = m == null || m.isEmpty() ? e.getClass().getSimpleName() : m;

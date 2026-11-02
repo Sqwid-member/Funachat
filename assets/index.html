@@ -61,12 +61,15 @@
   </header>
 
   <div class="findbar" id="findBar">
-    <svg class="ic"><use href="#i-search"/></svg>
-    <input id="findInput" class="findinput" autocomplete="off" spellcheck="false">
-    <span class="fcount" id="findCount"></span>
-    <button class="fbtn" id="findPrev"><svg class="ic"><use href="#i-up"/></svg></button>
-    <button class="fbtn" id="findNext"><svg class="ic"><use href="#i-up" style="transform:rotate(180deg)"/></svg></button>
-    <button class="fbtn" id="findClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    <div class="findrow">
+      <svg class="ic"><use href="#i-search"/></svg>
+      <input id="findInput" class="findinput" autocomplete="off" spellcheck="false">
+      <span class="fcount" id="findCount"></span>
+      <button class="fbtn" id="findPrev"><svg class="ic"><use href="#i-up"/></svg></button>
+      <button class="fbtn" id="findNext"><svg class="ic"><use href="#i-up" style="transform:rotate(180deg)"/></svg></button>
+      <button class="fbtn" id="findClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="findscopes" id="findScopes"></div>
   </div>
 
   <main id="scroll"><div id="msgs"></div></main>
@@ -77,6 +80,8 @@
     <p data-i18n="welcomeSub">DeepSeek з інструментами</p>
     <div class="quick" id="quick"></div>
   </section>
+
+  <button id="subChip" class="subchip" aria-label="stop subagents"><svg class="ic"><use href="#i-stop"/></svg><span id="subChipText"></span></button>
 
   <button id="toBottom" class="toBottom" aria-label="bottom"><svg class="ic"><use href="#i-down"/></svg></button>
 
@@ -760,6 +765,7 @@
     <div class="sheettop">
       <button class="ibtn" id="subBack"><svg class="ic"><use href="#i-back"/></svg></button>
       <div class="tbar"><div class="ttl" id="subTitle">—</div><div class="sub" id="subMeta"></div></div>
+      <button class="ibtn" id="subRetry" aria-label="retry" style="display:none"><svg class="ic"><use href="#i-regen"/></svg></button>
       <button class="ibtn" id="subStop" aria-label="stop"><svg class="ic"><use href="#i-stop"/></svg></button>
     </div>
     <div class="subbody" id="subBody"></div>

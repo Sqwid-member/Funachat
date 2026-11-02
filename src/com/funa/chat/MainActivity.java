@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.33";
-    static final int CODE = 108;
+    static final String VERSION = "2.42.35";
+    static final int CODE = 110;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -242,7 +242,8 @@ public class MainActivity extends Activity {
             "accounts", "acc_result", "acc_check", "whoami", "contacts",
             "sessions", "history", "session", "clean", "u_id",
             "user", "a_start", "a_id", "think", "answer", "a_end", "req_end",
-            "sub_start", "sub_list", "sub_live", "sub_log", "sub_end", "sub_view",
+            "sub_start", "sub_list", "sub_live", "sub_log", "sub_state", "sub_end", "sub_view",
+            "sub_retry_ok",
             "tool", "folders", "file", "file_thumb", "file_info", "view", "pdf_pages",
             "view_error", "file_saved", "compacted", "compact_error", "saved_file",
             "chat_exported", "pages", "page", "title", "api", "deleted", "renamed",
@@ -606,7 +607,7 @@ public class MainActivity extends Activity {
                 "folders", "folder_add", "folder_rename", "folder_del", "folder_move",
                 "accounts", "acc_add", "acc_check", "acc_use", "acc_del",
                 "contacts_save", "api_state", "api_apply", "api_start", "api_stop",
-                "api_key", "sub_view", "sub_list",
+                "api_key", "sub_view", "sub_list", "sub_retry",
                 "pages_list", "page_read", "page_del", "save_html"));
 
         void resetKey() {
@@ -670,6 +671,7 @@ public class MainActivity extends Activity {
                 case "sub_view": subView(c.optString("id", "")); break;
                 case "sub_list": subList(); break;
                 case "sub_stop": SubTask.stop(c.optString("id", "")); break;
+                case "sub_retry": retrySub(c.optString("id", "")); break;
                 case "sub_stop_all": SubTask.stopAll(); break;
                 case "save": save(c); break;
                 case "delete": delete(c.optString("id", "")); break;
@@ -1919,6 +1921,22 @@ public class MainActivity extends Activity {
             try {
                 o.put("e", "sub_list");
                 o.put("items", SubTask.listFor(agent.sessionId()));
+            } catch (Exception ignored) {}
+            emit(o);
+        }
+
+        private void retrySub(String id) {
+            SubTask t = SubTask.retry(store, id);
+            JSONObject o = new JSONObject();
+            try {
+                if (t == null) {
+                    o.put("e", "sub_retry_fail");
+                    o.put("id", id);
+                } else {
+                    o.put("e", "sub_retry_ok");
+                    o.put("id", t.id);
+                    o.put("old", id);
+                }
             } catch (Exception ignored) {}
             emit(o);
         }

@@ -186,6 +186,8 @@ const I18N = {
     noFolder: 'Без папки', folderDelete: 'Видалити папку?', interactive: 'Інтерактивна сторінка', buildingPage: 'Сторінка збирається…', showCode: 'Показати код', hideCode: 'Згорнути код', showFull: 'Показати повністю', showLess: 'Згорнути',
     folderNamePh: 'Назва папки', renameFolder: 'Перейменувати папку', createFolder: 'Нова папка',
     noFind: 'Немає збігів', continue: 'Продовжити', regen: 'Перегенерувати',
+    fsAll: 'Усе', fsMe: 'Я', fsAi: 'ШІ', fsDialog: 'Діалог', fsNoThink: 'Без думок',
+    fsNoTools: 'Без інструментів', fsTools: 'Інструменти', fsThink: 'Думки', findHint: 'Пошук у чаті…',
     regenHint: 'Перегенерувати відповідь', exportChat: 'Експорт у Markdown', chatExported: 'Чат збережено',
     pages: 'Збережені сторінки', openPages: 'Відкрити список', pagesHint: 'HTML-сторінки, які створив ШІ',
     pagesEmpty: 'Ще немає збережених сторінок', openPage: 'Відкрити', deletePage: 'Видалити сторінку?',
@@ -214,7 +216,10 @@ const I18N = {
     subagent: 'Субагент', subOpen: 'Відкрити сесію', subReadonly: 'лише перегляд',
     subRunning: 'працює…', subDone: 'готово', subStopped: 'зупинено', subFailed: 'помилка',
     subEmpty: 'Сесія субагента порожня', subFinishedToast: 'Субагент завершив роботу',
-    subStop: 'Зупинити', 
+    subStop: 'Зупинити', subRetry: 'Ще раз', subRetryFail: 'Не вдалося повторити задачу',
+    subQueued: 'у черзі', subQueuedHint: 'Чекає вільного слота й стартує автоматично.',
+    subStep: 'крок {n}', subTools: '{n} інстр.', subStopAll: 'Субагенти: {n} · стоп',
+    subAllStopped: 'Субагенти зупинені',
     error: 'Помилка', cards: 'карток',
     q1: 'Файли', q1s: 'Огляд робочої теки', q1p: 'Прочитай /sdcard/Download/FunaFiles і скажи, що там є.',
     q2: 'Термінал', q2s: 'Команди на пристрої', q2p: 'Покажи, де виконуються команди (Termux чи ReTerminal), версію sh і вільне місце на диску.',
@@ -396,6 +401,8 @@ const I18N = {
     noFolder: 'No folder', folderDelete: 'Delete this folder?', interactive: 'Interactive page', buildingPage: 'Building the page…', showCode: 'Show code', hideCode: 'Hide code', showFull: 'Show full answer', showLess: 'Collapse',
     folderNamePh: 'Folder name', renameFolder: 'Rename folder', createFolder: 'New folder',
     noFind: 'No matches', continue: 'Continue', regen: 'Regenerate',
+    fsAll: 'All', fsMe: 'Me', fsAi: 'AI', fsDialog: 'Dialogue', fsNoThink: 'No thinking',
+    fsNoTools: 'No tools', fsTools: 'Tools', fsThink: 'Thinking', findHint: 'Search in chat…',
     regenHint: 'Regenerate answer', exportChat: 'Export as Markdown', chatExported: 'Chat saved',
     pages: 'Saved pages', openPages: 'Open list', pagesHint: 'HTML pages created by the AI',
     pagesEmpty: 'No saved pages yet', openPage: 'Open', deletePage: 'Delete this page?',
@@ -424,7 +431,10 @@ const I18N = {
     subagent: 'Subagent', subOpen: 'Open session', subReadonly: 'read-only',
     subRunning: 'running…', subDone: 'done', subStopped: 'stopped', subFailed: 'error',
     subEmpty: 'The subagent session is empty', subFinishedToast: 'Subagent finished',
-    subStop: 'Stop', 
+    subStop: 'Stop', subRetry: 'Retry', subRetryFail: 'Could not retry the task',
+    subQueued: 'queued', subQueuedHint: 'Waiting for a free slot and will start automatically.',
+    subStep: 'step {n}', subTools: '{n} tools', subStopAll: 'Subagents: {n} · stop',
+    subAllStopped: 'Subagents stopped',
     error: 'Error', cards: 'cards',
     q1: 'Files', q1s: 'Browse the workspace', q1p: 'Read /sdcard/Download/FunaFiles and tell me what is there.',
     q2: 'Terminal', q2s: 'Run commands on device', q2p: 'Show where commands run (Termux or ReTerminal), the sh version and free disk space.',
@@ -606,6 +616,8 @@ const I18N = {
     noFolder: 'Без папки', folderDelete: 'Удалить папку?', interactive: 'Интерактивная страница', buildingPage: 'Страница собирается…', showCode: 'Показать код', hideCode: 'Свернуть код', showFull: 'Показать полностью', showLess: 'Свернуть',
     folderNamePh: 'Название папки', renameFolder: 'Переименовать папку', createFolder: 'Новая папка',
     noFind: 'Нет совпадений', continue: 'Продолжить', regen: 'Перегенерировать',
+    fsAll: 'Всё', fsMe: 'Я', fsAi: 'ИИ', fsDialog: 'Диалог', fsNoThink: 'Без мыслей',
+    fsNoTools: 'Без инструментов', fsTools: 'Инструменты', fsThink: 'Мысли', findHint: 'Поиск в чате…',
     regenHint: 'Перегенерировать ответ', exportChat: 'Экспорт в Markdown', chatExported: 'Чат сохранён',
     pages: 'Сохранённые страницы', openPages: 'Открыть список', pagesHint: 'HTML-страницы, созданные ИИ',
     pagesEmpty: 'Пока нет сохранённых страниц', openPage: 'Открыть', deletePage: 'Удалить страницу?',
@@ -634,7 +646,10 @@ const I18N = {
     subagent: 'Субагент', subOpen: 'Открыть сессию', subReadonly: 'только чтение',
     subRunning: 'работает…', subDone: 'готово', subStopped: 'остановлен', subFailed: 'ошибка',
     subEmpty: 'Сессия субагента пуста', subFinishedToast: 'Субагент завершил работу',
-    subStop: 'Остановить', 
+    subStop: 'Остановить', subRetry: 'Ещё раз', subRetryFail: 'Не удалось повторить задачу',
+    subQueued: 'в очереди', subQueuedHint: 'Ждёт свободного слота и стартует автоматически.',
+    subStep: 'шаг {n}', subTools: '{n} инстр.', subStopAll: 'Субагенты: {n} · стоп',
+    subAllStopped: 'Субагенты остановлены',
     error: 'Ошибка', cards: 'карточек',
     q1: 'Файлы', q1s: 'Обзор рабочей папки', q1p: 'Прочитай /sdcard/Download/FunaFiles и скажи, что там есть.',
     q2: 'Терминал', q2s: 'Команды на устройстве', q2p: 'Покажи, где выполняются команды (Termux или ReTerminal), версию sh и свободное место на диске.',
@@ -662,10 +677,11 @@ const S = {
   foldAll: false,
   auth: {}, authMode: 'ds', authForce: false, fromUnlock: false,
   editing: null, msgTarget: null, artName: '', nameId: null, mode: 'send', contTarget: null,
-  find: '', findHits: [], findIdx: -1, pages: [], att: [],
+  find: '', findHits: [], findIdx: -1, findScope: 'all', findScopeLoaded: false, pages: [], att: [],
   compact: '', compactBusy: false, pendingSend: null, pendingResume: false, ctxFrom: 0,
   queue: [], queueHold: false, queueEdit: null, queueSeq: 0,
   view: null, viewSeq: 0, fileTarget: null, subs: {}, subView: null,
+  subFollow: false, subTimer: 0,
   regenBackup: null, editBackup: null, pendingMsg: null,
   editTarget: null, regenPending: null, reqBaseOut: 0, reqLive: false,
   follow: true
@@ -1334,30 +1350,85 @@ function totalOutTokens() {
 
 function subState(st) {
   if (st === 'run') return { cls: 'run', label: t('subRunning') };
+  if (st === 'queued') return { cls: 'queued', label: t('subQueued') };
   if (st === 'error') return { cls: 'error', label: t('subFailed') };
   if (st === 'stopped') return { cls: 'error', label: t('subStopped') };
   return { cls: 'done', label: t('subDone') };
 }
 
+/** Скільки субагентів зараз працює або чекає в черзі. */
+function activeSubs() {
+  let n = 0;
+  for (const k in S.subs) {
+    const s = S.subs[k];
+    if (s && (s.status === 'run' || s.status === 'queued')) n++;
+  }
+  return n;
+}
+
+function updateSubChip() {
+  const chip = $('subChip');
+  if (!chip) return;
+  const n = activeSubs();
+  chip.classList.toggle('on', n > 0);
+  if (n > 0) {
+    const txt = $('subChipText');
+    if (txt) txt.textContent = t('subStopAll').replace('{n}', n);
+  }
+}
+
+/** Прогрес субагента одним рядком: крок · інструменти · поточний. */
+function subProg(s) {
+  const p = [];
+  if (!s || s.status !== 'run') return p;
+  if (s.step) p.push(t('subStep').replace('{n}', s.step));
+  if (s.tools) p.push(t('subTools').replace('{n}', s.tools));
+  if (s.tool) p.push(s.tool);
+  return p;
+}
+
+function subElapsed(s) {
+  const live = s.status === 'run' || s.status === 'queued';
+  if (s.status === 'queued') return 0;
+  return live ? Date.now() - (s.t0 || Date.now()) : (s.ms || 0);
+}
+
+/** Внутрішня розмітка картки. Окремо, щоб оновлювати на місці. */
+function subCardHTML(s, id) {
+  const st = subState(s.status);
+  const live = s.status === 'run' || s.status === 'queued';
+  const ms = subElapsed(s);
+  let preview;
+  if (s.status === 'queued') preview = t('subQueuedHint');
+  else if (s.status === 'run') preview = s.live || '';
+  else preview = s.result || s.error || '';
+  const prog = subProg(s);
+  const act = live
+    ? '<button class="subact" data-substop="1">' + esc(t('subStop')) + '</button>'
+    : ((s.status === 'error' || s.status === 'stopped')
+        ? '<button class="subact" data-subretry="1">' + esc(t('subRetry')) + '</button>' : '');
+  return '<div class="toolcard subcard ' + st.cls + '">' +
+      '<div class="toolhead ' + st.cls + '"><span class="st"></span>' +
+        '<b>' + esc(s.title || id) + '</b><span class="grow"></span>' +
+        '<span class="tstat">' + esc(st.label) + '</span>' +
+        '<span class="subid">' + esc(s.id || id) + '</span></div>' +
+      (!S.foldAll && s.task ? '<div class="subtask" title="' + esc(s.task) + '">' + esc(s.task) + '</div>' : '') +
+      (!S.foldAll && prog.length ? '<div class="subprog">' + esc(prog.join(' · ')) + '</div>' : '') +
+      (!S.foldAll && preview ? '<div class="subprev">' + esc(preview) + '</div>' : '') +
+      '<div class="subfoot">' + ic('i-open') + '<span>' + esc(t('subOpen')) + '</span>' +
+        '<span class="grow"></span>' + act +
+        '<span>' + esc(ms ? fmtMs(ms) : '') + '</span></div>' +
+    '</div>';
+}
+
 function subMsg(m) {
   const s = S.subs[m.id] || { id: m.id, status: 'run', title: m.id, task: '', live: '', t0: Date.now() };
-  const st = subState(s.status);
-  const ms = s.status === 'run' ? Date.now() - (s.t0 || Date.now()) : (s.ms || 0);
-  const preview = s.status === 'run' ? (s.live || '') : (s.result || s.error || '');
   const node = el('div', 'msg');
   node._m = m;
   node.innerHTML =
     '<div class="av">' + ic('i-plan') + '</div>' +
-    '<div class="body"><div class="name">' + esc(t('subagent')) + ' · ' + esc(s.id || m.id) + '</div>' +
-      '<div class="toolcard subcard ' + st.cls + '">' +
-        '<div class="toolhead ' + st.cls + '"><span class="st"></span>' +
-          '<b>' + esc(s.title || m.id) + '</b><span class="grow"></span>' +
-          '<span class="tstat">' + esc(st.label) + '</span>' + ic('i-open') + '</div>' +
-        (!S.foldAll && s.task ? '<div class="subtask">' + esc(s.task) + '</div>' : '') +
-        (!S.foldAll && preview ? '<div class="subprev">' + esc(preview) + '</div>' : '') +
-        '<div class="subfoot">' + ic('i-open') + '<span>' + esc(t('subOpen')) + '</span>' +
-          '<span class="grow"></span><span>' + esc(ms ? fmtMs(ms) : '') + '</span></div>' +
-      '</div></div>';
+    '<div class="body"><div class="name">' + esc(t('subagent')) + '</div>' +
+      subCardHTML(s, m.id) + '</div>';
   return node;
 }
 
@@ -1376,79 +1447,165 @@ function pruneSubs() {
     }
     return true;
   });
-  if (changed) { updateWelcome(); updateCtxChip(); }
+  if (changed) { updateWelcome(); updateCtxChip(); updateSubChip(); }
 }
 
 function repaintSub(id) {
+  const s = S.subs[id];
   for (const m of S.msgs) {
-    if (m.role === 'sub' && m.id === id && m._el) {
-      const n = msgNode(m);
-      m._el.replaceWith(n);
-      m._el = n;
-      maybeScroll();
-      return;
-    }
+    if (m.role !== 'sub' || m.id !== id || !m._el) continue;
+    if (!s) return;
+    const old = m._el.querySelector('.subcard');
+    if (!old) return;
+    // Міняємо лише картку, не все повідомлення: інакше кожен крок
+    // перезапускає анімацію, смикає скрол і мерехтить.
+    const box = document.createElement('div');
+    box.innerHTML = subCardHTML(s, id);
+    const fresh = box.firstElementChild;
+    if (fresh) old.replaceWith(fresh);
+    if (S.follow) maybeScroll();
+    return;
   }
+}
+
+function subNearBottom() {
+  const b = $('subBody');
+  if (!b) return true;
+  return b.scrollHeight - b.scrollTop - b.clientHeight < 48;
 }
 
 function openSub(id) {
   S.subView = S.subs[id] || { id: id, title: id, status: 'run', ms: 0, messages: [] };
+  S.subFollow = true;
   $('subTitle').textContent = S.subView.title || id;
   $('subMeta').textContent = t('subReadonly');
   $('subBody').innerHTML = '';
   $('subSheet').classList.add('on');
+  subHead(S.subView);
   api({ cmd: 'sub_view', id: id });
 }
 
 function closeSub() {
   $('subSheet').classList.remove('on');
   S.subView = null;
+  S.subFollow = false;
+}
+
+/** Шапка сесії: статус, прогрес і кнопки. */
+function subHead(o) {
+  if (!o) return;
+  const st = subState(o.status);
+  const bits = [t('subReadonly'), st.label];
+  if (o.status === 'run') {
+    const p = subProg(o);
+    if (p.length) bits.push(p.join(' · '));
+  }
+  const ms = subElapsed(o);
+  if (ms) bits.push(fmtMs(ms));
+  $('subTitle').textContent = o.title || o.id;
+  $('subMeta').textContent = bits.join(' · ');
+  const live = o.status === 'run' || o.status === 'queued';
+  $('subStop').style.display = live ? '' : 'none';
+  const showRetry = !live && (o.status === 'error' || o.status === 'stopped');
+  $('subRetry').style.display = showRetry ? '' : 'none';
+  if (showRetry) $('subRetry').disabled = false;
+}
+
+/** Картка виклику інструмента в сесії субагента. */
+function subToolNode(m) {
+  const run = m.status === 'run';
+  const bad = m.status === 'error';
+  const label = run ? t('subRunning') : (bad ? t('subFailed') : t('subDone'));
+  const long = (m.output || '').length + (m.args || '').length;
+  const open = run || long < 700;
+  const node = el('div', 'msg');
+  node.innerHTML =
+    '<div class="av">' + ic(toolIcon(m.name)) + '</div>' +
+    '<div class="body"><div class="name">' + esc(m.name || 'tool') + '</div>' +
+      '<div class="toolcard subcard-tool' + (open ? ' open' : '') + '">' +
+        '<button class="toolhead ' + (bad ? 'error' : (run ? 'run' : 'done')) + '">' +
+          '<span class="st"></span><b>' + esc(m.name || 'tool') + '</b><span class="grow"></span>' +
+          '<span class="tstat">' + esc(label) + '</span>' + ic('i-chevron', 'chev') + '</button>' +
+        '<div class="toolwrap"><div class="toolinner">' +
+          (m.args ? '<div class="toolargs">' + esc(m.args) + '</div>' : '') +
+          (m.output ? '<div class="toolbody"><pre>' + esc(m.output) + '</pre></div>' : '') +
+        '</div></div>' +
+      '</div></div>';
+  return node;
+}
+
+/** Повідомлення помічника у вигляді звичайного чату. */
+function subAssistantNode(text, think) {
+  const node = el('div', 'msg');
+  node.innerHTML =
+    '<div class="av">' + ic('i-spark') + '</div>' +
+    '<div class="body"><div class="name">' + esc(t('subagent')) +
+      '<span class="sp"></span>' +
+      '<button class="mact" data-subcopy="1" title="' + esc(t('copy')) + '">' + ic('i-copy') + '</button></div>' +
+      '<div class="md">' + md(text || '', false) + '</div>' +
+      (think ? '<details class="subthink"><summary>' + esc(t('thinking')) + '</summary>' +
+        '<div class="subthinktxt">' + esc(think) + '</div></details>' : '') +
+    '</div>';
+  return node;
 }
 
 function renderSub(o) {
   S.subView = o;
-  const st = subState(o.status);
-  $('subTitle').textContent = o.title || o.id;
-  $('subMeta').textContent = t('subReadonly') + ' · ' + st.label + (o.ms ? ' · ' + fmtMs(o.ms) : '');
-  $('subStop').style.display = o.status === 'run' ? '' : 'none';
+  if (S.subs[o.id]) Object.assign(S.subs[o.id], {
+    status: o.status, title: o.title || S.subs[o.id].title, step: o.step || 0,
+    tools: o.tools || 0, tool: o.tool || '', live: o.live || '',
+    result: o.result || '', error: o.error || '', ms: o.ms || 0
+  });
+  subHead(o);
   const b = $('subBody');
-  b.innerHTML = '';
+  const follow = S.subFollow || subNearBottom();
+  const gap = b.scrollHeight - b.scrollTop;
+  // Перебудова не має згортати те, що користувач сам розгорнув.
+  const openThink = [];
+  const openCards = [];
+  const hadCards = b.querySelectorAll('.toolcard').length > 0;
+  const hadThink = b.querySelectorAll('details.subthink').length > 0;
+  b.querySelectorAll('details.subthink').forEach((d, i) => { if (d.open) openThink.push(i); });
+  b.querySelectorAll('.toolcard').forEach((d, i) => { if (d.classList.contains('open')) openCards.push(i); });
+  const frag = document.createDocumentFragment();
   const msgs = o.messages || [];
   if (!msgs.length) {
-    b.innerHTML = '<div class="subempty">' + esc(t('subEmpty')) + '</div>';
+    const n = el('div', 'subempty');
+    n.textContent = t('subEmpty');
+    frag.appendChild(n);
   }
   for (const m of msgs) {
     if (m.role === 'user') {
-      b.insertAdjacentHTML('beforeend', '<div class="submsg user"><div class="subrole">' + esc(t('you')) +
-        '</div><div class="md">' + md(m.text || '', false) + '</div></div>');
+      const n = el('div', 'msg user');
+      n.innerHTML = '<div class="uwrap"><div class="bubble">' + userText(m.text || '') + '</div></div>';
+      frag.appendChild(n);
     } else if (m.role === 'assistant') {
-      const n = el('div', 'submsg');
-      n.innerHTML = '<div class="subrole">' + esc(t('subagent')) + '</div>' +
-        '<div class="md">' + md(m.text || '', false) + '</div>' +
-        (m.think ? '<div class="subthink">' + esc(m.think) + '</div>' : '');
-      b.appendChild(n);
+      frag.appendChild(subAssistantNode(m.text, m.think));
     } else if (m.role === 'tool') {
-      const n = el('div', 'subtool');
-      const ok = m.status === 'done' ? 'done' : (m.status === 'error' ? t('subFailed') : t('subRunning'));
-      n.innerHTML = '<div class="h">' + ic(toolIcon(m.name)) + '<b>' + esc(m.name || 'tool') + '</b>' +
-        '<span class="grow"></span><span>' + esc(ok) + '</span></div>' +
-        (m.args ? '<pre>' + esc(m.args) + '</pre>' : '') +
-        (m.output ? '<pre>' + esc(m.output) + '</pre>' : '');
-      b.appendChild(n);
+      frag.appendChild(subToolNode(m));
     }
   }
   if (o.status === 'run') {
-    const n = el('div', 'submsg');
-    n.innerHTML = '<div class="subrole">' + esc(t('subRunning')) +
-      '</div><div class="sublive" id="subLiveText">' + esc(o.live || '') + '</div>';
-    b.appendChild(n);
-  } else if (o.status !== 'done' && o.error) {
-    const n = el('div', 'submsg');
-    n.innerHTML = '<div class="subrole">' + esc(o.status === 'stopped' ? t('subStopped') : t('subFailed')) +
-      '</div><div class="subthink">' + esc(o.error) + '</div>';
-    b.appendChild(n);
+    const n = el('div', 'msg');
+    n.innerHTML =
+      '<div class="av">' + ic('i-spark') + '</div>' +
+      '<div class="body"><div class="name">' + esc(t('subRunning')) + '</div>' +
+        '<div class="sublive" id="subLiveText">' + esc(o.live || '') + '</div></div>';
+    frag.appendChild(n);
+  } else if (o.error && o.status !== 'done') {
+    const n = el('div', 'msg');
+    n.innerHTML =
+      '<div class="av err">' + ic('i-stop') + '</div>' +
+      '<div class="body"><div class="name">' + esc(o.status === 'stopped' ? t('subStopped') : t('subFailed')) +
+        '</div><div class="toolcard"><div class="toolbody"><pre>' + esc(o.error) + '</pre></div></div></div>';
+    frag.appendChild(n);
   }
-  b.scrollTop = b.scrollHeight;
+  b.innerHTML = '';
+  b.appendChild(frag);
+  if (hadThink) b.querySelectorAll('details.subthink').forEach((d, i) => { d.open = openThink.includes(i); });
+  if (hadCards) b.querySelectorAll('.toolcard').forEach((d, i) => { d.classList.toggle('open', openCards.includes(i)); });
+  if (follow) { S.subFollow = true; b.scrollTop = b.scrollHeight; }
+  else b.scrollTop = Math.max(0, b.scrollHeight - gap);
 }
 
 function msgNode(m) {
@@ -1631,6 +1788,11 @@ function applyI18n() {
   renderSessions();
   renderMem();
   renderAll();
+  if ($('findBar') && $('findBar').classList.contains('on')) {
+    renderFindScopes();
+    if ($('findInput')) $('findInput').placeholder = t('findHint');
+    if (S.find) runFind(S.find);
+  }
   setBusy(S.busy);
   syncSettings();
   renderSetCats();
@@ -3175,6 +3337,65 @@ function chatMarkdown() {
 
 /* ---------------- find in chat ---------------- */
 
+/* Області пошуку. Раніше пошук дивився лише в текстові відповіді ШІ, тому
+   повідомлення користувача, «думки» й інструменти не знаходились. */
+const FIND_SCOPES = ['all', 'me', 'ai', 'dialog', 'nothink', 'notools', 'tools', 'think'];
+/* Які частини повідомлення входять у кожну область. */
+const FIND_PARTS = {
+  all: { me: 1, ai: 1, think: 1, tools: 1 },
+  me: { me: 1 },
+  ai: { ai: 1 },
+  dialog: { me: 1, ai: 1 },
+  nothink: { me: 1, ai: 1, tools: 1 },
+  notools: { me: 1, ai: 1, think: 1 },
+  tools: { tools: 1 },
+  think: { think: 1 }
+};
+
+/** До якої частини повідомлення належить текстовий вузол.
+ *  «Думки» лежать усередині .md, тому їх треба відрізняти першими. */
+function findKind(el) {
+  if (!el) return '';
+  if (el.closest('.msg.user .bubble')) return 'me';
+  const card = el.closest('.toolcard');
+  if (card) {
+    if (el.closest('.toolargs') || el.closest('.toolbody') || el.closest('.toolhead b')) return 'tools';
+    // Картка субагента — теж виклик інструмента: шукаємо задачу й результат,
+    // але не службові підписи на кшталт «Відкрити сесію» чи прогрес.
+    if (card.classList.contains('subcard') && (el.closest('.subtask') || el.closest('.subprev'))) return 'tools';
+    return '';
+  }
+  const think = el.closest('.think');
+  if (think) return el.closest('.think .txt') ? 'think' : '';
+  if (el.closest('.md')) {
+    // Кнопки («Копіювати», «Продовжити») — це інтерфейс, а не текст.
+    if (el.closest('button')) return '';
+    return 'ai';
+  }
+  return '';
+}
+
+function findLabel(id) {
+  return ({
+    all: 'fsAll', me: 'fsMe', ai: 'fsAi', dialog: 'fsDialog',
+    nothink: 'fsNoThink', notools: 'fsNoTools', tools: 'fsTools', think: 'fsThink'
+  })[id] || 'fsAll';
+}
+
+function renderFindScopes() {
+  const box = $('findScopes');
+  if (!box) return;
+  box.innerHTML = '';
+  for (const id of FIND_SCOPES) {
+    const b = el('button', 'fscope' + (id === S.findScope ? ' on' : ''));
+    b.type = 'button';
+    b.dataset.fscope = id;
+    b.textContent = t(findLabel(id));
+    b.setAttribute('aria-pressed', id === S.findScope ? 'true' : 'false');
+    box.appendChild(b);
+  }
+}
+
 function clearFind() {
   document.querySelectorAll('#msgs mark.srch').forEach(m => {
     const p = m.parentNode;
@@ -3186,15 +3407,40 @@ function clearFind() {
   S.findIdx = -1;
 }
 
+/** Розгортає «думки» або картку інструмента, якщо збіг усередині згорнутого. */
+function revealHit(h) {
+  let opened = false;
+  const th = h.closest('.think');
+  if (th && !th.classList.contains('open')) {
+    th.classList.add('open');
+    const node = th.closest('.msg');
+    if (node && node._m) node._m.thinkOpen = true;
+    opened = true;
+  }
+  const card = h.closest('.toolcard');
+  if (card && !card.classList.contains('subcard') && !card.classList.contains('open')) {
+    card.classList.add('open');
+    const node = card.closest('.msg');
+    if (node && node._m) node._m.open = true;
+    opened = true;
+  }
+  return opened;
+}
+
 function focusHit() {
   S.findHits.forEach(h => h.classList.remove('cur'));
   const h = S.findHits[S.findIdx];
-  if (h) {
-    h.classList.add('cur');
-    try { h.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
-  }
   const n = S.findHits.length;
-  $('findCount').textContent = n ? (S.findIdx + 1) + '/' + n : (S.find ? t('noFind') : '');
+  $('findCount').textContent = n ? (S.findIdx + 1) + '/' + n : (S.find.trim() ? t('noFind') : '');
+  if (!h) return;
+  h.classList.add('cur');
+  const opened = revealHit(h);
+  const go = () => {
+    try { h.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {}
+  };
+  go();
+  // Висота розгорнутого блоку анімується — після неї позиція вже точна.
+  if (opened) setTimeout(go, 280);
 }
 
 function runFind(q) {
@@ -3208,40 +3454,51 @@ function runFind(q) {
   try {
     re = new RegExp(S.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
   } catch (e) { focusHit(); return; }
-  const nodes = Array.from(document.querySelectorAll('#msgs .md'));
-  for (const root of nodes) {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
-    const texts = [];
-    let n;
-    while ((n = walker.nextNode())) texts.push(n);
-    for (const tn of texts) {
-      const val = tn.nodeValue || '';
-      re.lastIndex = 0;
-      if (!re.test(val)) continue;
-      re.lastIndex = 0;
-      const frag = document.createDocumentFragment();
-      let i = 0, m;
-      while ((m = re.exec(val))) {
-        if (m.index > i) frag.appendChild(document.createTextNode(val.slice(i, m.index)));
-        const mk = document.createElement('mark');
-        mk.className = 'srch';
-        mk.textContent = m[0];
-        frag.appendChild(mk);
-        S.findHits.push(mk);
-        i = m.index + m[0].length;
-        if (!m[0].length) re.lastIndex++;
-      }
-      if (i < val.length) frag.appendChild(document.createTextNode(val.slice(i)));
-      if (tn.parentNode) tn.parentNode.replaceChild(frag, tn);
+  const parts = FIND_PARTS[S.findScope] || FIND_PARTS.all;
+  const root = $('msgs');
+  if (!root) { focusHit(); return; }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  const texts = [];
+  let n;
+  while ((n = walker.nextNode())) texts.push(n);
+  for (const tn of texts) {
+    const kind = findKind(tn.parentElement);
+    if (!kind || !parts[kind]) continue;
+    const val = tn.nodeValue || '';
+    re.lastIndex = 0;
+    if (!re.test(val)) continue;
+    re.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let i = 0, m;
+    while ((m = re.exec(val))) {
+      if (m.index > i) frag.appendChild(document.createTextNode(val.slice(i, m.index)));
+      const mk = document.createElement('mark');
+      mk.className = 'srch';
+      mk.textContent = m[0];
+      frag.appendChild(mk);
+      S.findHits.push(mk);
+      i = m.index + m[0].length;
+      if (!m[0].length) re.lastIndex++;
     }
+    if (i < val.length) frag.appendChild(document.createTextNode(val.slice(i)));
+    if (tn.parentNode) tn.parentNode.replaceChild(frag, tn);
   }
   S.findIdx = S.findHits.length ? 0 : -1;
   focusHit();
 }
 
 function openFind() {
+  if (!S.findScopeLoaded) {
+    S.findScopeLoaded = true;
+    try {
+      const v = localStorage.getItem('funa.findScope');
+      if (FIND_SCOPES.includes(v)) S.findScope = v;
+    } catch (e) {}
+  }
+  renderFindScopes();
   $('findBar').classList.add('on');
   const inp = $('findInput');
+  inp.placeholder = t('findHint');
   inp.value = S.find || '';
   setTimeout(() => { try { inp.focus(); } catch (e) {} }, 120);
 }
@@ -3262,7 +3519,7 @@ function purgeAccountDom() {
   S.att = []; S.accounts = []; S.contacts = {}; S.apiKey = ''; S.keys = [];
   S.auditMask = ''; S.auditContact = ''; S.auditHook = ''; S.auditLog = [];
   renderKeys(); renderAuditLog();
-  S.compact = ''; S.compactBusy = false; S.ctxFrom = 0; S.subs = {};
+  S.compact = ''; S.compactBusy = false; S.ctxFrom = 0; S.subs = {}; updateSubChip();
   S.pendingSend = null; S.pendingResume = false;
   S.regenBackup = null; S.editBackup = null; S.pendingMsg = null;
   S.editTarget = null; S.regenPending = null;
@@ -3539,7 +3796,7 @@ window.__funa = function (raw) {
       $('msgSheet').classList.remove('on');
       clearAtt();
       S.msgs = [];
-      S.subs = {};
+      S.subs = {}; updateSubChip();
       if ($('subSheet').classList.contains('on')) closeSub();
       const tsmap = msgTsLoad();
       for (const m of (o.items || [])) {
@@ -3594,7 +3851,7 @@ window.__funa = function (raw) {
       } else {
         S.compact = '';
         S.ctxFrom = 0;
-        S.subs = {};
+        S.subs = {}; updateSubChip();
         if ($('subSheet').classList.contains('on')) closeSub();
         clearAtt();
         setTitle('FunaChat');
@@ -3678,8 +3935,10 @@ window.__funa = function (raw) {
       // pruneSubs() прибере її, якщо сесія виявиться іншою.
       if (o.sid && S.session && o.sid !== S.session) break;
       S.subs[o.id] = { id: o.id, sid: o.sid || '', title: o.title || o.id, task: o.task || '',
-        status: 'run', t0: o.t0 || Date.now(), live: '', result: '', ms: 0 };
+        status: o.status || 'run', t0: o.t0 || Date.now(), live: '', result: '', ms: 0,
+        step: o.step || 0, tools: o.tools || 0, tool: o.tool || '' };
       if (!S.msgs.some(m => m.role === 'sub' && m.id === o.id)) appendMsg({ role: 'sub', id: o.id });
+      updateSubChip();
       break;
     }
     case 'sub_list': {
@@ -3687,6 +3946,26 @@ window.__funa = function (raw) {
         S.subs[s.id] = Object.assign({}, S.subs[s.id] || {}, s);
         if (!S.msgs.some(m => m.role === 'sub' && m.id === s.id)) appendMsg({ role: 'sub', id: s.id });
         else repaintSub(s.id);
+      }
+      updateSubChip();
+      break;
+    }
+    case 'sub_state': {
+      const s = S.subs[o.id];
+      if (s) {
+        s.status = o.status || s.status;
+        s.step = o.step || 0;
+        s.tools = o.tools || 0;
+        s.tool = o.tool || '';
+        if (o.live !== undefined) s.live = o.live || '';
+        if (o.t0) s.t0 = o.t0;
+        s.ms = o.ms || s.ms;
+        repaintSub(o.id);
+        updateSubChip();
+      }
+      if (S.subView && S.subView.id === o.id && $('subSheet').classList.contains('on')) {
+        Object.assign(S.subView, o);
+        subHead(S.subView);
       }
       break;
     }
@@ -3699,7 +3978,9 @@ window.__funa = function (raw) {
     }
     case 'sub_log': {
       if (S.subView && S.subView.id === o.id && $('subSheet').classList.contains('on')) {
-        api({ cmd: 'sub_view', id: o.id });
+        // Кожен інструмент шле окрему подію; склеюємо їх в один запит.
+        clearTimeout(S.subTimer);
+        S.subTimer = setTimeout(() => api({ cmd: 'sub_view', id: o.id }), 140);
       }
       break;
     }
@@ -3710,14 +3991,35 @@ window.__funa = function (raw) {
         s.result = o.result || '';
         s.error = o.error || '';
         s.ms = o.ms || 0;
+        if (o.t0) s.t0 = o.t0;
+        s.step = o.step || s.step;
+        s.tools = o.tools || s.tools;
+        s.tool = '';
         repaintSub(o.id);
-        toast(t('subFinishedToast') + (s.title ? ': ' + s.title : ''));
+        updateSubChip();
+        if (s.status === 'done') toast(t('subFinishedToast') + (s.title ? ': ' + s.title : ''));
+        else if (s.status === 'error') toast((s.title ? s.title + ' · ' : '') + t('subFailed'));
       }
       if (S.subView && S.subView.id === o.id) api({ cmd: 'sub_view', id: o.id });
       break;
     }
+    case 'sub_retry_ok': {
+      if (S.subView && S.subView.id === o.old) { closeSub(); openSub(o.id); }
+      updateSubChip();
+      break;
+    }
+    case 'sub_retry_fail': {
+      $('subRetry').disabled = false;
+      toast(t('subRetryFail'));
+      repaintSub(o.id);
+      updateSubChip();
+      break;
+    }
     case 'sub_view': {
       if (o.missing) { toast(o.error || t('error')); break; }
+      // Пізня відповідь для вже закритої або іншої сесії не має
+      // перемальовувати чуже вікно.
+      if (!$('subSheet').classList.contains('on') || !S.subView || S.subView.id !== o.id) break;
       renderSub(o);
       break;
     }
@@ -3835,7 +4137,7 @@ window.__funa = function (raw) {
       S.compact = '';
       S.compactBusy = false;
       S.ctxFrom = 0;
-      S.subs = {};
+      S.subs = {}; updateSubChip();
       S.pendingSend = null;
       S.pendingResume = false;
       S.regenBackup = null; S.editBackup = null; S.pendingMsg = null;
@@ -4556,12 +4858,37 @@ function submitUnlock() {
 
 /* ---------------- help, diagnostics, reports ---------------- */
 
-const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять кроків від установки до першого чату.", "li": ["1. На екрані входу натисни «Увійти через сайт DeepSeek» або встав «Ключ сесії».", "2. Дозволь «Керування всіма файлами» — інакше доступні лише Download/FunaFiles.", "3. Налаштування → «Акаунт і безпека» → «Перевірити» — має бути статус «активний».", "4. Напиши перше повідомлення у полі внизу.", "5. Увімкни блокування застосунку в Налаштуваннях, якщо телефон не завжди під рукою."], "a": {"act": "login", "label": "Увійти"}}, {"t": "Вхід і акаунти", "p": "Ідентичність застосунку — активний акаунт DeepSeek. Локальних профілів більше немає.", "li": ["Основний шлях — «Увійти через сайт DeepSeek»: пароль, капча й код обробляються на сайті, у застосунок потрапляє лише токен сесії.", "«Ключ сесії» — вставити готовий Bearer-токен або рядок cookie від chat.deepseek.com.", "«Імпорт session.json» — старий формат експорту (токен + uid + контакти).", "Кілька акаунтів: Налаштування → «Акаунт і безпека» → «Додати акаунт»; перемикання змінює, від чийого імені йдуть запити.", "Пам'ять, папки й сесії ізольовані за акаунтом: різні акаунти не бачать дані один одного."], "a": {"act": "login", "label": "До входу"}}, {"t": "Чат: основи", "p": "Звичайний чат із Markdown, таблицями, кодом і формулами KaTeX — усе рендериться офлайн.", "li": ["Enter у полі введення — надіслати (Shift+Enter — новий рядок).", "Під час відповіді Enter або кнопка надсилання ставлять повідомлення в чергу. Чергу можна переставляти, редагувати й чистити; після відповіді вона запускається сама, а «Стоп» ставить її на паузу.", "Кнопка «Стоп» зупиняє генерацію, вже отриманий текст лишається.", "Повідомлення ШІ не редагуються — історія завжди відповідає тому, що реально прийшло.", "Тап по повідомленню ШІ або кнопка ⋯ — копіювати, перегенерувати чи продовжити; тап по своєму — редагувати.", "Кнопка внизу справа повертає до останнього повідомлення; якщо прокрутити чат угору під час відповіді, автопрокрутка вимикається й текст більше не смикає екран."], "a": {"act": "newchat", "label": "Новий чат"}}, {"t": "Час, версії та статистика", "p": "Під кожним повідомленням видно дату, а біля відповіді ШІ — скільки часу він працював. Редаговані повідомлення й перегенерації мають перемикач версій.", "li": ["Час показується за годинником телефона: сьогодні — лише години й хвилини, давніші — дата.", "Час біля відповіді — тривалість цього раунду; повний час запиту з інструментами видно в статистиці.", "Змінив перше повідомлення? Під ним зʼявиться ‹ 1/2 › — повернення до старої версії відновлює і хвіст чату, що йшов під нею.", "Те саме для «Згенерувати ще раз»: кожна регенерація стає окремою версією.", "Версії зберігаються на сервері DeepSeek і відновлюються після перезапуску (для останніх 16 повідомлень).", "Налаштування → «Статистика ШІ»: запити, відповіді, зупинки, загальний і середній час, оцінка токенів, правки, регенерації, інструменти й помилки.", "Статистика рахується для активного акаунта; «Скинути» очищає лише її."]}, {"t": "Файли й вкладення", "p": "Скріпка в полі введення додає файл до повідомлення.", "li": ["Обмеження на один файл — 50 МБ; великі зображення стискаються перед відправкою.", "Підтримуються тексти, PDF, DOCX, таблиці, зображення; вміст читається й передається моделі.", "Робоча тека інструментів — /sdcard/Download/FunaFiles.", "Експорт документів і пам'яті — /sdcard/Download/FunaFiles/exports.", "Файли поза Download доступні лише з дозволом «Керування всіма файлами»."]}, {"t": "Інструменти моделі", "p": "Модель може працювати з файлами й командами, а не лише відповідати текстом.", "li": ["read — прочитати файл; write/append — створити або дописати; edit — точкова заміна.", "list/ls — вміст теки; sh/bash/termux — команда через міст термінала (Termux/ReTerminal).", "doc/document — створити PDF або DOCX із заголовком і текстом.", "Вбудовані: time, calc, convert, random, base64, hash, skill — працюють без мережі; skill віддає інструкції docx/pdf/design/docs.", "Кожен виклик показується окремою карткою; її можна згорнути або розгорнути."], "a": {"act": "help", "label": "Діагностика"}}, {"t": "funa-bridge: як підключити", "p": "funa-bridge — невеликий скрипт у терміналі, який виконує команди FunaChat і повертає вивід. Працює у Termux і ReTerminal. Без нього доступні лише файлові інструменти.", "li": ["1. Постав термінал з F-Droid: Termux або ReTerminal. Версія Termux із Google Play застаріла й не працює з Android 12+.", "2. Відкрий цей розділ і натисни «Зберегти скрипт» — файл зʼявиться у /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, потім bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — termux-setup-storage там не потрібен.", "5. Залиш сесію термінала відкритою: у Termux додай termux-wake-lock, у ReTerminal вимкни для нього оптимізацію батареї.", "6. Перевірка: «Допомога й логи» → «Черга Termux доступна» (або ReTerminal), а в чаті — команда sh echo ok.", "Черга команд лежить у /sdcard/Download/FunaQueue — її мають бачити і FunaChat, і термінал.", "Якщо /sdcard не видно: у Termux повтори termux-setup-storage, у ReTerminal дозволь доступ до файлів у налаштуваннях Android.", "Скрипт v11 портативний: сам знаходить sh, обходиться без flock і timeout — працює і в Alpine, і в системній оболонці. Вивід команди публікується атомарно, тому фонові процеси не ламають маркер завершення."], "a": {"act": "bridge", "label": "Зберегти скрипт"}}, {"t": "Пам'ять", "p": "Картки знань додаються до системного промту в кожній новій сесії.", "li": ["Меню → «Пам'ять» → «+» → заголовок, текст, теги → «Зберегти».", "Картку можна вимкнути перемикачем, не видаляючи.", "У промт потрапляє до 3000 символів — найважливіше пиши коротко.", "Експорт/імпорт — JSON, зручно переносити між пристроями.", "Картки належать активному акаунту; старі без власника забирає перший акаунт."], "a": {"act": "memory", "label": "Відкрити пам'ять"}}, {"t": "Папки, пошук і сесії", "p": "Чатів може бути багато — їх можна групувати й шукати.", "li": ["Бокова шухляда: пошук по назві, фільтр «Всі / Без папки / папка».", "Довге натискання на папці — перейменувати; «+» — створити.", "Меню сесії (⋮) — закріпити, перейменувати, перемістити в папку, видалити.", "Закріплені сесії завжди зверху списку.", "Пошук всередині чату — кнопка лупи у верхній панелі."]}, {"t": "Субагенти", "p": "Для складних задач модель запускає помічників паралельно.", "li": ["Одночасно працює до 4 субагентів, глибина вкладеності — 2.", "Кожен субагент має власний блок із кроком і кнопкою зупинки.", "Результат повертається окремим повідомленням у чат.", "У локальному API субагент виконується синхронно в межах запиту."]}, {"t": "Артефакти, PDF і DOCX", "p": "Великі результати можна отримати як файл або інтерактивний артефакт.", "li": ["HTML-артефакт відкривається на весь екран і виконується офлайн.", "Артефакт працює в пісочниці: без доступу до файлів, буфера й містка застосунку.", "PDF і DOCX генеруються на телефоні без зовнішніх сервісів.", "Документ можна одразу поділитися або зберегти в Download/FunaFiles.", "Готові файли видно у файловому менеджері застосунку."]}, {"t": "Навички ШІ", "p": "Перед створенням документа модель читає вбудовану інструкцію — так PDF, DOCX і сторінки виходять охайними.", "li": ["Навички: docx (Word), pdf, design (HTML-артефакт) і docs (документація).", "У чаті достатньо попросити «зроби PDF» — агент сам викличе skill і дотримається правил.", "У локальному API є інструмент skill із тими самими інструкціями.", "Навички лежать в assets/skills/<назва>.<мова>.md і не потребують мережі.", "Якщо модель забула — повторіть прохання або згадайте назву навички."], "a": {"act": "newchat", "label": "До чату"}}, {"t": "Локальний API", "p": "OpenAI-сумісний сервер працює просто на телефоні — для інших застосунків і агентів.", "li": ["Адреса за замовчуванням: http://127.0.0.1:8787, ключ виду fk-… (Налаштування → «Мережа та API» → API key).", "Ендпоінти: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. Ключ потрібен для всіх, навіть для /health.", "Приклад: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Привіт\"}]}'", "Моделі: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. Невідомий id мапиться на модель із налаштувань; thinking/search можна передати в тілі запиту.", "Для іншого пристрою в мережі увімкни LAN і відкрий порт у фаєрволі.", "Сервер поважає блокування акаунта: поки застосунок заблокований, /v1/* віддає 503, а /health — locked:true.", "Ліміти API: тіло до 8 МБ, 8 одночасних з’єднань, 120 запитів/хв з однієї IP, промт до 1 000 000 символів. Деталі — в API.md."], "a": {"act": "settings", "label": "Налаштувати API"}}, {"t": "Публічний доступ", "p": "API можна відкрити в інтернет через тунель — без відкритих портів і без картки.", "li": ["У Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, резервний канал — zrok.", "Скрипт пише адресу в Download/FunaFiles/tunnel.txt, застосунок читає її кнопкою «З файлу» на сторінці API.", "Один origin: /v1/* — API, /updates/latest.json — маніфест оновлень, /updates/FunaChat.apk — підписаний APK.", "Ключ fk-… обовʼязковий; ліміт 120 запитів/хв на IP, за тунелем рахується справжній IP клієнта.", "Історія оновлень → «Перевірити оновлення» покаже нову версію й кнопку «Завантажити».", "Публічний API не виконує файлових інструментів, funa-bridge і ADB.", "Деталі та стабільний домен — tunnel/README.md."]}, {"t": "Контекст і стиснення", "p": "Довгі чати не обриваються — старі частини стискаються автоматично.", "li": ["Налаштування → «Чат і ШІ» → «Ліміт контексту»: 60K, 128K, 256K, 512K або 1M токенів; типовий — 1M (DeepSeek V4.1 Flash).", "У налаштуваннях видно, скільки місця зайнято.", "Стиснення зберігає суть і відкидає повтори, а не обрізає навмання.", "Новий чат завжди починається з чистим контекстом і картками пам'яті.", "Якщо модель «забула» деталь — повтори її або додай картку пам'яті."]}, {"t": "Безпека й приватність", "p": "Токени шифруються AES-256-GCM ключем Android Keystore.", "li": ["Пароль DeepSeek не зберігається і не передається застосунку — його обробляє сайт.", "Токени й cookie не потрапляють у логи та звіти.", "Блокування застосунку — окремий локальний пароль (PBKDF2); пароль DeepSeek для нього не потрібен.", "Пароль блокування належить акаунту: додавання іншого акаунта не вимикає захист першого.", "Розблокування теж окреме для кожного акаунта; холодний старт закриває всі сесії.", "Дані пам'яті, папок і сесій живуть лише на телефоні.", "Видалення акаунта прибирає його токен, пароль, памʼять, папки й чернетки."]}, {"t": "Ліміти й помилки DeepSeek", "p": "DeepSeek обмежує часті запити й підозрілі входи — це його захист, не баг застосунку.", "li": ["401 — токен прострочений: увійди через сайт знову.", "Коди 40303/40304 — DeepSeek просить підтвердити, що ти людина: відкрий сайт кнопкою «Пройти перевірку», надішли будь-яке повідомлення й пройди капчу, потім натисни «Імпортувати» й повтори запит.", "429 — занадто часто: зачекай, поки сервер відпустить ліміт.", "«Новий пристрій» / ризик — саме тому вхід іде через сайт, а не нативним запитом.", "Сайт може вимагати капчу або код із листа — це нормально.", "Акаунти без пароля (Google) підтримуються лише через сесію сайту."]}, {"t": "Діагностика й звіти", "p": "Якщо щось не працює — спершу глянь «Допомога й логи».", "li": ["Кожен пункт має стан: ✓ добре, ! увага, × проблема.", "Кнопка дії поруч веде одразу до потрібного налаштування.", "«Звіт» містить версію, пристрій, діагностику й останні 300 рядків логу.", "Логи можна переглянути перед надсиланням; токенів там немає.", "«Діагностичні дані» — знеособлений знімок раз на добу (типово увімкнений); відправляє Termux-релей у Telegram, токен у APK не входить."], "a": {"act": "help", "label": "Відкрити діагностику"}}, {"t": "Поради", "p": "Дрібниці, які економлять час.", "li": ["Формулюй задачу конкретно: мета, формат, обмеження.", "Проси файл («зроби PDF») — отримаєш готовий документ, а не простирадло тексту.", "Для повторюваних фактів — картка пам'яті, а не новий чат щоразу.", "Довгі дослідження краще розбивати на чати з окремими папками.", "Закріплюй важливі сесії, щоб не шукати їх у списку.", "Якщо відповідь обірвалась — «Продовж», модель пам'ятає контекст."]}], "en": [{"t": "Quick start", "p": "Five steps from install to the first chat.", "li": ["1. On the sign-in screen tap “Sign in via the DeepSeek site” or paste a “Session key”.", "2. Grant “All files access” — otherwise only Download/FunaFiles are available.", "3. Settings → “Account & security” → “Verify” — the status should be active.", "4. Type your first message in the composer.", "5. Turn on app lock in Settings if the phone is not always with you."], "a": {"act": "login", "label": "Sign in"}}, {"t": "Sign-in and accounts", "p": "The app's identity is the active DeepSeek account. Local profiles are gone.", "li": ["The main path is “Sign in via the DeepSeek site”: the site handles the password, captcha and code; only the session token reaches the app.", "“Session key” — paste a ready Bearer token or a cookie string from chat.deepseek.com.", "“Import session.json” — the old export format (token + uid + contacts).", "Several accounts: Settings → “Account & security” → “Add account”; switching changes whose identity requests use.", "Memory, folders and sessions are isolated per account: accounts never see each other's data."], "a": {"act": "login", "label": "Open sign-in"}}, {"t": "Chat basics", "p": "A normal chat with Markdown, tables, code and KaTeX formulas — all rendered offline.", "li": ["Enter in the composer sends (Shift+Enter inserts a newline).", "While the model is answering, Enter or the send button queues the message. Reorder, edit or remove queued messages; the queue starts automatically after an answer, and Stop pauses it.", "“Stop” halts generation; the text received so far stays.", "Assistant messages are never edited — history always matches what really arrived.", "Tap an AI message or its ⋯ button to copy, regenerate or continue; tap your own message to edit it.", "The bottom-right button jumps to the latest message; scrolling up while an answer is streaming turns auto-scroll off, so the text no longer pulls the screen down."], "a": {"act": "newchat", "label": "New chat"}}, {"t": "Time, versions and statistics", "p": "Every message shows its date, and an AI answer shows how long the model worked. Edited messages and regenerations get a version switcher.", "li": ["Time follows the phone clock: today shows hours and minutes only, older messages show the date.", "The time next to an answer is that round's duration; the full request time with tools is in the statistics.", "Edited an earlier message? A ‹ 1/2 › switcher appears under it — going back restores the chat tail that followed that version.", "The same applies to “Regenerate”: every regeneration becomes a separate version.", "Versions live on the DeepSeek server and come back after a restart (for the latest 16 messages).", "Settings → “AI usage”: requests, answers, stops, total and average time, token estimate, edits, regenerations, tool calls and errors.", "Statistics are kept per active account; “Reset” clears only them."]}, {"t": "Files and attachments", "p": "The paperclip in the composer attaches a file to the message.", "li": ["One file up to 50 MB; large images are compressed before sending.", "Texts, PDF, DOCX, spreadsheets and images are supported and passed to the model.", "The tools working folder is /sdcard/Download/FunaFiles.", "Document and memory exports go to /sdcard/Download/FunaFiles/exports.", "Files outside Download need the “All files access” permission."]}, {"t": "Model tools", "p": "The model can work with files and commands, not just answer with text.", "li": ["read — read a file; write/append — create or extend; edit — exact replacement.", "list/ls — folder contents; sh/bash/termux — run a command through the terminal bridge (Termux/ReTerminal).", "doc/document — build a PDF or DOCX from a title and text.", "Built-ins: time, calc, convert, random, base64, hash, skill — all offline; skill returns the docx/pdf/design/docs instructions.", "Every call appears as its own card that can be collapsed or expanded."], "a": {"act": "help", "label": "Diagnostics"}}, {"t": "funa-bridge: how to connect", "p": "funa-bridge is a small terminal script that runs FunaChat commands and returns their output. It works in Termux and ReTerminal. Without it only file tools work.", "li": ["1. Install a terminal from F-Droid: Termux or ReTerminal. The Google Play Termux build is outdated and does not work on Android 12+.", "2. Open this section and tap “Save script” — the file appears at /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, then bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — no termux-setup-storage needed there.", "5. Keep the terminal session open: run termux-wake-lock in Termux, and disable battery optimisation for ReTerminal.", "6. Check: “Help & logs” → “Termux queue is writable” (or ReTerminal), and in chat run sh echo ok.", "The command queue lives in /sdcard/Download/FunaQueue — both FunaChat and the terminal must see it.", "If /sdcard is not visible: rerun termux-setup-storage in Termux, or grant file access to ReTerminal in Android settings.", "Script v11 is portable: it finds sh itself and works without flock or timeout — in Alpine and in the system shell alike. Output is published atomically, so background processes cannot break the completion marker."], "a": {"act": "bridge", "label": "Save script"}}, {"t": "Memory", "p": "Knowledge cards are added to the system prompt in every new session.", "li": ["Menu → “Memory” → “+” → title, text, tags → Save.", "A card can be switched off without deleting it.", "Up to 3000 characters reach the prompt — keep the important parts short.", "Export/import is JSON, handy for moving between devices.", "Cards belong to the active account; ownerless old cards go to the first account."], "a": {"act": "memory", "label": "Open memory"}}, {"t": "Folders, search and sessions", "p": "Many chats can be grouped and searched.", "li": ["Side drawer: search by title, filter “All / Unfiled / folder”.", "Long-press a folder to rename; “+” creates one.", "Session menu (⋮) — pin, rename, move to a folder, delete.", "Pinned sessions always sit on top.", "Search inside a chat — the magnifier in the top bar."]}, {"t": "Subagents", "p": "For complex tasks the model runs helpers in parallel.", "li": ["Up to 4 subagents at once, nesting depth 2.", "Each subagent has its own block with progress and a stop button.", "The result arrives as a separate chat message.", "In the local API a subagent runs synchronously within the request."]}, {"t": "Artifacts, PDF and DOCX", "p": "Big results can come back as a file or an interactive artifact.", "li": ["An HTML artifact opens full screen and runs offline.", "Artifacts run sandboxed: no access to files, the clipboard or the app bridge.", "PDF and DOCX are generated on the phone with no external services.", "A document can be shared right away or saved to Download/FunaFiles.", "Finished files are visible in the app's file manager."]}, {"t": "AI skills", "p": "Before creating an artifact the model reads built-in instructions — that is why PDFs, DOCX files and pages come out clean.", "li": ["Skills: docx (Word), pdf, design (HTML artifact) and docs (documentation).", "In chat just ask for a PDF — the agent calls skill itself and follows the rules.", "The local API exposes a skill tool with the same instructions.", "Skills live in assets/skills/<name>.<lang>.md and need no network.", "If the model forgot, repeat the request or mention the skill name."], "a": {"act": "newchat", "label": "Open chat"}}, {"t": "Local API", "p": "An OpenAI-compatible server runs right on the phone — for other apps and agents.", "li": ["Default address: http://127.0.0.1:8787, key looks like fk-… (Settings → “Network & API” → API key).", "Endpoints: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. The key is required for every one, including /health.", "Example: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Hi\"}]}'", "Models: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. An unknown id falls back to the model from Settings; thinking/search can be passed in the request body.", "For another device on the network enable LAN and open the port in the firewall.", "The server respects the account lock: while the app is locked, /v1/* returns 503 and /health reports locked:true.", "API limits: 8 MB body, 8 concurrent connections, 120 requests/min per IP, prompt up to 1,000,000 characters. Details in API.md."], "a": {"act": "settings", "label": "Configure API"}}, {"t": "Public access", "p": "The API can be exposed to the internet through a tunnel — no open ports, no card.", "li": ["In Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, zrok as the backup channel.", "The script writes the URL to Download/FunaFiles/tunnel.txt; the app reads it with the From file button on the API page.", "One origin: /v1/* is the API, /updates/latest.json is the manifest, /updates/FunaChat.apk is the signed APK.", "The fk-… key is required; the limit is 120 requests/min per IP, and behind a tunnel the real client IP is used.", "Update log → Check for updates shows a new version and a Download button.", "The public API cannot run file tools, funa-bridge or ADB.", "Details and the stable domain — tunnel/README.md."]}, {"t": "Context and compaction", "p": "Long chats do not break — older parts are compacted automatically.", "li": ["Settings → “Chat & AI” → “Context limit”: 60K, 128K, 256K, 512K or 1M tokens; the default is 1M (DeepSeek V4.1 Flash).", "Settings show how much space is used.", "Compaction keeps the essence and drops repetition instead of cutting blindly.", "A new chat always starts with a clean context plus memory cards.", "If the model “forgot” a detail, repeat it or save it as a memory card."]}, {"t": "Security and privacy", "p": "Tokens are encrypted with AES-256-GCM backed by the Android Keystore.", "li": ["The DeepSeek password is never stored and never sent to the app — the site handles it.", "Tokens and cookies never reach the logs or reports.", "App lock uses its own local password (PBKDF2); no DeepSeek password is needed for it.", "The lock password belongs to the account: adding another account does not disable the first one's protection.", "Unlocking is per account too; a cold start closes every unlocked session.", "Memory, folders and sessions live only on the phone.", "Deleting an account removes its token, password, memory, folders and drafts."]}, {"t": "DeepSeek limits and errors", "p": "DeepSeek throttles frequent requests and suspicious sign-ins — that is its protection, not an app bug.", "li": ["401 — the token expired: sign in via the site again.", "Codes 40303/40304 — DeepSeek asks you to confirm you are human: open the site with the “Complete the check” button, send any message and pass the captcha, then tap “Import” and retry.", "429 — too frequent: wait until the server releases the limit.", "“New device” / risk — exactly why sign-in goes through the site, not a native request.", "The site may ask for a captcha or an email code — that is normal.", "Accounts without a password (Google) work only through a site session."]}, {"t": "Diagnostics and reports", "p": "If something breaks, open “Help & logs” first.", "li": ["Each item has a state: ✓ fine, ! attention, × problem.", "The action button next to it jumps straight to the right setting.", "A “Report” contains the version, device, diagnostics and the last 300 log lines.", "Logs can be previewed before sending; they contain no tokens.", "“Diagnostic data” is an anonymised daily snapshot (on by default); a Termux relay sends it to Telegram, the token is not in the APK."], "a": {"act": "help", "label": "Open diagnostics"}}, {"t": "Tips", "p": "Small things that save time.", "li": ["State the task concretely: goal, format, constraints.", "Ask for a file (“make a PDF”) and you get a document, not a wall of text.", "For repeating facts use a memory card instead of a new chat every time.", "Split long research into chats grouped in folders.", "Pin important sessions so you do not hunt for them.", "If an answer is cut off, say “continue” — the model keeps the context."]}], "ru": [{"t": "Быстрый старт", "p": "Пять шагов от установки до первого чата.", "li": ["1. На экране входа нажми «Войти через сайт DeepSeek» или вставь «Ключ сессии».", "2. Разреши «Управление всеми файлами» — иначе доступны только Download/FunaFiles.", "3. Настройки → «Аккаунт и безопасность» → «Проверить» — статус должен быть активным.", "4. Напиши первое сообщение в поле внизу.", "5. Включи блокировку приложения в Настройках, если телефон не всегда под рукой."], "a": {"act": "login", "label": "Войти"}}, {"t": "Вход и аккаунты", "p": "Идентичность приложения — активный аккаунт DeepSeek. Локальных профилей больше нет.", "li": ["Основной путь — «Войти через сайт DeepSeek»: пароль, капчу и код обрабатывает сайт, в приложение попадает только токен сессии.", "«Ключ сессии» — вставить готовый Bearer-токен или строку cookie от chat.deepseek.com.", "«Импорт session.json» — старый формат экспорта (токен + uid + контакты).", "Несколько аккаунтов: Настройки → «Аккаунт и безопасность» → «Добавить аккаунт»; переключение меняет, от чьего имени идут запросы.", "Память, папки и сессии изолированы по аккаунту: разные аккаунты не видят данные друг друга."], "a": {"act": "login", "label": "Ко входу"}}, {"t": "Чат: основы", "p": "Обычный чат с Markdown, таблицами, кодом и формулами KaTeX — всё рендерится офлайн.", "li": ["Enter в поле ввода — отправить (Shift+Enter — новая строка).", "Во время ответа Enter или кнопка отправки ставят сообщение в очередь. Очередь можно переставлять, редактировать и очищать; после ответа она запускается сама, а «Стоп» ставит её на паузу.", "Кнопка «Стоп» останавливает генерацию, полученный текст остаётся.", "Сообщения ИИ не редактируются — история всегда соответствует тому, что реально пришло.", "Тап по сообщению ИИ или кнопка ⋯ — копировать, перегенерировать или продолжить; тап по своему — редактировать.", "Кнопка справа внизу возвращает к последнему сообщению; если прокрутить чат вверх во время ответа, автопрокрутка выключается и текст больше не дёргает экран."], "a": {"act": "newchat", "label": "Новый чат"}}, {"t": "Время, версии и статистика", "p": "Под каждым сообщением видна дата, а у ответа ИИ — сколько времени он работал. У правок и перегенераций есть переключатель версий.", "li": ["Время по часам телефона: сегодня — только часы и минуты, у старых — дата.", "Время у ответа — длительность этого раунда; полное время запроса с инструментами видно в статистике.", "Изменил раннее сообщение? Под ним появится ‹ 1/2 › — возврат к старой версии восстанавливает и хвост чата под ней.", "То же для «Сгенерировать ещё раз»: каждая регенерация становится отдельной версией.", "Версии хранятся на сервере DeepSeek и восстанавливаются после перезапуска (для последних 16 сообщений).", "Настройки → «Статистика ИИ»: запросы, ответы, остановки, общее и среднее время, оценка токенов, правки, регенерации, инструменты и ошибки.", "Статистика считается для активного аккаунта; «Сбросить» очищает только её."]}, {"t": "Файлы и вложения", "p": "Скрепка в поле ввода добавляет файл к сообщению.", "li": ["Ограничение на один файл — 50 МБ; большие изображения сжимаются перед отправкой.", "Поддерживаются тексты, PDF, DOCX, таблицы, изображения; содержимое читается и передаётся модели.", "Рабочая папка инструментов — /sdcard/Download/FunaFiles.", "Экспорт документов и памяти — /sdcard/Download/FunaFiles/exports.", "Файлы вне Download доступны только с разрешением «Управление всеми файлами»."]}, {"t": "Инструменты модели", "p": "Модель может работать с файлами и командами, а не только отвечать текстом.", "li": ["read — прочитать файл; write/append — создать или дописать; edit — точечная замена.", "list/ls — содержимое папки; sh/bash/termux — команда через мост терминала (Termux/ReTerminal).", "doc/document — создать PDF или DOCX из заголовка и текста.", "Встроенные: time, calc, convert, random, base64, hash, skill — работают без сети; skill отдаёт инструкции docx/pdf/design/docs.", "Каждый вызов показывается отдельной карточкой; её можно свернуть или развернуть."], "a": {"act": "help", "label": "Диагностика"}}, {"t": "funa-bridge: как подключить", "p": "funa-bridge — небольшой скрипт в терминале, который выполняет команды FunaChat и возвращает вывод. Работает в Termux и ReTerminal. Без него доступны только файловые инструменты.", "li": ["1. Установи терминал из F-Droid: Termux или ReTerminal. Версия Termux из Google Play устарела и не работает на Android 12+.", "2. Открой этот раздел и нажми «Сохранить скрипт» — файл появится в /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, затем bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — termux-setup-storage там не нужен.", "5. Оставь сессию терминала открытой: в Termux добавь termux-wake-lock, в ReTerminal отключи для него оптимизацию батареи.", "6. Проверка: «Помощь и логи» → «Очередь Termux доступна» (или ReTerminal), а в чате — команда sh echo ok.", "Очередь команд лежит в /sdcard/Download/FunaQueue — её должны видеть и FunaChat, и терминал.", "Если /sdcard не видно: в Termux повтори termux-setup-storage, в ReTerminal разреши доступ к файлам в настройках Android.", "Скрипт v11 портативный: сам находит sh, обходится без flock и timeout — работает и в Alpine, и в системной оболочке. Вывод команды публикуется атомарно, поэтому фоновые процессы не ломают маркер завершения."], "a": {"act": "bridge", "label": "Сохранить скрипт"}}, {"t": "Память", "p": "Карточки знаний добавляются в системный промт в каждой новой сессии.", "li": ["Меню → «Память» → «+» → заголовок, текст, теги → «Сохранить».", "Карточку можно выключить переключателем, не удаляя.", "В промт попадает до 3000 символов — важное пиши коротко.", "Экспорт/импорт — JSON, удобно переносить между устройствами.", "Карточки принадлежат активному аккаунту; старые без владельца забирает первый аккаунт."], "a": {"act": "memory", "label": "Открыть память"}}, {"t": "Папки, поиск и сессии", "p": "Чатов может быть много — их можно группировать и искать.", "li": ["Боковое меню: поиск по названию, фильтр «Все / Без папки / папка».", "Долгое нажатие на папке — переименовать; «+» — создать.", "Меню сессии (⋮) — закрепить, переименовать, переместить в папку, удалить.", "Закреплённые сессии всегда сверху списка.", "Поиск внутри чата — кнопка лупы в верхней панели."]}, {"t": "Субагенты", "p": "Для сложных задач модель запускает помощников параллельно.", "li": ["Одновременно работает до 4 субагентов, глубина вложенности — 2.", "У каждого субагента свой блок с прогрессом и кнопкой остановки.", "Результат приходит отдельным сообщением в чат.", "В локальном API субагент выполняется синхронно в рамках запроса."]}, {"t": "Артефакты, PDF и DOCX", "p": "Большие результаты можно получить файлом или интерактивным артефактом.", "li": ["HTML-артефакт открывается на весь экран и работает офлайн.", "Артефакт работает в песочнице: без доступа к файлам, буферу и мосту приложения.", "PDF и DOCX генерируются на телефоне без внешних сервисов.", "Документом можно сразу поделиться или сохранить в Download/FunaFiles.", "Готовые файлы видны в файловом менеджере приложения."]}, {"t": "Навыки ИИ", "p": "Перед созданием документа модель читает встроенную инструкцию — поэтому PDF, DOCX и страницы получаются аккуратными.", "li": ["Навыки: docx (Word), pdf, design (HTML-артефакт) и docs (документация).", "В чате достаточно попросить «сделай PDF» — агент сам вызовет skill и соблюдёт правила.", "В локальном API есть инструмент skill с теми же инструкциями.", "Навыки лежат в assets/skills/<название>.<язык>.md и не требуют сети.", "Если модель забыла — повтори просьбу или назови навык."], "a": {"act": "newchat", "label": "К чату"}}, {"t": "Локальный API", "p": "OpenAI-совместимый сервер работает прямо на телефоне — для других приложений и агентов.", "li": ["Адрес по умолчанию: http://127.0.0.1:8787, ключ вида fk-… (Настройки → «Сеть и API» → API key).", "Эндпоинты: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. Ключ нужен для всех, даже для /health.", "Пример: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Привет\"}]}'", "Модели: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. Неизвестный id мапится на модель из настроек; thinking/search можно передать в теле запроса.", "Для другого устройства в сети включи LAN и открой порт в фаерволе.", "Сервер соблюдает блокировку аккаунта: пока приложение заблокировано, /v1/* отдаёт 503, а /health — locked:true.", "Лимиты API: тело до 8 МБ, 8 одновременных соединений, 120 запросов/мин с одного IP, промт до 1 000 000 символов. Детали — в API.md."], "a": {"act": "settings", "label": "Настроить API"}}, {"t": "Публичный доступ", "p": "API можно открыть в интернет через туннель — без открытых портов и без карты.", "li": ["В Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, резервный канал — zrok.", "Скрипт пишет адрес в Download/FunaFiles/tunnel.txt, приложение читает его кнопкой «Из файла» на странице API.", "Один origin: /v1/* — API, /updates/latest.json — манифест обновлений, /updates/FunaChat.apk — подписанный APK.", "Ключ fk-… обязателен; лимит 120 запросов/мин на IP, за туннелем считается реальный IP клиента.", "История обновлений → «Проверить обновления» покажет новую версию и кнопку «Скачать».", "Публичный API не выполняет файловых инструментов, funa-bridge и ADB.", "Детали и стабильный домен — tunnel/README.md."]}, {"t": "Контекст и сжатие", "p": "Длинные чаты не обрываются — старые части сжимаются автоматически.", "li": ["Настройки → «Чат и ИИ» → «Лимит контекста»: 60K, 128K, 256K, 512K или 1M токенов; по умолчанию — 1M (DeepSeek V4.1 Flash).", "В настройках видно, сколько места занято.", "Сжатие сохраняет суть и отбрасывает повторы, а не режет наугад.", "Новый чат всегда начинается с чистым контекстом и карточками памяти.", "Если модель «забыла» деталь — повтори её или добавь карточку памяти."]}, {"t": "Безопасность и приватность", "p": "Токены шифруются AES-256-GCM ключом Android Keystore.", "li": ["Пароль DeepSeek не сохраняется и не передаётся приложению — его обрабатывает сайт.", "Токены и cookie не попадают в логи и отчёты.", "Блокировка приложения — отдельный локальный пароль (PBKDF2); пароль DeepSeek для неё не нужен.", "Пароль блокировки принадлежит аккаунту: добавление другого аккаунта не отключает защиту первого.", "Разблокировка тоже отдельная для каждого аккаунта; холодный старт закрывает все сессии.", "Данные памяти, папок и сессий живут только на телефоне.", "Удаление аккаунта убирает его токен, пароль, память, папки и черновики."]}, {"t": "Лимиты и ошибки DeepSeek", "p": "DeepSeek ограничивает частые запросы и подозрительные входы — это его защита, не баг приложения.", "li": ["401 — токен просрочен: войди через сайт снова.", "Коды 40303/40304 — DeepSeek просит подтвердить, что ты человек: открой сайт кнопкой «Пройти проверку», отправь любое сообщение и пройди капчу, потом нажми «Импортировать» и повтори запрос.", "429 — слишком часто: подожди, пока сервер отпустит лимит.", "«Новое устройство» / риск — именно поэтому вход идёт через сайт, а не нативным запросом.", "Сайт может требовать капчу или код из письма — это нормально.", "Аккаунты без пароля (Google) поддерживаются только через сессию сайта."]}, {"t": "Диагностика и отчёты", "p": "Если что-то не работает — сначала открой «Помощь и логи».", "li": ["У каждого пункта есть состояние: ✓ хорошо, ! внимание, × проблема.", "Кнопка действия рядом ведёт сразу к нужной настройке.", "«Отчёт» содержит версию, устройство, диагностику и последние 300 строк лога.", "Логи можно посмотреть перед отправкой; токенов там нет.", "«Диагностические данные» — обезличенный снимок раз в сутки (по умолчанию включён); отправляет Termux-релей в Telegram, токен в APK не входит."], "a": {"act": "help", "label": "Открыть диагностику"}}, {"t": "Советы", "p": "Мелочи, которые экономят время.", "li": ["Формулируй задачу конкретно: цель, формат, ограничения.", "Проси файл («сделай PDF») — получишь документ, а не простыню текста.", "Для повторяющихся фактов — карточка памяти, а не новый чат каждый раз.", "Долгие исследования лучше разбивать на чаты с отдельными папками.", "Закрепляй важные сессии, чтобы не искать их в списке.", "Если ответ оборвался — «Продолжай», модель помнит контекст."]}]};
+const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять кроків від установки до першого чату.", "li": ["1. На екрані входу натисни «Увійти через сайт DeepSeek» або встав «Ключ сесії».", "2. Дозволь «Керування всіма файлами» — інакше доступні лише Download/FunaFiles.", "3. Налаштування → «Акаунт і безпека» → «Перевірити» — має бути статус «активний».", "4. Напиши перше повідомлення у полі внизу.", "5. Увімкни блокування застосунку в Налаштуваннях, якщо телефон не завжди під рукою."], "a": {"act": "login", "label": "Увійти"}}, {"t": "Вхід і акаунти", "p": "Ідентичність застосунку — активний акаунт DeepSeek. Локальних профілів більше немає.", "li": ["Основний шлях — «Увійти через сайт DeepSeek»: пароль, капча й код обробляються на сайті, у застосунок потрапляє лише токен сесії.", "«Ключ сесії» — вставити готовий Bearer-токен або рядок cookie від chat.deepseek.com.", "«Імпорт session.json» — старий формат експорту (токен + uid + контакти).", "Кілька акаунтів: Налаштування → «Акаунт і безпека» → «Додати акаунт»; перемикання змінює, від чийого імені йдуть запити.", "Пам'ять, папки й сесії ізольовані за акаунтом: різні акаунти не бачать дані один одного."], "a": {"act": "login", "label": "До входу"}}, {"t": "Чат: основи", "p": "Звичайний чат із Markdown, таблицями, кодом і формулами KaTeX — усе рендериться офлайн.", "li": ["Enter у полі введення — надіслати (Shift+Enter — новий рядок).", "Під час відповіді Enter або кнопка надсилання ставлять повідомлення в чергу. Чергу можна переставляти, редагувати й чистити; після відповіді вона запускається сама, а «Стоп» ставить її на паузу.", "Кнопка «Стоп» зупиняє генерацію, вже отриманий текст лишається.", "Повідомлення ШІ не редагуються — історія завжди відповідає тому, що реально прийшло.", "Тап по повідомленню ШІ або кнопка ⋯ — копіювати, перегенерувати чи продовжити; тап по своєму — редагувати.", "Кнопка внизу справа повертає до останнього повідомлення; якщо прокрутити чат угору під час відповіді, автопрокрутка вимикається й текст більше не смикає екран."], "a": {"act": "newchat", "label": "Новий чат"}}, {"t": "Час, версії та статистика", "p": "Під кожним повідомленням видно дату, а біля відповіді ШІ — скільки часу він працював. Редаговані повідомлення й перегенерації мають перемикач версій.", "li": ["Час показується за годинником телефона: сьогодні — лише години й хвилини, давніші — дата.", "Час біля відповіді — тривалість цього раунду; повний час запиту з інструментами видно в статистиці.", "Змінив перше повідомлення? Під ним зʼявиться ‹ 1/2 › — повернення до старої версії відновлює і хвіст чату, що йшов під нею.", "Те саме для «Згенерувати ще раз»: кожна регенерація стає окремою версією.", "Версії зберігаються на сервері DeepSeek і відновлюються після перезапуску (для останніх 16 повідомлень).", "Налаштування → «Статистика ШІ»: запити, відповіді, зупинки, загальний і середній час, оцінка токенів, правки, регенерації, інструменти й помилки.", "Статистика рахується для активного акаунта; «Скинути» очищає лише її."]}, {"t": "Файли й вкладення", "p": "Скріпка в полі введення додає файл до повідомлення.", "li": ["Обмеження на один файл — 50 МБ; великі зображення стискаються перед відправкою.", "Підтримуються тексти, PDF, DOCX, таблиці, зображення; вміст читається й передається моделі.", "Робоча тека інструментів — /sdcard/Download/FunaFiles.", "Експорт документів і пам'яті — /sdcard/Download/FunaFiles/exports.", "Файли поза Download доступні лише з дозволом «Керування всіма файлами»."]}, {"t": "Інструменти моделі", "p": "Модель може працювати з файлами й командами, а не лише відповідати текстом.", "li": ["read — прочитати файл; write/append — створити або дописати; edit — точкова заміна.", "list/ls — вміст теки; sh/bash/termux — команда через міст термінала (Termux/ReTerminal).", "doc/document — створити PDF або DOCX із заголовком і текстом.", "Вбудовані: time, calc, convert, random, base64, hash, skill — працюють без мережі; skill віддає інструкції docx/pdf/design/docs.", "Кожен виклик показується окремою карткою; її можна згорнути або розгорнути."], "a": {"act": "help", "label": "Діагностика"}}, {"t": "funa-bridge: як підключити", "p": "funa-bridge — невеликий скрипт у терміналі, який виконує команди FunaChat і повертає вивід. Працює у Termux і ReTerminal. Без нього доступні лише файлові інструменти.", "li": ["1. Постав термінал з F-Droid: Termux або ReTerminal. Версія Termux із Google Play застаріла й не працює з Android 12+.", "2. Відкрий цей розділ і натисни «Зберегти скрипт» — файл зʼявиться у /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, потім bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — termux-setup-storage там не потрібен.", "5. Залиш сесію термінала відкритою: у Termux додай termux-wake-lock, у ReTerminal вимкни для нього оптимізацію батареї.", "6. Перевірка: «Допомога й логи» → «Черга Termux доступна» (або ReTerminal), а в чаті — команда sh echo ok.", "Черга команд лежить у /sdcard/Download/FunaQueue — її мають бачити і FunaChat, і термінал.", "Якщо /sdcard не видно: у Termux повтори termux-setup-storage, у ReTerminal дозволь доступ до файлів у налаштуваннях Android.", "Скрипт v11 портативний: сам знаходить sh, обходиться без flock і timeout — працює і в Alpine, і в системній оболонці. Вивід команди публікується атомарно, тому фонові процеси не ламають маркер завершення."], "a": {"act": "bridge", "label": "Зберегти скрипт"}}, {"t": "Пам'ять", "p": "Картки знань додаються до системного промту в кожній новій сесії.", "li": ["Меню → «Пам'ять» → «+» → заголовок, текст, теги → «Зберегти».", "Картку можна вимкнути перемикачем, не видаляючи.", "У промт потрапляє до 3000 символів — найважливіше пиши коротко.", "Експорт/імпорт — JSON, зручно переносити між пристроями.", "Картки належать активному акаунту; старі без власника забирає перший акаунт."], "a": {"act": "memory", "label": "Відкрити пам'ять"}}, {"t": "Папки, пошук і сесії", "p": "Чатів може бути багато — їх можна групувати й шукати.", "li": ["Бокова шухляда: пошук по назві, фільтр «Всі / Без папки / папка».", "Довге натискання на папці — перейменувати; «+» — створити.", "Меню сесії (⋮) — закріпити, перейменувати, перемістити в папку, видалити.", "Закріплені сесії завжди зверху списку.", "Пошук всередині чату — кнопка лупи у верхній панелі. Фільтри: усе, я, ШІ, діалог, без думок, без інструментів, інструменти, думки."]}, {"t": "Субагенти", "p": "Для складних задач модель запускає помічників паралельно.", "li": ["Одночасно працює до 4 субагентів, глибина вкладеності — 2.", "Задачі понад ліміт (до 12) чекають у черзі й стартують автоматично.", "На картці видно крок, кількість інструментів і поточний інструмент.", "Кнопка на картці зупиняє задачу, «Ще раз» повторює невдалу чи зупинену.", "Кнопка «Субагенти: N · стоп» над чатом зупиняє всі одразу.", "Вікно помічника — повноцінний чат: Markdown, згортувані інструменти й мислення, копіювання.", "Модель може передати субагенту context із фактами, обмеженнями й шляхами.", "Результат повертається окремим повідомленням у чат.", "У локальному API субагент виконується синхронно в межах запиту."]}, {"t": "Артефакти, PDF і DOCX", "p": "Великі результати можна отримати як файл або інтерактивний артефакт.", "li": ["HTML-артефакт відкривається на весь екран і виконується офлайн.", "Артефакт працює в пісочниці: без доступу до файлів, буфера й містка застосунку.", "PDF і DOCX генеруються на телефоні без зовнішніх сервісів.", "Документ можна одразу поділитися або зберегти в Download/FunaFiles.", "Готові файли видно у файловому менеджері застосунку."]}, {"t": "Навички ШІ", "p": "Перед створенням документа модель читає вбудовану інструкцію — так PDF, DOCX і сторінки виходять охайними.", "li": ["Навички: docx (Word), pdf, design (HTML-артефакт) і docs (документація).", "У чаті достатньо попросити «зроби PDF» — агент сам викличе skill і дотримається правил.", "У локальному API є інструмент skill із тими самими інструкціями.", "Навички лежать в assets/skills/<назва>.<мова>.md і не потребують мережі.", "Якщо модель забула — повторіть прохання або згадайте назву навички."], "a": {"act": "newchat", "label": "До чату"}}, {"t": "Локальний API", "p": "OpenAI-сумісний сервер працює просто на телефоні — для інших застосунків і агентів.", "li": ["Адреса за замовчуванням: http://127.0.0.1:8787, ключ виду fk-… (Налаштування → «Мережа та API» → API key).", "Ендпоінти: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. Ключ потрібен для всіх, навіть для /health.", "Приклад: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Привіт\"}]}'", "Моделі: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. Невідомий id мапиться на модель із налаштувань; thinking/search можна передати в тілі запиту.", "Для іншого пристрою в мережі увімкни LAN і відкрий порт у фаєрволі.", "Сервер поважає блокування акаунта: поки застосунок заблокований, /v1/* віддає 503, а /health — locked:true.", "Ліміти API: тіло до 8 МБ, 8 одночасних з’єднань, 120 запитів/хв з однієї IP, промт до 1 000 000 символів. Деталі — в API.md."], "a": {"act": "settings", "label": "Налаштувати API"}}, {"t": "Публічний доступ", "p": "API можна відкрити в інтернет через тунель — без відкритих портів і без картки.", "li": ["У Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, резервний канал — zrok.", "Скрипт пише адресу в Download/FunaFiles/tunnel.txt, застосунок читає її кнопкою «З файлу» на сторінці API.", "Один origin: /v1/* — API, /updates/latest.json — маніфест оновлень, /updates/FunaChat.apk — підписаний APK.", "Ключ fk-… обовʼязковий; ліміт 120 запитів/хв на IP, за тунелем рахується справжній IP клієнта.", "Історія оновлень → «Перевірити оновлення» покаже нову версію й кнопку «Завантажити».", "Публічний API не виконує файлових інструментів, funa-bridge і ADB.", "Деталі та стабільний домен — tunnel/README.md."]}, {"t": "Контекст і стиснення", "p": "Довгі чати не обриваються — старі частини стискаються автоматично.", "li": ["Налаштування → «Чат і ШІ» → «Ліміт контексту»: 60K, 128K, 256K, 512K або 1M токенів; типовий — 1M (DeepSeek V4.1 Flash).", "У налаштуваннях видно, скільки місця зайнято.", "Стиснення зберігає суть і відкидає повтори, а не обрізає навмання.", "Новий чат завжди починається з чистим контекстом і картками пам'яті.", "Якщо модель «забула» деталь — повтори її або додай картку пам'яті."]}, {"t": "Безпека й приватність", "p": "Токени шифруються AES-256-GCM ключем Android Keystore.", "li": ["Пароль DeepSeek не зберігається і не передається застосунку — його обробляє сайт.", "Токени й cookie не потрапляють у логи та звіти.", "Блокування застосунку — окремий локальний пароль (PBKDF2); пароль DeepSeek для нього не потрібен.", "Пароль блокування належить акаунту: додавання іншого акаунта не вимикає захист першого.", "Розблокування теж окреме для кожного акаунта; холодний старт закриває всі сесії.", "Дані пам'яті, папок і сесій живуть лише на телефоні.", "Видалення акаунта прибирає його токен, пароль, памʼять, папки й чернетки."]}, {"t": "Ліміти й помилки DeepSeek", "p": "DeepSeek обмежує часті запити й підозрілі входи — це його захист, не баг застосунку.", "li": ["401 — токен прострочений: увійди через сайт знову.", "Коди 40303/40304 — DeepSeek просить підтвердити, що ти людина: відкрий сайт кнопкою «Пройти перевірку», надішли будь-яке повідомлення й пройди капчу, потім натисни «Імпортувати» й повтори запит.", "429 — занадто часто: зачекай, поки сервер відпустить ліміт.", "«Новий пристрій» / ризик — саме тому вхід іде через сайт, а не нативним запитом.", "Сайт може вимагати капчу або код із листа — це нормально.", "Акаунти без пароля (Google) підтримуються лише через сесію сайту."]}, {"t": "Діагностика й звіти", "p": "Якщо щось не працює — спершу глянь «Допомога й логи».", "li": ["Кожен пункт має стан: ✓ добре, ! увага, × проблема.", "Кнопка дії поруч веде одразу до потрібного налаштування.", "«Звіт» містить версію, пристрій, діагностику й останні 300 рядків логу.", "Логи можна переглянути перед надсиланням; токенів там немає.", "«Діагностичні дані» — знеособлений знімок раз на добу (типово увімкнений); відправляє Termux-релей у Telegram, токен у APK не входить."], "a": {"act": "help", "label": "Відкрити діагностику"}}, {"t": "Поради", "p": "Дрібниці, які економлять час.", "li": ["Формулюй задачу конкретно: мета, формат, обмеження.", "Проси файл («зроби PDF») — отримаєш готовий документ, а не простирадло тексту.", "Для повторюваних фактів — картка пам'яті, а не новий чат щоразу.", "Довгі дослідження краще розбивати на чати з окремими папками.", "Закріплюй важливі сесії, щоб не шукати їх у списку.", "Якщо відповідь обірвалась — «Продовж», модель пам'ятає контекст."]}], "en": [{"t": "Quick start", "p": "Five steps from install to the first chat.", "li": ["1. On the sign-in screen tap “Sign in via the DeepSeek site” or paste a “Session key”.", "2. Grant “All files access” — otherwise only Download/FunaFiles are available.", "3. Settings → “Account & security” → “Verify” — the status should be active.", "4. Type your first message in the composer.", "5. Turn on app lock in Settings if the phone is not always with you."], "a": {"act": "login", "label": "Sign in"}}, {"t": "Sign-in and accounts", "p": "The app's identity is the active DeepSeek account. Local profiles are gone.", "li": ["The main path is “Sign in via the DeepSeek site”: the site handles the password, captcha and code; only the session token reaches the app.", "“Session key” — paste a ready Bearer token or a cookie string from chat.deepseek.com.", "“Import session.json” — the old export format (token + uid + contacts).", "Several accounts: Settings → “Account & security” → “Add account”; switching changes whose identity requests use.", "Memory, folders and sessions are isolated per account: accounts never see each other's data."], "a": {"act": "login", "label": "Open sign-in"}}, {"t": "Chat basics", "p": "A normal chat with Markdown, tables, code and KaTeX formulas — all rendered offline.", "li": ["Enter in the composer sends (Shift+Enter inserts a newline).", "While the model is answering, Enter or the send button queues the message. Reorder, edit or remove queued messages; the queue starts automatically after an answer, and Stop pauses it.", "“Stop” halts generation; the text received so far stays.", "Assistant messages are never edited — history always matches what really arrived.", "Tap an AI message or its ⋯ button to copy, regenerate or continue; tap your own message to edit it.", "The bottom-right button jumps to the latest message; scrolling up while an answer is streaming turns auto-scroll off, so the text no longer pulls the screen down."], "a": {"act": "newchat", "label": "New chat"}}, {"t": "Time, versions and statistics", "p": "Every message shows its date, and an AI answer shows how long the model worked. Edited messages and regenerations get a version switcher.", "li": ["Time follows the phone clock: today shows hours and minutes only, older messages show the date.", "The time next to an answer is that round's duration; the full request time with tools is in the statistics.", "Edited an earlier message? A ‹ 1/2 › switcher appears under it — going back restores the chat tail that followed that version.", "The same applies to “Regenerate”: every regeneration becomes a separate version.", "Versions live on the DeepSeek server and come back after a restart (for the latest 16 messages).", "Settings → “AI usage”: requests, answers, stops, total and average time, token estimate, edits, regenerations, tool calls and errors.", "Statistics are kept per active account; “Reset” clears only them."]}, {"t": "Files and attachments", "p": "The paperclip in the composer attaches a file to the message.", "li": ["One file up to 50 MB; large images are compressed before sending.", "Texts, PDF, DOCX, spreadsheets and images are supported and passed to the model.", "The tools working folder is /sdcard/Download/FunaFiles.", "Document and memory exports go to /sdcard/Download/FunaFiles/exports.", "Files outside Download need the “All files access” permission."]}, {"t": "Model tools", "p": "The model can work with files and commands, not just answer with text.", "li": ["read — read a file; write/append — create or extend; edit — exact replacement.", "list/ls — folder contents; sh/bash/termux — run a command through the terminal bridge (Termux/ReTerminal).", "doc/document — build a PDF or DOCX from a title and text.", "Built-ins: time, calc, convert, random, base64, hash, skill — all offline; skill returns the docx/pdf/design/docs instructions.", "Every call appears as its own card that can be collapsed or expanded."], "a": {"act": "help", "label": "Diagnostics"}}, {"t": "funa-bridge: how to connect", "p": "funa-bridge is a small terminal script that runs FunaChat commands and returns their output. It works in Termux and ReTerminal. Without it only file tools work.", "li": ["1. Install a terminal from F-Droid: Termux or ReTerminal. The Google Play Termux build is outdated and does not work on Android 12+.", "2. Open this section and tap “Save script” — the file appears at /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, then bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — no termux-setup-storage needed there.", "5. Keep the terminal session open: run termux-wake-lock in Termux, and disable battery optimisation for ReTerminal.", "6. Check: “Help & logs” → “Termux queue is writable” (or ReTerminal), and in chat run sh echo ok.", "The command queue lives in /sdcard/Download/FunaQueue — both FunaChat and the terminal must see it.", "If /sdcard is not visible: rerun termux-setup-storage in Termux, or grant file access to ReTerminal in Android settings.", "Script v11 is portable: it finds sh itself and works without flock or timeout — in Alpine and in the system shell alike. Output is published atomically, so background processes cannot break the completion marker."], "a": {"act": "bridge", "label": "Save script"}}, {"t": "Memory", "p": "Knowledge cards are added to the system prompt in every new session.", "li": ["Menu → “Memory” → “+” → title, text, tags → Save.", "A card can be switched off without deleting it.", "Up to 3000 characters reach the prompt — keep the important parts short.", "Export/import is JSON, handy for moving between devices.", "Cards belong to the active account; ownerless old cards go to the first account."], "a": {"act": "memory", "label": "Open memory"}}, {"t": "Folders, search and sessions", "p": "Many chats can be grouped and searched.", "li": ["Side drawer: search by title, filter “All / Unfiled / folder”.", "Long-press a folder to rename; “+” creates one.", "Session menu (⋮) — pin, rename, move to a folder, delete.", "Pinned sessions always sit on top.", "Search inside a chat — the magnifier in the top bar. Filters: all, me, AI, dialogue, no thinking, no tools, tools, thinking."]}, {"t": "Subagents", "p": "For complex tasks the model runs helpers in parallel.", "li": ["Up to 4 subagents at once, nesting depth 2.", "Tasks over the limit (up to 12) wait in a queue and start automatically.", "Each card shows the step, tool count and the current tool.", "The card button stops a task; Retry repeats a failed or stopped one.", "The “Subagents: N · stop” button above the chat stops all at once.", "The helper window is a full chat: Markdown, collapsible tools and thinking, copy.", "The model can pass a context with facts, constraints and paths to a subagent.", "The result arrives as a separate chat message.", "In the local API a subagent runs synchronously within the request."]}, {"t": "Artifacts, PDF and DOCX", "p": "Big results can come back as a file or an interactive artifact.", "li": ["An HTML artifact opens full screen and runs offline.", "Artifacts run sandboxed: no access to files, the clipboard or the app bridge.", "PDF and DOCX are generated on the phone with no external services.", "A document can be shared right away or saved to Download/FunaFiles.", "Finished files are visible in the app's file manager."]}, {"t": "AI skills", "p": "Before creating an artifact the model reads built-in instructions — that is why PDFs, DOCX files and pages come out clean.", "li": ["Skills: docx (Word), pdf, design (HTML artifact) and docs (documentation).", "In chat just ask for a PDF — the agent calls skill itself and follows the rules.", "The local API exposes a skill tool with the same instructions.", "Skills live in assets/skills/<name>.<lang>.md and need no network.", "If the model forgot, repeat the request or mention the skill name."], "a": {"act": "newchat", "label": "Open chat"}}, {"t": "Local API", "p": "An OpenAI-compatible server runs right on the phone — for other apps and agents.", "li": ["Default address: http://127.0.0.1:8787, key looks like fk-… (Settings → “Network & API” → API key).", "Endpoints: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. The key is required for every one, including /health.", "Example: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Hi\"}]}'", "Models: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. An unknown id falls back to the model from Settings; thinking/search can be passed in the request body.", "For another device on the network enable LAN and open the port in the firewall.", "The server respects the account lock: while the app is locked, /v1/* returns 503 and /health reports locked:true.", "API limits: 8 MB body, 8 concurrent connections, 120 requests/min per IP, prompt up to 1,000,000 characters. Details in API.md."], "a": {"act": "settings", "label": "Configure API"}}, {"t": "Public access", "p": "The API can be exposed to the internet through a tunnel — no open ports, no card.", "li": ["In Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, zrok as the backup channel.", "The script writes the URL to Download/FunaFiles/tunnel.txt; the app reads it with the From file button on the API page.", "One origin: /v1/* is the API, /updates/latest.json is the manifest, /updates/FunaChat.apk is the signed APK.", "The fk-… key is required; the limit is 120 requests/min per IP, and behind a tunnel the real client IP is used.", "Update log → Check for updates shows a new version and a Download button.", "The public API cannot run file tools, funa-bridge or ADB.", "Details and the stable domain — tunnel/README.md."]}, {"t": "Context and compaction", "p": "Long chats do not break — older parts are compacted automatically.", "li": ["Settings → “Chat & AI” → “Context limit”: 60K, 128K, 256K, 512K or 1M tokens; the default is 1M (DeepSeek V4.1 Flash).", "Settings show how much space is used.", "Compaction keeps the essence and drops repetition instead of cutting blindly.", "A new chat always starts with a clean context plus memory cards.", "If the model “forgot” a detail, repeat it or save it as a memory card."]}, {"t": "Security and privacy", "p": "Tokens are encrypted with AES-256-GCM backed by the Android Keystore.", "li": ["The DeepSeek password is never stored and never sent to the app — the site handles it.", "Tokens and cookies never reach the logs or reports.", "App lock uses its own local password (PBKDF2); no DeepSeek password is needed for it.", "The lock password belongs to the account: adding another account does not disable the first one's protection.", "Unlocking is per account too; a cold start closes every unlocked session.", "Memory, folders and sessions live only on the phone.", "Deleting an account removes its token, password, memory, folders and drafts."]}, {"t": "DeepSeek limits and errors", "p": "DeepSeek throttles frequent requests and suspicious sign-ins — that is its protection, not an app bug.", "li": ["401 — the token expired: sign in via the site again.", "Codes 40303/40304 — DeepSeek asks you to confirm you are human: open the site with the “Complete the check” button, send any message and pass the captcha, then tap “Import” and retry.", "429 — too frequent: wait until the server releases the limit.", "“New device” / risk — exactly why sign-in goes through the site, not a native request.", "The site may ask for a captcha or an email code — that is normal.", "Accounts without a password (Google) work only through a site session."]}, {"t": "Diagnostics and reports", "p": "If something breaks, open “Help & logs” first.", "li": ["Each item has a state: ✓ fine, ! attention, × problem.", "The action button next to it jumps straight to the right setting.", "A “Report” contains the version, device, diagnostics and the last 300 log lines.", "Logs can be previewed before sending; they contain no tokens.", "“Diagnostic data” is an anonymised daily snapshot (on by default); a Termux relay sends it to Telegram, the token is not in the APK."], "a": {"act": "help", "label": "Open diagnostics"}}, {"t": "Tips", "p": "Small things that save time.", "li": ["State the task concretely: goal, format, constraints.", "Ask for a file (“make a PDF”) and you get a document, not a wall of text.", "For repeating facts use a memory card instead of a new chat every time.", "Split long research into chats grouped in folders.", "Pin important sessions so you do not hunt for them.", "If an answer is cut off, say “continue” — the model keeps the context."]}], "ru": [{"t": "Быстрый старт", "p": "Пять шагов от установки до первого чата.", "li": ["1. На экране входа нажми «Войти через сайт DeepSeek» или вставь «Ключ сессии».", "2. Разреши «Управление всеми файлами» — иначе доступны только Download/FunaFiles.", "3. Настройки → «Аккаунт и безопасность» → «Проверить» — статус должен быть активным.", "4. Напиши первое сообщение в поле внизу.", "5. Включи блокировку приложения в Настройках, если телефон не всегда под рукой."], "a": {"act": "login", "label": "Войти"}}, {"t": "Вход и аккаунты", "p": "Идентичность приложения — активный аккаунт DeepSeek. Локальных профилей больше нет.", "li": ["Основной путь — «Войти через сайт DeepSeek»: пароль, капчу и код обрабатывает сайт, в приложение попадает только токен сессии.", "«Ключ сессии» — вставить готовый Bearer-токен или строку cookie от chat.deepseek.com.", "«Импорт session.json» — старый формат экспорта (токен + uid + контакты).", "Несколько аккаунтов: Настройки → «Аккаунт и безопасность» → «Добавить аккаунт»; переключение меняет, от чьего имени идут запросы.", "Память, папки и сессии изолированы по аккаунту: разные аккаунты не видят данные друг друга."], "a": {"act": "login", "label": "Ко входу"}}, {"t": "Чат: основы", "p": "Обычный чат с Markdown, таблицами, кодом и формулами KaTeX — всё рендерится офлайн.", "li": ["Enter в поле ввода — отправить (Shift+Enter — новая строка).", "Во время ответа Enter или кнопка отправки ставят сообщение в очередь. Очередь можно переставлять, редактировать и очищать; после ответа она запускается сама, а «Стоп» ставит её на паузу.", "Кнопка «Стоп» останавливает генерацию, полученный текст остаётся.", "Сообщения ИИ не редактируются — история всегда соответствует тому, что реально пришло.", "Тап по сообщению ИИ или кнопка ⋯ — копировать, перегенерировать или продолжить; тап по своему — редактировать.", "Кнопка справа внизу возвращает к последнему сообщению; если прокрутить чат вверх во время ответа, автопрокрутка выключается и текст больше не дёргает экран."], "a": {"act": "newchat", "label": "Новый чат"}}, {"t": "Время, версии и статистика", "p": "Под каждым сообщением видна дата, а у ответа ИИ — сколько времени он работал. У правок и перегенераций есть переключатель версий.", "li": ["Время по часам телефона: сегодня — только часы и минуты, у старых — дата.", "Время у ответа — длительность этого раунда; полное время запроса с инструментами видно в статистике.", "Изменил раннее сообщение? Под ним появится ‹ 1/2 › — возврат к старой версии восстанавливает и хвост чата под ней.", "То же для «Сгенерировать ещё раз»: каждая регенерация становится отдельной версией.", "Версии хранятся на сервере DeepSeek и восстанавливаются после перезапуска (для последних 16 сообщений).", "Настройки → «Статистика ИИ»: запросы, ответы, остановки, общее и среднее время, оценка токенов, правки, регенерации, инструменты и ошибки.", "Статистика считается для активного аккаунта; «Сбросить» очищает только её."]}, {"t": "Файлы и вложения", "p": "Скрепка в поле ввода добавляет файл к сообщению.", "li": ["Ограничение на один файл — 50 МБ; большие изображения сжимаются перед отправкой.", "Поддерживаются тексты, PDF, DOCX, таблицы, изображения; содержимое читается и передаётся модели.", "Рабочая папка инструментов — /sdcard/Download/FunaFiles.", "Экспорт документов и памяти — /sdcard/Download/FunaFiles/exports.", "Файлы вне Download доступны только с разрешением «Управление всеми файлами»."]}, {"t": "Инструменты модели", "p": "Модель может работать с файлами и командами, а не только отвечать текстом.", "li": ["read — прочитать файл; write/append — создать или дописать; edit — точечная замена.", "list/ls — содержимое папки; sh/bash/termux — команда через мост терминала (Termux/ReTerminal).", "doc/document — создать PDF или DOCX из заголовка и текста.", "Встроенные: time, calc, convert, random, base64, hash, skill — работают без сети; skill отдаёт инструкции docx/pdf/design/docs.", "Каждый вызов показывается отдельной карточкой; её можно свернуть или развернуть."], "a": {"act": "help", "label": "Диагностика"}}, {"t": "funa-bridge: как подключить", "p": "funa-bridge — небольшой скрипт в терминале, который выполняет команды FunaChat и возвращает вывод. Работает в Termux и ReTerminal. Без него доступны только файловые инструменты.", "li": ["1. Установи терминал из F-Droid: Termux или ReTerminal. Версия Termux из Google Play устарела и не работает на Android 12+.", "2. Открой этот раздел и нажми «Сохранить скрипт» — файл появится в /sdcard/Download/FunaFiles/funa-bridge.sh.", "3. Termux: termux-setup-storage, затем bash ~/storage/downloads/FunaFiles/funa-bridge.sh", "4. ReTerminal: sh /sdcard/Download/FunaFiles/funa-bridge.sh — termux-setup-storage там не нужен.", "5. Оставь сессию терминала открытой: в Termux добавь termux-wake-lock, в ReTerminal отключи для него оптимизацию батареи.", "6. Проверка: «Помощь и логи» → «Очередь Termux доступна» (или ReTerminal), а в чате — команда sh echo ok.", "Очередь команд лежит в /sdcard/Download/FunaQueue — её должны видеть и FunaChat, и терминал.", "Если /sdcard не видно: в Termux повтори termux-setup-storage, в ReTerminal разреши доступ к файлам в настройках Android.", "Скрипт v11 портативный: сам находит sh, обходится без flock и timeout — работает и в Alpine, и в системной оболочке. Вывод команды публикуется атомарно, поэтому фоновые процессы не ломают маркер завершения."], "a": {"act": "bridge", "label": "Сохранить скрипт"}}, {"t": "Память", "p": "Карточки знаний добавляются в системный промт в каждой новой сессии.", "li": ["Меню → «Память» → «+» → заголовок, текст, теги → «Сохранить».", "Карточку можно выключить переключателем, не удаляя.", "В промт попадает до 3000 символов — важное пиши коротко.", "Экспорт/импорт — JSON, удобно переносить между устройствами.", "Карточки принадлежат активному аккаунту; старые без владельца забирает первый аккаунт."], "a": {"act": "memory", "label": "Открыть память"}}, {"t": "Папки, поиск и сессии", "p": "Чатов может быть много — их можно группировать и искать.", "li": ["Боковое меню: поиск по названию, фильтр «Все / Без папки / папка».", "Долгое нажатие на папке — переименовать; «+» — создать.", "Меню сессии (⋮) — закрепить, переименовать, переместить в папку, удалить.", "Закреплённые сессии всегда сверху списка.", "Поиск внутри чата — кнопка лупы в верхней панели. Фильтры: всё, я, ИИ, диалог, без мыслей, без инструментов, инструменты, мысли."]}, {"t": "Субагенты", "p": "Для сложных задач модель запускает помощников параллельно.", "li": ["Одновременно работает до 4 субагентов, глубина вложенности — 2.", "Задачи сверх лимита (до 12) ждут в очереди и стартуют автоматически.", "На карточке видно шаг, количество инструментов и текущий инструмент.", "Кнопка на карточке останавливает задачу, «Ещё раз» повторяет неудачную или остановленную.", "Кнопка «Субагенты: N · стоп» над чатом останавливает все сразу.", "Окно помощника — полноценный чат: Markdown, сворачиваемые инструменты и мышление, копирование.", "Модель может передать субагенту context с фактами, ограничениями и путями.", "Результат приходит отдельным сообщением в чат.", "В локальном API субагент выполняется синхронно в рамках запроса."]}, {"t": "Артефакты, PDF и DOCX", "p": "Большие результаты можно получить файлом или интерактивным артефактом.", "li": ["HTML-артефакт открывается на весь экран и работает офлайн.", "Артефакт работает в песочнице: без доступа к файлам, буферу и мосту приложения.", "PDF и DOCX генерируются на телефоне без внешних сервисов.", "Документом можно сразу поделиться или сохранить в Download/FunaFiles.", "Готовые файлы видны в файловом менеджере приложения."]}, {"t": "Навыки ИИ", "p": "Перед созданием документа модель читает встроенную инструкцию — поэтому PDF, DOCX и страницы получаются аккуратными.", "li": ["Навыки: docx (Word), pdf, design (HTML-артефакт) и docs (документация).", "В чате достаточно попросить «сделай PDF» — агент сам вызовет skill и соблюдёт правила.", "В локальном API есть инструмент skill с теми же инструкциями.", "Навыки лежат в assets/skills/<название>.<язык>.md и не требуют сети.", "Если модель забыла — повтори просьбу или назови навык."], "a": {"act": "newchat", "label": "К чату"}}, {"t": "Локальный API", "p": "OpenAI-совместимый сервер работает прямо на телефоне — для других приложений и агентов.", "li": ["Адрес по умолчанию: http://127.0.0.1:8787, ключ вида fk-… (Настройки → «Сеть и API» → API key).", "Эндпоинты: GET /health, GET /v1/models, GET /v1/models/{id}, GET /v1/tools, POST /v1/chat/completions, POST /v1/completions. Ключ нужен для всех, даже для /health.", "Пример: curl -s http://127.0.0.1:8787/v1/chat/completions -H \"Authorization: Bearer fk-…\" -H \"Content-Type: application/json\" -d '{\"model\":\"default\",\"messages\":[{\"role\":\"user\",\"content\":\"Привет\"}]}'", "Модели: deepseek-chat, deepseek-reasoner, deepseek-expert, deepseek-search. Неизвестный id мапится на модель из настроек; thinking/search можно передать в теле запроса.", "Для другого устройства в сети включи LAN и открой порт в фаерволе.", "Сервер соблюдает блокировку аккаунта: пока приложение заблокировано, /v1/* отдаёт 503, а /health — locked:true.", "Лимиты API: тело до 8 МБ, 8 одновременных соединений, 120 запросов/мин с одного IP, промт до 1 000 000 символов. Детали — в API.md."], "a": {"act": "settings", "label": "Настроить API"}}, {"t": "Публичный доступ", "p": "API можно открыть в интернет через туннель — без открытых портов и без карты.", "li": ["В Termux: cd ~/downloads/funachat/tunnel && ./start.sh — Cloudflare quick tunnel, резервный канал — zrok.", "Скрипт пишет адрес в Download/FunaFiles/tunnel.txt, приложение читает его кнопкой «Из файла» на странице API.", "Один origin: /v1/* — API, /updates/latest.json — манифест обновлений, /updates/FunaChat.apk — подписанный APK.", "Ключ fk-… обязателен; лимит 120 запросов/мин на IP, за туннелем считается реальный IP клиента.", "История обновлений → «Проверить обновления» покажет новую версию и кнопку «Скачать».", "Публичный API не выполняет файловых инструментов, funa-bridge и ADB.", "Детали и стабильный домен — tunnel/README.md."]}, {"t": "Контекст и сжатие", "p": "Длинные чаты не обрываются — старые части сжимаются автоматически.", "li": ["Настройки → «Чат и ИИ» → «Лимит контекста»: 60K, 128K, 256K, 512K или 1M токенов; по умолчанию — 1M (DeepSeek V4.1 Flash).", "В настройках видно, сколько места занято.", "Сжатие сохраняет суть и отбрасывает повторы, а не режет наугад.", "Новый чат всегда начинается с чистым контекстом и карточками памяти.", "Если модель «забыла» деталь — повтори её или добавь карточку памяти."]}, {"t": "Безопасность и приватность", "p": "Токены шифруются AES-256-GCM ключом Android Keystore.", "li": ["Пароль DeepSeek не сохраняется и не передаётся приложению — его обрабатывает сайт.", "Токены и cookie не попадают в логи и отчёты.", "Блокировка приложения — отдельный локальный пароль (PBKDF2); пароль DeepSeek для неё не нужен.", "Пароль блокировки принадлежит аккаунту: добавление другого аккаунта не отключает защиту первого.", "Разблокировка тоже отдельная для каждого аккаунта; холодный старт закрывает все сессии.", "Данные памяти, папок и сессий живут только на телефоне.", "Удаление аккаунта убирает его токен, пароль, память, папки и черновики."]}, {"t": "Лимиты и ошибки DeepSeek", "p": "DeepSeek ограничивает частые запросы и подозрительные входы — это его защита, не баг приложения.", "li": ["401 — токен просрочен: войди через сайт снова.", "Коды 40303/40304 — DeepSeek просит подтвердить, что ты человек: открой сайт кнопкой «Пройти проверку», отправь любое сообщение и пройди капчу, потом нажми «Импортировать» и повтори запрос.", "429 — слишком часто: подожди, пока сервер отпустит лимит.", "«Новое устройство» / риск — именно поэтому вход идёт через сайт, а не нативным запросом.", "Сайт может требовать капчу или код из письма — это нормально.", "Аккаунты без пароля (Google) поддерживаются только через сессию сайта."]}, {"t": "Диагностика и отчёты", "p": "Если что-то не работает — сначала открой «Помощь и логи».", "li": ["У каждого пункта есть состояние: ✓ хорошо, ! внимание, × проблема.", "Кнопка действия рядом ведёт сразу к нужной настройке.", "«Отчёт» содержит версию, устройство, диагностику и последние 300 строк лога.", "Логи можно посмотреть перед отправкой; токенов там нет.", "«Диагностические данные» — обезличенный снимок раз в сутки (по умолчанию включён); отправляет Termux-релей в Telegram, токен в APK не входит."], "a": {"act": "help", "label": "Открыть диагностику"}}, {"t": "Советы", "p": "Мелочи, которые экономят время.", "li": ["Формулируй задачу конкретно: цель, формат, ограничения.", "Проси файл («сделай PDF») — получишь документ, а не простыню текста.", "Для повторяющихся фактов — карточка памяти, а не новый чат каждый раз.", "Долгие исследования лучше разбивать на чаты с отдельными папками.", "Закрепляй важные сессии, чтобы не искать их в списке.", "Если ответ оборвался — «Продолжай», модель помнит контекст."]}]};
 
 /* История обновлений. Порядок — от новых к старым; текущая версия
    подсвечивается по номеру из нативного слоя (S.version). */
 const UPDATES = {
   uk: [
+    {
+      code: "v110", name: "2.42.35", title: "Пошук з фільтрами й чат субагента",
+      p: "Пошук тепер знаходить повідомлення користувача, відповіді, думки та інструменти — окремо або разом.",
+      li: [
+        "Фільтри пошуку: усе, я, ШІ, діалог, без думок, без інструментів, інструменти, думки.",
+        "Збіг у згорнутих думках або картці інструмента розгортається автоматично.",
+        "Відповіді помічника з Markdown, згортуваним мисленням і копіюванням.",
+        "Виклики інструментів згортаються, довгі результати не займають увесь екран.",
+        "Кнопки «Назад», «Стоп» і «Ще раз» у шапці тепер працюють.",
+        "Чат не прокручується сам, якщо ти читаєш вище.",
+        "Картка субагента оновлюється на місці — без мерехтіння й стрибків.",
+        "Адресу телеметрії можна змінити на збірці через FUNA_TELEMETRY_URL."
+      ]
+    },
+    {
+      code: "v109", name: "2.42.34", title: "Субагенти: черга, прогрес і повтор",
+      p: "Помічники більше не губляться, коли їх більше чотирьох, і показують, що саме роблять.",
+      li: [
+        "Задачі понад 4 не відкидаються, а чекають у черзі (до 12) і стартують самі.",
+        "На картці видно крок, кількість інструментів і поточний інструмент.",
+        "Кнопка «Стоп» на картці зупиняє одну задачу, «Ще раз» повторює невдалу.",
+        "Кнопка над чатом зупиняє всіх субагентів одразу.",
+        "Модель може передати субагенту context із фактами й обмеженнями."
+      ]
+    },
     {
       code: "v108", name: "2.42.33", title: "Чат не стрибає вниз під час відповіді",
       p: "Якщо прокрутити історію вгору, поки модель пише, екран більше не смикається до низу.",
@@ -4780,6 +5107,31 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v110", name: "2.42.35", title: "Search filters and subagent chat",
+      p: "Search now finds your messages, answers, thinking and tools — separately or together.",
+      li: [
+        "Search filters: all, me, AI, dialogue, no thinking, no tools, tools, thinking.",
+        "A match inside collapsed thinking or a tool card opens it automatically.",
+        "Helper replies with Markdown, collapsible thinking and copy.",
+        "Tool calls collapse, so long results do not take over the screen.",
+        "The Back, Stop and Retry buttons in the header now work.",
+        "The chat no longer scrolls itself while you read above.",
+        "The subagent card updates in place, without flicker or jumps.",
+        "The telemetry URL can be changed at build time via FUNA_TELEMETRY_URL."
+      ]
+    },
+    {
+      code: "v109", name: "2.42.34", title: "Subagents: queue, progress and retry",
+      p: "Helpers no longer get dropped when there are more than four, and they show what they are doing.",
+      li: [
+        "Tasks over 4 are queued (up to 12) instead of being dropped and start automatically.",
+        "Each card shows the step, tool count and current tool.",
+        "The Stop button on a card stops one task; Retry repeats a failed one.",
+        "The button above the chat stops every subagent at once.",
+        "The model can pass a context with facts and constraints to a subagent."
+      ]
+    },
+    {
       code: "v108", name: "2.42.33", title: "Chat no longer jumps down while answering",
       p: "If you scroll up while the model is writing, the screen no longer snaps back to the bottom.",
       li: [
@@ -4996,6 +5348,31 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v110", name: "2.42.35", title: "Поиск с фильтрами и чат субагента",
+      p: "Поиск теперь находит сообщения пользователя, ответы, мысли и инструменты — отдельно или вместе.",
+      li: [
+        "Фильтры поиска: всё, я, ИИ, диалог, без мыслей, без инструментов, инструменты, мысли.",
+        "Совпадение в свёрнутых мыслях или карточке инструмента раскрывается автоматически.",
+        "Ответы помощника с Markdown, сворачиваемым мышлением и копированием.",
+        "Вызовы инструментов сворачиваются, длинные результаты не занимают весь экран.",
+        "Кнопки «Назад», «Стоп» и «Ещё раз» в шапке теперь работают.",
+        "Чат не прокручивается сам, если ты читаешь выше.",
+        "Карточка субагента обновляется на месте — без мерцания и скачков.",
+        "Адрес телеметрии можно изменить при сборке через FUNA_TELEMETRY_URL."
+      ]
+    },
+    {
+      code: "v109", name: "2.42.34", title: "Субагенты: очередь, прогресс и повтор",
+      p: "Помощники больше не теряются, когда их больше четырёх, и показывают, что именно делают.",
+      li: [
+        "Задачи сверх 4 не отбрасываются, а ждут в очереди (до 12) и стартуют сами.",
+        "На карточке видно шаг, количество инструментов и текущий инструмент.",
+        "Кнопка «Стоп» на карточке останавливает одну задачу, «Ещё раз» повторяет неудачную.",
+        "Кнопка над чатом останавливает всех субагентов сразу.",
+        "Модель может передать субагенту context с фактами и ограничениями."
+      ]
+    },
     {
       code: "v108", name: "2.42.33", title: "Чат не прыгает вниз во время ответа",
       p: "Если прокрутить историю вверх, пока модель пишет, экран больше не дёргается вниз.",
@@ -5621,6 +5998,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pre) { api({ cmd: 'copy', text: pre.textContent }); b.textContent = '✓'; setTimeout(() => b.textContent = t('copy'), 1200); }
       return;
     }
+    const ssb = ev.target.closest('[data-substop]');
+    if (ssb) {
+      const n = ssb.closest('.msg');
+      if (n && n._m) api({ cmd: 'sub_stop', id: n._m.id });
+      return;
+    }
+    const srb = ev.target.closest('[data-subretry]');
+    if (srb) {
+      const n = srb.closest('.msg');
+      if (n && n._m) {
+        srb.disabled = true;
+        srb.textContent = '…';
+        api({ cmd: 'sub_retry', id: n._m.id });
+      }
+      return;
+    }
     const card = ev.target.closest('.toolcard');
     if (card) {
       const sub = card.closest('.subcard');
@@ -5804,6 +6197,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (touching && e.touches.length && e.touches[0].clientY - touchY > 8) S.follow = false;
   }, { passive: true });
   sc.addEventListener('touchend', () => { touching = false; }, { passive: true });
+  $('subChip').onclick = () => {
+    api({ cmd: 'sub_stop_all' });
+    toast(t('subAllStopped'));
+  };
+  $('subBack').onclick = closeSub;
+  $('subStop').onclick = () => {
+    if (S.subView) api({ cmd: 'sub_stop', id: S.subView.id });
+  };
+  $('subRetry').onclick = () => {
+    if (!S.subView) return;
+    $('subRetry').disabled = true;
+    api({ cmd: 'sub_retry', id: S.subView.id });
+  };
+  $('subBody').addEventListener('scroll', () => {
+    S.subFollow = subNearBottom();
+  }, { passive: true });
+  $('subBody').addEventListener('click', (ev) => {
+    const del = ev.target.closest('[data-substop]');
+    if (del) {
+      if (S.subView) api({ cmd: 'sub_stop', id: S.subView.id });
+      return;
+    }
+    const retry = ev.target.closest('[data-subretry]');
+    if (retry) {
+      if (!S.subView) return;
+      retry.disabled = true;
+      api({ cmd: 'sub_retry', id: S.subView.id });
+      return;
+    }
+    const code = ev.target.closest('[data-copy]');
+    if (code) {
+      const pre = code.closest('.code').querySelector('pre');
+      if (pre) {
+        api({ cmd: 'copy', text: pre.textContent });
+        code.textContent = '✓';
+        setTimeout(() => code.textContent = t('copy'), 1200);
+      }
+      return;
+    }
+    const cp = ev.target.closest('[data-subcopy]');
+    if (cp) {
+      const mdNode = cp.closest('.msg').querySelector('.md');
+      api({ cmd: 'copy', text: mdNode ? mdNode.innerText : '' });
+      toast(t('copied'));
+      return;
+    }
+    const head = ev.target.closest('.subcard-tool .toolhead');
+    if (head) {
+      const card = head.closest('.toolcard');
+      if (card) card.classList.toggle('open');
+      return;
+    }
+  });
   $('toBottom').onclick = () => {
     S.follow = true;
     try {
@@ -5977,6 +6423,16 @@ document.addEventListener('DOMContentLoaded', () => {
     else openFind();
   };
   $('findClose').onclick = closeFind;
+  $('findScopes').addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-fscope]');
+    if (!b) return;
+    const sc = b.dataset.fscope;
+    if (!FIND_SCOPES.includes(sc) || sc === S.findScope) return;
+    S.findScope = sc;
+    try { localStorage.setItem('funa.findScope', sc); } catch (e) {}
+    renderFindScopes();
+    if (S.find.trim()) runFind(S.find); else focusHit();
+  });
   $('findInput').addEventListener('input', (e) => runFind(e.target.value));
   $('findInput').addEventListener('keydown', (ev) => {
     if (ev.key === 'Enter') { ev.preventDefault(); stepFind(ev.shiftKey ? -1 : 1); }

@@ -28,19 +28,24 @@ public final class SubTask {
 
     /** Скільки завершених задач тримаємо в памʼяті для перегляду. */
     private static final int KEEP = 40;
-    /** Скільки субагентів можуть працювати одночасно (решта — пізніше). */
+    /** Скільки субагентів можуть працювати одночасно (решта — у черзі). */
     public static final int MAX_RUNNING = 4;
+    /** Скільки задач можуть чекати в черзі, поки працюють інші. */
+    public static final int MAX_QUEUE = 12;
 
     private static final Map<String, SubTask> ALL =
             new LinkedHashMap<String, SubTask>(16, 0.75f, false) {
                 @Override protected boolean removeEldestEntry(Map.Entry<String, SubTask> e) {
-                    return size() > KEEP && !"run".equals(e.getValue().status);
+                    String st = e.getValue().status;
+                    return size() > KEEP && !"run".equals(st) && !"queued".equals(st);
                 }
             };
 
     private static int seq;
     private static Sink sink;
     private static Done doneCb;
+    /** Поки зупиняємо всіх, нові задачі з черги не стартують. */
+    private static boolean stoppingAll;
 
     public static synchronized void setSink(Sink s) { sink = s; }
     public static synchronized void setDone(Done d) { doneCb = d; }
@@ -49,27 +54,80 @@ public final class SubTask {
         return id == null ? null : ALL.get(id);
     }
 
-    public static SubTask start(Store st, String parentSid, String task, String system, int depth) {
-        if (task == null || task.trim().isEmpty()) return null;
+    public static SubTask start(Store st, String parentSid, String task, String system,
+                                String context, int depth) {
+        if (st == null || task == null || task.trim().isEmpty()) return null;
         final SubTask t;
+        boolean queued;
         synchronized (SubTask.class) {
-            int running = 0;
-            for (SubTask x : ALL.values()) if ("run".equals(x.status)) running++;
-            if (running >= MAX_RUNNING) return null;
-            t = new SubTask("sub-" + (++seq), parentSid, task, system, depth, st.activeId());
+            int running = count("run");
+            if (running >= MAX_RUNNING && count("queued") >= MAX_QUEUE) return null;
+            t = new SubTask("sub-" + (++seq), parentSid, task, system, context, depth,
+                    st.activeId());
+            t.runStore = st;
+            queued = running >= MAX_RUNNING;
+            if (queued) {
+                t.status = "queued";
+            } else {
+                t.status = "run";
+                t.runAt = System.currentTimeMillis();
+            }
             ALL.put(t.id, t);
         }
         t.logUser();
         t.emitStart();
+        if (!queued) t.startThread();
+        return t;
+    }
+
+    /** Повторює завершену/зупинену задачу тим самим акаунтом. */
+    public static SubTask retry(Store st, String id) {
+        SubTask old = get(id);
+        if (old == null || st == null) return null;
+        if ("run".equals(old.status) || "queued".equals(old.status)) return null;
+        if (!old.account().equals(st.activeId())) return null;
+        return start(st, old.parentSid, old.task, old.system, old.context, old.depth);
+    }
+
+    private static int count(String status) {
+        int n = 0;
+        for (SubTask x : ALL.values()) if (status.equals(x.status)) n++;
+        return n;
+    }
+
+    private void startThread() {
+        final Store st = runStore;
+        runStore = null;
         Thread th = new Thread(new Runnable() {
             @Override public void run() {
-                t.worker = Thread.currentThread();
-                try { t.execute(st); } finally { t.worker = null; }
+                worker = Thread.currentThread();
+                try { execute(st); } finally { worker = null; }
             }
-        }, "funa-" + t.id);
+        }, "funa-" + id);
         th.setDaemon(true);
         th.start();
-        return t;
+    }
+
+    /** Запускає задачі з черги, коли звільняються слоти. */
+    private static void pump() {
+        List<SubTask> go = new ArrayList<>();
+        synchronized (SubTask.class) {
+            if (stoppingAll) return;
+            int running = count("run");
+            if (running >= MAX_RUNNING) return;
+            for (SubTask c : ALL.values()) {
+                if (running >= MAX_RUNNING) break;
+                if (!"queued".equals(c.status)) continue;
+                c.status = "run";
+                c.runAt = System.currentTimeMillis();
+                go.add(c);
+                running++;
+            }
+        }
+        for (SubTask c : go) {
+            c.emitState();
+            c.startThread();
+        }
     }
 
     public static void stop(String id) {
@@ -78,7 +136,16 @@ public final class SubTask {
     }
 
     public static synchronized void stopAll() {
-        for (SubTask t : new ArrayList<>(ALL.values())) t.stop();
+        List<SubTask> copy = new ArrayList<>(ALL.values());
+        // Спершу черга: інакше потік, що саме завершився, встигне
+        // запустити наступну задачу, поки ми зупиняємо решту.
+        stoppingAll = true;
+        try {
+            for (SubTask t : copy) if ("queued".equals(t.status)) t.stop();
+            for (SubTask t : copy) if ("run".equals(t.status)) t.stop();
+        } finally {
+            stoppingAll = false;
+        }
     }
 
     public static synchronized List<SubTask> running() {
@@ -91,6 +158,8 @@ public final class SubTask {
     public final String parentSid;
     public final String task;
     public final String system;
+    /** Додатковий контекст від батьківської моделі (факти, обмеження). */
+    public final String context;
     public final String title;
     public final int depth;
     /** Аккаунт на момент запуска: после переключения задача уже чужая. */
@@ -103,20 +172,29 @@ public final class SubTask {
     public volatile String error = "";
     public volatile String live = "";
 
+    /** Store для відкладеної задачі; звільняємо одразу після старту. */
+    private volatile Store runStore;
+
     private final JSONArray log = new JSONArray();
     private final StringBuilder think = new StringBuilder();
     private volatile boolean cancelled;
     private volatile Net net;
     private volatile Thread worker;
     private volatile long lastLive;
+    /** Прогрес: раунд, кількість інструментів і поточний інструмент. */
+    public volatile long runAt;
+    public volatile int step;
+    public volatile int tools;
+    public volatile String tool = "";
 
-    private SubTask(String id, String parentSid, String task, String system, int depth,
-                    String accountId) {
+    private SubTask(String id, String parentSid, String task, String system, String context,
+                    int depth, String accountId) {
         this.id = id;
         this.accountId = accountId == null ? "" : accountId;
         this.parentSid = parentSid == null ? "" : parentSid;
         this.task = task == null ? "" : task.trim();
         this.system = system == null ? "" : system;
+        this.context = context == null ? "" : context.trim();
         this.depth = depth;
         this.startedAt = System.currentTimeMillis();
         this.title = makeTitle(this.task);
@@ -127,10 +205,24 @@ public final class SubTask {
 
     public long ms() {
         long end = endedAt > 0 ? endedAt : System.currentTimeMillis();
-        return Math.max(0, end - startedAt);
+        long start = runAt > 0 ? runAt : startedAt;
+        return Math.max(0, end - start);
+    }
+
+    /** Початок саме роботи, без часу в черзі. */
+    private long t0() {
+        return runAt > 0 ? runAt : startedAt;
     }
 
     public void stop() {
+        if ("queued".equals(status)) {
+            status = "stopped";
+            endedAt = System.currentTimeMillis();
+            runStore = null;
+            emitEnd();
+            pump();
+            return;
+        }
         if (!"run".equals(status)) return;
         cancelled = true;
         Net n = net;
@@ -162,7 +254,7 @@ public final class SubTask {
             }
             final Net n = new Net(st, tok);
             net = n;
-            String out = SubAgent.runJob(n, st, task, system, depth, null,
+            String out = SubAgent.runJob(n, st, task, system, context, depth, null,
                     new SubAgent.Listener() {
                         @Override public void onSession(String sid) { }
 
@@ -193,17 +285,25 @@ public final class SubTask {
                                 live = "";
                             }
                             logAssistant(answer, th);
+                            step++;
+                            tool = "";
                             emitLog();
+                            emitState();
                         }
 
                         @Override public void onTool(String name, JSONObject call) {
                             logTool(name, call);
+                            tools++;
+                            tool = name == null ? "" : name;
                             emitLog();
+                            emitState();
                         }
 
                         @Override public void onToolResult(String name, boolean ok, String text) {
                             toolResult(name, ok, text);
+                            tool = "";
                             emitLog();
+                            emitState();
                         }
 
                         @Override public boolean cancelled() { return cancelled; }
@@ -224,6 +324,7 @@ public final class SubTask {
             if (d != null) {
                 try { d.done(this); } catch (Exception ignored) {}
             }
+            pump();
         }
     }
 
@@ -317,8 +418,11 @@ public final class SubTask {
             o.put("result", result);
             o.put("error", error);
             o.put("ms", ms());
-            o.put("t0", startedAt);
+            o.put("t0", t0());
             o.put("live", live);
+            o.put("step", step);
+            o.put("tools", tools);
+            o.put("tool", tool);
             o.put("messages", copyLog());
         } catch (Exception ignored) {}
         return o;
@@ -338,8 +442,11 @@ public final class SubTask {
             o.put("result", r);
             o.put("error", error);
             o.put("ms", ms());
-            o.put("t0", startedAt);
+            o.put("t0", t0());
             o.put("live", live);
+            o.put("step", step);
+            o.put("tools", tools);
+            o.put("tool", tool);
         } catch (Exception ignored) {}
         return o;
     }
@@ -364,7 +471,26 @@ public final class SubTask {
             o.put("title", title);
             o.put("task", task);
             o.put("status", status);
-            o.put("t0", startedAt);
+            o.put("t0", t0());
+            o.put("step", step);
+            o.put("tools", tools);
+            o.put("tool", tool);
+        } catch (Exception ignored) {}
+        emit(o);
+    }
+
+    private void emitState() {
+        JSONObject o = new JSONObject();
+        try {
+            o.put("e", "sub_state");
+            o.put("id", id);
+            o.put("status", status);
+            o.put("step", step);
+            o.put("tools", tools);
+            o.put("tool", tool);
+            o.put("live", live);
+            o.put("ms", ms());
+            o.put("t0", t0());
         } catch (Exception ignored) {}
         emit(o);
     }
@@ -399,6 +525,9 @@ public final class SubTask {
             o.put("result", result);
             o.put("error", error);
             o.put("ms", ms());
+            o.put("t0", t0());
+            o.put("step", step);
+            o.put("tools", tools);
         } catch (Exception ignored) {}
         emit(o);
     }

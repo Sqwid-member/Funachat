@@ -142,6 +142,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .toolhead.run .st{background:#F5C97A;animation:pulse 1.1s infinite}
 .toolhead.done .st{background:var(--ok)}
 .toolhead.error .st{background:var(--err)}
+.toolhead.queued .st{background:#8A93A6;animation:pulse 1.8s infinite}
 @keyframes pulse{50%{opacity:.3}}
 .toolbody{border-top:1px solid var(--outline);padding:9px 12px}
 .toolbody pre{margin:0;max-height:220px;overflow:auto;font:12.2px/1.55 ui-monospace,Menlo,monospace;
@@ -150,13 +151,20 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .toolargs{font:11.5px/1.45 ui-monospace,monospace;color:var(--dim);padding:0 12px 9px;word-break:break-all}
 
 /* subagent card + read-only session */
-.subcard{cursor:pointer}
+.subcard{cursor:pointer;animation:none}
 .subcard:active{background:var(--surf1)}
+.subcard .subid{font:10px/1 ui-monospace,monospace;color:var(--dim);opacity:.7;margin-left:6px}
 .subcard .subtask{padding:0 12px 8px;font-size:11.5px;line-height:1.45;color:var(--dim);
   word-break:break-word;max-height:52px;overflow:hidden}
 .subcard .subprev{padding:0 12px 9px;font-size:12.5px;line-height:1.5;color:var(--var);
   white-space:pre-wrap;word-break:break-word;max-height:120px;overflow:hidden}
 .subcard.done .subprev{max-height:150px}
+.subcard .subprog{padding:0 12px 6px;font-size:11px;color:var(--dim)}
+.subact{font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--outline);
+  color:var(--primary);background:var(--surf1);white-space:nowrap}
+.subact:active{background:var(--surf3)}
+.subact[data-substop]{color:var(--err)}
+.subact:disabled{opacity:.5}
 .subfoot{display:flex;align-items:center;gap:6px;padding:8px 12px;border-top:1px solid var(--outline);
   font-size:11.5px;color:var(--primary)}
 .subfoot .ic{width:14px;height:14px}
@@ -181,6 +189,20 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .subtool pre{margin:0;padding:8px 10px;border-top:1px solid var(--outline);max-height:160px;overflow:auto;
   font:11.5px/1.5 ui-monospace,monospace;white-space:pre-wrap;color:var(--var)}
 .subempty{padding:40px 16px;text-align:center;color:var(--dim);font-size:13px}
+.subbody .msg{margin-bottom:16px}
+.subbody .msg.user .bubble{max-width:86%}
+.subbody .sublive{padding:0;font-size:13.5px;line-height:1.55;color:var(--var)}
+.subbody .sublive:empty::after{content:'…';color:var(--dim)}
+.subbody .name .mact{width:26px;height:26px}
+.av.err{color:var(--err);background:rgba(255,180,171,.12)}
+.subthink{margin-top:9px;border-top:1px dashed var(--outline);padding-top:7px;
+  font-size:12px;line-height:1.5;color:var(--dim)}
+.subthink summary{cursor:pointer;list-style:none;color:var(--dim);user-select:none}
+.subthink summary::-webkit-details-marker{display:none}
+.subthink summary::before{content:'▸';display:inline-block;width:14px;color:var(--dim)}
+.subthink[open] summary::before{content:'▾'}
+.subthinktxt{white-space:pre-wrap;margin-top:6px;max-height:260px;overflow:auto}
+.subcard-tool .toolhead{width:100%;text-align:left}
 
 /* welcome */
 #welcome{display:none;padding:34px 20px 8px}
@@ -418,6 +440,11 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
   display:none;place-items:center;background:var(--surf2);color:var(--on);border:1px solid var(--outline);
   box-shadow:0 6px 20px rgba(0,0,0,.45);z-index:14}
 .toBottom.on{display:grid}
+.subchip{position:fixed;right:16px;bottom:calc(162px + var(--safe-b));display:none;align-items:center;gap:6px;
+  padding:8px 12px;border-radius:18px;background:var(--surf2);color:var(--on);border:1px solid var(--outline);
+  font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.45);z-index:14}
+.subchip.on{display:flex}
+.subchip .ic{width:14px;height:14px;color:var(--err)}
 
 /* pinned badge */
 .sitem .pin{color:var(--primary);display:inline-flex;vertical-align:-3px;margin-right:4px}
@@ -637,13 +664,14 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 /* ============ v9: find bar, regenerate/continue, saved pages ============ */
 
 /* in-chat search */
-.findbar{display:flex;align-items:center;gap:6px;height:0;margin:0 12px;padding:0 6px 0 12px;
-  background:var(--surf1);border:1px solid var(--outline);border-radius:16px;overflow:hidden;opacity:0;
-  visibility:hidden;transition:height .24s cubic-bezier(.2,.8,.2,1),opacity .2s ease,
-  margin .24s ease,visibility 0s linear .24s}
-.findbar.on{height:48px;opacity:1;visibility:visible;margin:2px 12px 6px;
-  transition:height .24s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .24s ease,visibility 0s}
-.findbar>.ic{width:17px;height:17px;color:var(--dim);flex:0 0 17px}
+.findbar{display:flex;flex-direction:column;max-height:0;margin:0 12px;padding:0;
+  background:var(--surf1);border:1px solid var(--outline);border-radius:18px;overflow:hidden;opacity:0;
+  visibility:hidden;transition:max-height .26s cubic-bezier(.2,.8,.2,1),opacity .2s ease,
+  margin .24s ease,visibility 0s linear .26s}
+.findbar.on{max-height:132px;opacity:1;visibility:visible;margin:2px 12px 6px;
+  transition:max-height .26s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .24s ease,visibility 0s}
+.findrow{display:flex;align-items:center;gap:6px;height:48px;padding:0 6px 0 12px;flex:0 0 auto}
+.findrow>.ic{width:17px;height:17px;color:var(--dim);flex:0 0 17px}
 .findinput{flex:1;min-width:0;background:none;border:0;outline:0;font-size:14px;padding:6px 2px;color:var(--on)}
 .findinput::placeholder{color:var(--dim)}
 .fcount{font-size:11.5px;color:var(--dim);white-space:nowrap;padding:0 2px}
@@ -652,6 +680,13 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .fbtn:active{background:var(--surf3);color:var(--on)}
 mark.srch{background:rgba(168,199,250,.24);color:inherit;border-radius:3px;padding:0 1px}
 mark.srch.cur{background:var(--primary);color:var(--on-primary)}
+.findscopes{display:flex;gap:6px;overflow-x:auto;padding:0 10px 10px;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch}
+.findscopes::-webkit-scrollbar{display:none}
+.fscope{flex:0 0 auto;height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--outline);
+  background:transparent;color:var(--var);font-size:12px;white-space:nowrap}
+.fscope.on{background:var(--prim-c);border-color:transparent;color:#DCE8FC;font-weight:600}
+.fscope:active{background:var(--surf3)}
 
 /* assistant actions */
 .mact[data-mregen]{margin-left:2px}

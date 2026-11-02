@@ -816,7 +816,8 @@ public class ApiServer {
                         + "multi-step work or a second opinion.",
                 params(prop("string", "Clear, self-contained task for one subagent."))
                         .put2("tasks", prop("array", "Up to 4 independent tasks to run in parallel."))
-                        .put2("system", prop("string", "Optional custom system prompt for the subagent(s)."))));
+                        .put2("system", prop("string", "Optional custom system prompt for the subagent(s)."))
+                        .put2("context", prop("string", "Optional facts, constraints or file paths the subagents need."))));
         return a;
     }
 

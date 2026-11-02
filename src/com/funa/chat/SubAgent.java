@@ -22,6 +22,7 @@ public final class SubAgent {
     private static final int MAX_ROUNDS = 4;
     private static final long DEADLINE_MS = 240000L;
     private static final int MAX_TASK = 8000;
+    private static final int MAX_CONTEXT = 6000;
     /** Стеля однієї відповіді, яку тримаємо в памʼяті (стрім іде далі). */
     private static final int MAX_REPLY = 1000000;
 
@@ -46,7 +47,9 @@ public final class SubAgent {
                     + "Якщо потрібні файли, термінал, час, калькулятор чи інші дані — виводь рівно один блок:\n"
                     + "```funa\n{\"tool\":\"read\",\"path\":\"...\"}\n```\n"
                     + "і зупинись: клієнт виконає інструмент і надішле результат наступним кроком.\n"
-                    + "Перед створенням DOCX/PDF спершу виклич {\"tool\":\"skill\",\"name\":\"docx\"} або \"pdf\".";
+                    + "Перед створенням DOCX/PDF спершу виклич {\"tool\":\"skill\",\"name\":\"docx\"} або \"pdf\".\n"
+                    + "Фінальний результат має бути самодостатнім: коротко що зроблено, ключові факти й абсолютні шляхи до створених файлів. "
+                    + "Не вигадуй даних, яких не бачив, і не переказуй задачу.";
 
     private static final String SYSTEM_EN =
             "You are a subagent. Complete the subtask autonomously and return ONLY the final result "
@@ -54,7 +57,9 @@ public final class SubAgent {
                     + "If you need files, terminal, time, calculator or other data, output exactly one block:\n"
                     + "```funa\n{\"tool\":\"read\",\"path\":\"...\"}\n```\n"
                     + "then stop: the client runs the tool and sends the result as the next step.\n"
-                    + "Before creating a DOCX/PDF, first call {\"tool\":\"skill\",\"name\":\"docx\"} or \"pdf\".";
+                    + "Before creating a DOCX/PDF, first call {\"tool\":\"skill\",\"name\":\"docx\"} or \"pdf\".\n"
+                    + "Make the final result self-contained: briefly what was done, the key facts and absolute paths to any files you created. "
+                    + "Do not invent data you did not see and do not restate the task.";
 
     private static final String SYSTEM_RU =
             "Ты — субагент. Выполни подзадачу автономно и верни ТОЛЬКО финальный результат "
@@ -62,15 +67,17 @@ public final class SubAgent {
                     + "Если нужны файлы, терминал, время, калькулятор или другие данные — выводи ровно один блок:\n"
                     + "```funa\n{\"tool\":\"read\",\"path\":\"...\"}\n```\n"
                     + "и остановись: клиент выполнит инструмент и пришлёт результат следующим шагом.\n"
-                    + "Перед созданием DOCX/PDF сначала вызови {\"tool\":\"skill\",\"name\":\"docx\"} или \"pdf\".";
+                    + "Перед созданием DOCX/PDF сначала вызови {\"tool\":\"skill\",\"name\":\"docx\"} или \"pdf\".\n"
+                    + "Финальный результат должен быть самодостаточным: коротко что сделано, ключевые факты и абсолютные пути к созданным файлам. "
+                    + "Не выдумывай данных, которых не видел, и не пересказывай задачу.";
 
-    public static String run(Store st, String task, String system, int depth, Progress p)
-            throws Exception {
-        return runJob(new Net(st), st, task, system, depth, p, null);
+    public static String run(Store st, String task, String system, String context, int depth,
+                             Progress p) throws Exception {
+        return runJob(new Net(st), st, task, system, context, depth, p, null);
     }
 
-    public static String runJob(Net net, Store st, String task, String system, int depth,
-                                Progress p, Listener l) throws Exception {
+    public static String runJob(Net net, Store st, String task, String system, String context,
+                                int depth, Progress p, Listener l) throws Exception {
         if (task == null || task.trim().isEmpty()) throw new Exception("subagent: порожня задача");
         if (depth > MAX_DEPTH) throw new Exception("subagent: перевищено глибину вкладення (" + MAX_DEPTH + ")");
         String job = task.trim();
@@ -81,13 +88,19 @@ public final class SubAgent {
         if (sys.length() > 4000) sys = sys.substring(0, 4000);
         if (sys.isEmpty()) sys = defaultSystem(st.lang());
 
+        // Контекст від батьківської моделі: факти, обмеження, шляхи до
+        // файлів. Він не замінює задачу, тому має окрему межу.
+        String ctx = context == null ? "" : context.trim();
+        if (ctx.length() > MAX_CONTEXT) ctx = ctx.substring(0, MAX_CONTEXT);
+
         String sid = null;
         // Аккаунт фиксируем на старте: смена активного аккаунта посреди
         // задачи не должна отправить её инструменты (особенно вложенных
         // субагентов) уже от имени нового аккаунта.
         final String aid = st.activeId();
         long deadline = System.currentTimeMillis() + DEADLINE_MS;
-        String prompt = sys + "\n\nTask:\n" + job;
+        String prompt = sys + (ctx.isEmpty() ? "" : "\n\nContext:\n" + ctx)
+                + "\n\nTask:\n" + job;
         String answer = "";
         try {
             JSONObject sess = net.createSession();

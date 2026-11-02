@@ -16,14 +16,20 @@ for s in docx pdf design docs; do
 done
 
 rm -rf build; mkdir -p build/gen build/classes build/dex
+# Збираємо з копії src: адресу телеметрії можна перевизначити на збірці,
+# не редагуючи робоче дерево.
+cp -a src build/src
+if [ -n "${FUNA_TELEMETRY_URL:-}" ]; then
+  python3 tools/set-endpoint.py build/src/com/funa/chat/Telemetry.java "$FUNA_TELEMETRY_URL"
+fi
 echo "== res =="
 aapt2 compile --dir res -o build/res.zip >/dev/null
 aapt2 link -o build/base.apk -I "$ANDROID" --manifest AndroidManifest.xml -A assets \
   --java build/gen build/res.zip --min-sdk-version 26 --target-sdk-version 34 \
-  --version-code 108 --version-name 2.42.33 >/dev/null
+  --version-code 110 --version-name 2.42.35 >/dev/null
 
 echo "== javac =="
-javac --release 8 -nowarn -cp "$ANDROID" -d build/classes $(find src -name '*.java')
+javac --release 8 -nowarn -cp "$ANDROID" -d build/classes $(find build/src -name '*.java')
 
 echo "== d8 =="
 java -cp "$R8" com.android.tools.r8.D8 --min-api 26 --lib "$ANDROID" --output build/dex \

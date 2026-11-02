@@ -10,6 +10,7 @@
  * лишається на петлі й не слухає LAN.
  */
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -18,6 +19,8 @@ const ROOT = path.resolve(__dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 const APP_PORT = Number(process.env.APP_PORT || 8787);
 const PORT = Number(process.env.PORT || 8790);
+// Якщо телеметрію пускають через цей тунель, а не напряму на воркер.
+const TELEMETRY_UPSTREAM = (process.env.TELEMETRY_UPSTREAM || '').replace(/\/+$/, '');
 
 const TYPES = {
   '.json': 'application/json; charset=utf-8',
@@ -114,6 +117,50 @@ const server = http.createServer((req, res) => {
       'access-control-allow-methods': 'GET,POST,OPTIONS'
     });
     return res.end();
+  }
+
+  // Необовʼязковий міст для телеметрії: APK бачить лише адресу тунелю,
+  // а JSON іде далі на воркер. Токен бота при цьому не потрапляє сюди.
+  if (url === '/v1/telemetry') {
+    if (!TELEMETRY_UPSTREAM) return json(res, 404, { error: 'telemetry upstream is not configured' });
+    if (req.method !== 'POST') return json(res, 405, { error: 'method not allowed' });
+    const chunks = [];
+    let size = 0;
+    let big = false;
+    req.on('data', (b) => {
+      size += b.length;
+      if (size > 16384) { big = true; return; }
+      chunks.push(b);
+    });
+    req.on('end', () => {
+      if (big) return json(res, 413, { error: 'too large' });
+      const u = new URL(TELEMETRY_UPSTREAM + '/v1/telemetry');
+      const headers = {
+        'content-type': 'application/json; charset=utf-8',
+        'content-length': String(size),
+        'x-funa-telemetry': '1'
+      };
+      for (const k of ['cf-connecting-ip', 'x-forwarded-for', 'user-agent']) {
+        if (req.headers[k]) headers[k] = req.headers[k];
+      }
+      const p = https.request({
+        hostname: u.hostname,
+        port: u.port || 443,
+        path: u.pathname + u.search,
+        method: 'POST',
+        headers
+      }, (up) => {
+        res.writeHead(up.statusCode || 502, up.headers);
+        up.pipe(res);
+      });
+      p.setTimeout(15000, () => p.destroy(new Error('telemetry timeout')));
+      p.on('error', () => {
+        if (!res.headersSent) json(res, 502, { error: 'telemetry upstream is unreachable' });
+        else res.end();
+      });
+      p.end(Buffer.concat(chunks));
+    });
+    return;
   }
 
   if (url === '/updates/health') {

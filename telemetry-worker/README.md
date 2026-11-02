@@ -13,7 +13,7 @@
    - `TELEGRAM_BOT_TOKEN` — токен від BotFather (Secret);
    - `TELEGRAM_CHAT_ID` — chat_id діагностики (Secret);
    - опційно `TELEGRAM_SILENT=0` і `MAX_PER_HOUR=30`.
-5. Скопіюйте URL виду `https://funabot.<account>.workers.dev`.
+5. Скопіюйте URL виду `https://<worker>.<account>.workers.dev`.
 
 ### Реакції та /review (потрібен KV)
 
@@ -47,7 +47,7 @@ Webhook уже налаштовується окремо на `/v1/telegram`; с
 Перевірка:
 
 ```bash
-curl -s https://funachat-telemetry.<account>.workers.dev/health
+curl -s https://<worker>.<account>.workers.dev/health
 # {"ok":true,"app":"funachat-telemetry"}
 ```
 
@@ -60,6 +60,34 @@ npx wrangler secret put TELEGRAM_BOT_TOKEN
 npx wrangler secret put TELEGRAM_CHAT_ID
 npx wrangler deploy
 ```
+
+## Прибрати імʼя акаунта з адреси
+
+`<worker>.<account>.workers.dev` містить імʼя акаунта, і воно потрапляє
+в APK. Найнадійніший варіант — custom domain на тому ж воркері:
+
+1. делегувати безкоштовний домен (наприклад `funachat.net.eu.org`) на
+   Cloudflare;
+2. додати в `wrangler.toml`:
+
+```toml
+routes = [
+  { pattern = "telemetry.funachat.net.eu.org", custom_domain = true }
+]
+```
+
+3. `npx wrangler deploy` — сертифікат видасться сам;
+4. зібрати APK:
+
+```bash
+FUNA_TELEMETRY_URL=https://telemetry.funachat.net.eu.org/v1/telemetry \
+  ../build.sh /sdcard/Download/FunaChat.apk
+```
+
+Без домену можна поставити Pages-проксі з `../telemetry-proxy/`: він дає
+`https://<project>.pages.dev/v1/telemetry`, а справжня адреса воркера
+лежить у секреті `UPSTREAM`. Zrok для телеметрії не рекомендується:
+він живе, лише поки живий тунель на телефоні.
 
 ## Що приймається
 

@@ -411,6 +411,7 @@ public class Agent {
     private JSONObject startSubagents(JSONObject call) {
         JSONArray tasks = call.optJSONArray("tasks");
         String system = call.optString("system", "");
+        String context = call.optString("context", "");
         List<String> ids = new ArrayList<>();
         List<String> skipped = new ArrayList<>();
         if (tasks != null && tasks.length() > 0) {
@@ -419,7 +420,7 @@ public class Agent {
             int n = Math.min(tasks.length(), 8);
             for (int i = 0; i < n; i++) {
                 String task = tasks.optString(i, "");
-                SubTask t = SubTask.start(st, sessionId, task, system, 1);
+                SubTask t = SubTask.start(st, sessionId, task, system, context, 1);
                 if (t != null) ids.add(t.id);
                 else skipped.add(firstLine(task));
             }
@@ -427,18 +428,34 @@ public class Agent {
                 skipped.add("… (+" + (tasks.length() - n) + ")");
             }
         } else {
-            SubTask t = SubTask.start(st, sessionId, call.optString("task", ""), system, 1);
+            SubTask t = SubTask.start(st, sessionId, call.optString("task", ""), system,
+                    context, 1);
             if (t != null) ids.add(t.id);
         }
         if (ids.isEmpty()) {
-            boolean empty = (tasks == null || tasks.length() == 0) && call.optString("task", "").trim().isEmpty();
+            boolean empty = tasks == null || tasks.length() == 0
+                    ? call.optString("task", "").trim().isEmpty()
+                    : true;
+            if (tasks != null) {
+                for (int i = 0; i < tasks.length(); i++) {
+                    if (!tasks.optString(i, "").trim().isEmpty()) { empty = false; break; }
+                }
+            }
             return Builtin.err(empty
                     ? tr("subagent: потрібна непорожня задача",
                          "subagent: a non-empty task is required",
                          "subagent: нужна непустая задача")
-                    : tr("subagent: уже працюють " + SubTask.MAX_RUNNING + " субагенти — спробуй пізніше",
-                         "subagent: " + SubTask.MAX_RUNNING + " subagents are already running — try later",
-                         "subagent: уже работают " + SubTask.MAX_RUNNING + " субагента — попробуй позже"));
+                    : tr("subagent: немає вільного слота (працюють " + SubTask.MAX_RUNNING
+                                    + ", черга заповнена) — спробуй пізніше",
+                         "subagent: no free slot (" + SubTask.MAX_RUNNING
+                                    + " running, queue is full) — try later",
+                         "subagent: нет свободного слота (работают " + SubTask.MAX_RUNNING
+                                    + ", очередь заполнена) — попробуй позже"));
+        }
+        int queued = 0;
+        for (String id : ids) {
+            SubTask t = SubTask.get(id);
+            if (t != null && "queued".equals(t.status)) queued++;
         }
         StringBuilder sb = new StringBuilder();
         sb.append(tr("Субагенти запущені у фоні: ", "Subagents started in background: ",
@@ -448,6 +465,12 @@ public class Agent {
                 "Вони працюють паралельно з чатом та один з одним. Результат прийде окремим повідомленням, коли задача завершиться. Не чекай — продовжуй іншу роботу або відповідай користувачу.",
                 "They run in parallel with the chat and with each other. The result will arrive as a separate message when each task finishes. Do not wait — continue with other work or answer the user.",
                 "Они работают параллельно с чатом и друг с другом. Результат придёт отдельным сообщением, когда задача завершится. Не жди — продолжай другую работу или отвечай пользователю."));
+        if (queued > 0) {
+            sb.append("\n").append(tr(
+                    "Задач у черзі: " + queued + ". Вони стартують автоматично, щойно звільниться слот; окремо запускати їх не потрібно.",
+                    "Queued tasks: " + queued + ". They start automatically as soon as a slot frees up; do not start them again.",
+                    "Задач в очереди: " + queued + ". Они стартуют автоматически, как только освободится слот; отдельно запускать их не нужно."));
+        }
         if (!skipped.isEmpty()) {
             sb.append("\n").append(tr(
                     "Не запущено (одночасно працює щонайбільше " + SubTask.MAX_RUNNING + "): ",

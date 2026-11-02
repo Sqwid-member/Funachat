@@ -1131,9 +1131,10 @@ public class Store implements Guard.State {
         "- random {kind, min?, max?, items?, count?} — int/float/uuid/bytes/choice\n" +
         "- base64 {op:\"encode\"|\"decode\", text} — кодування Base64\n" +
         "- hash {algo, text} — md5, sha1, sha256, sha512\n" +
-        "- subagent {task|tasks, system?} — один або до 4 паралельних субагентів автономно виконують підзадачі у фоні; результат прийде окремим повідомленням\n\n" +
+        "- subagent {task|tasks, system?, context?} — один або до 4 паралельних субагентів автономно виконують підзадачі у фоні; решта стає в чергу; результат прийде окремим повідомленням\n\n" +
         "time, calc, convert, random, base64, hash і skill виконуються локально й миттєво. " +
         "subagent — лише для справді незалежних складних підзадач (дослідження, друга думка), не для дрібниць. " +
+        "У context передавай факти, обмеження й шляхи, яких субагент не бачить зі свого чату. " +
         "Після запуску не чекай на результат: продовжуй іншу роботу або відповідай користувачу.\n\n" +
         "Правила: не вигадуй результат інструмента; не пиши блок funa, якщо дія не потрібна; " +
         "для великих файлів читай частинами через offset/limit. Ніколи не видаляй файли без прямого прохання.\n" +
@@ -1169,9 +1170,10 @@ public class Store implements Guard.State {
         "- random {kind, min?, max?, items?, count?} — int/float/uuid/bytes/choice\n" +
         "- base64 {op:\"encode\"|\"decode\", text} — Base64 encoding\n" +
         "- hash {algo, text} — md5, sha1, sha256, sha512\n" +
-        "- subagent {task|tasks, system?} — one or up to 4 parallel subagents complete subtasks autonomously in the background; the result arrives as a separate message\n\n" +
+        "- subagent {task|tasks, system?, context?} — one or up to 4 parallel subagents complete subtasks autonomously in the background; extra tasks are queued; the result arrives as a separate message\n\n" +
         "time, calc, convert, random, base64, hash and skill run locally and instantly. " +
         "subagent is for genuinely independent, complex subtasks (research, a second opinion), not for small things. " +
+        "Pass facts, constraints and paths the subagent cannot see from its own chat in context. " +
         "After starting one, do not wait: continue with other work or answer the user.\n\n" +
         "Rules: never invent tool output; do not emit a funa block when no action is needed; " +
         "for large files read in chunks with offset/limit. Never delete files without an explicit request.\n" +
@@ -1207,9 +1209,10 @@ public class Store implements Guard.State {
         "- random {kind, min?, max?, items?, count?} — int/float/uuid/bytes/choice\n" +
         "- base64 {op:\"encode\"|\"decode\", text} — кодирование Base64\n" +
         "- hash {algo, text} — md5, sha1, sha256, sha512\n" +
-        "- subagent {task|tasks, system?} — один или до 4 параллельных субагентов автономно выполняют подзадачи в фоне; результат придёт отдельным сообщением\n\n" +
+        "- subagent {task|tasks, system?, context?} — один или до 4 параллельных субагентов автономно выполняют подзадачи в фоне; остальные встают в очередь; результат придёт отдельным сообщением\n\n" +
         "time, calc, convert, random, base64, hash и skill выполняются локально и мгновенно. " +
         "subagent — только для действительно независимых сложных подзадач (исследование, второе мнение), не для мелочей. " +
+        "В context передавай факты, ограничения и пути, которых субагент не видит из своего чата. " +
         "После запуска не жди результат: продолжай другую работу или отвечай пользователю.\n\n" +
         "Правила: не выдумывай результат инструмента; не пиши блок funa, если действие не нужно; " +
         "большие файлы читай частями через offset/limit. Никогда не удаляй файлы без прямой просьбы.\n" +

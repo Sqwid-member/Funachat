@@ -69,6 +69,33 @@ cd ~/downloads/funachat/tunnel
 Ліміт безкоштовного тарифу — 5 ГБ/добу, публічний HTTPS, антифішингова
 сторінка для браузерів (API-клієнти її не бачать).
 
+### Телеметрія без імені в адресі
+
+Адреса воркера виглядає як `<worker>.<account>.workers.dev`, і якщо
+`account` — це імʼя, воно потрапляє в APK. Варіанти, від найкращого:
+
+1. **Custom domain на воркері** (безкоштовно, без картки): делегувати
+   `funachat.net.eu.org` на Cloudflare і додати маршрут
+   `telemetry.funachat.net.eu.org` до воркера. Телеметрія працює
+   постійно, бо воркер serverless.
+2. **Cloudflare Pages-проксі**: `telemetry-proxy/` дає нейтральний
+   `https://<project>.pages.dev/v1/telemetry`. Деплой і секрет
+   `UPSTREAM` — у `telemetry-proxy/README.md`.
+3. **zrok** — лише якщо постійно живий агент. Для APK потрібна
+   *резервована* адреса (`zrok reserve`), а не тимчасова з
+   `share public`. Якщо телефон вимкнеться, телеметрія з усіх
+   встановлень не дійде. Щоб пустити через нього, задайте
+   `TELEMETRY_UPSTREAM=https://<worker>.workers.dev` для `proxy.js`
+   і зберіть APK з адресою тунелю.
+
+Після появи робочої адреси:
+
+```bash
+cd ~/downloads/funachat
+FUNA_TELEMETRY_URL=https://telemetry.funachat.net.eu.org/v1/telemetry \
+  ./build.sh /sdcard/Download/FunaChat.apk
+```
+
 ### Cloudflare named tunnel (основний, після EU.org)
 
 ```bash

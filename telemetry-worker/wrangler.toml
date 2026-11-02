@@ -2,6 +2,12 @@ name = "funabot"
 main = "index.js"
 compatibility_date = "2025-06-01"
 
+# Нейтральна адреса без імені акаунта: спершу делегуйте домен на
+# Cloudflare, потім розкоментуйте. TLS-сертифікат видається автоматично.
+# routes = [
+#   { pattern = "telemetry.funachat.net.eu.org", custom_domain = true }
+# ]
+
 # KV для /review і позначок ❤. Binding у dashboard злітає після деплою
 # з GitHub, тому namespace треба тримати тут. Розкоментуйте й впишіть id:
 # [[kv_namespaces]]
