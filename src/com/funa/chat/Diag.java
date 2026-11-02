@@ -171,22 +171,30 @@ public final class Diag {
                 String who = act == null ? "" : act.optString("name", "").trim();
                 if (who.isEmpty()) who = tr(st, "активний акаунт", "active account", "активный аккаунт");
                 boolean expired = !hasToken || (act != null && "expired".equals(act.optString("status", "")));
+                boolean challenge = act != null && "challenge".equals(act.optString("status", ""));
                 StringBuilder sub = new StringBuilder();
                 sub.append(tr(st, "Активний: ", "Active: ", "Активный: ")).append(who);
                 if (expired) sub.append(tr(st, " · сесія прострочена — увійди знову",
                         " · session expired — sign in again",
                         " · сессия истекла — войди снова"));
+                else if (challenge) sub.append(tr(st, " · DeepSeek просить пройти перевірку",
+                        " · DeepSeek asks to complete a check",
+                        " · DeepSeek просит пройти проверку"));
                 else if (au.lock()) sub.append(tr(st, " · блокування паролем увімкнено",
                         " · password lock is on", " · блокировка паролем включена"));
-                add(out, "account", expired ? "warn" : "ok",
+                add(out, "account", expired || challenge ? "warn" : "ok",
                         expired
                                 ? tr(st, "Акаунт DeepSeek прострочено", "DeepSeek account expired",
                                         "Аккаунт DeepSeek просрочен")
+                                : challenge
+                                ? tr(st, "DeepSeek просить перевірку", "DeepSeek asks for a check",
+                                        "DeepSeek просит проверку")
                                 : tr(st, "Акаунт DeepSeek підключено", "DeepSeek account is connected",
                                         "Аккаунт DeepSeek подключён"),
                         sub.toString(),
-                        expired ? "account" : "",
-                        expired ? tr(st, "Увійти", "Sign in", "Войти") : "");
+                        expired ? "account" : (challenge ? "verify" : ""),
+                        expired ? tr(st, "Увійти", "Sign in", "Войти")
+                                : (challenge ? tr(st, "Пройти", "Complete", "Пройти") : ""));
             }
 
             if (!online(c)) {

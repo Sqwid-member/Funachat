@@ -5192,6 +5192,7 @@ function diagAction(id) {
   if (id === 'settings') { closeHelp(); openSettings(); return; }
   if (id === 'report') { previewReport(); return; }
   if (id === 'account') { closeHelp(); openSettings(); openSetCat('account'); return; }
+  if (id === 'verify') { closeHelp(); api({ cmd: 'auth_verify' }); return; }
   api({ cmd: 'diag_action', id });
 }
 
