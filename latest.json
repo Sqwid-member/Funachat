@@ -1,9 +1,9 @@
 {
-  "version": "2.42.26",
-  "code": 101,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v101/FunaChat.apk",
-  "md5": "87c53e5c848dd61591686e04d3184912",
+  "version": "2.42.27",
+  "code": 102,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v102/FunaChat.apk",
+  "md5": "3fa2838a832cb0715c0c7863e650396c",
   "size": 662869,
-  "notes": "Діагностика надсилається напряму на Cloudflare Worker (токен лише в секретах Worker), при помилці — локальна черга для Termux. URL приймача можна змінити в Довідці.",
+  "notes": "Діагностика містить останні 120 рядків логу та текст збою; виправлено час (більше не 1970); адреса приймача прибрана з інтерфейсу; повідомлення обрізається до ліміту Telegram.",
   "date": "2026-11-02"
 }
