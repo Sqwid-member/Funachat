@@ -1,9 +1,9 @@
 {
-  "version": "2.42.24",
-  "code": 99,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v99/FunaChat.apk",
-  "md5": "ccba799a6305638ca77177344b714ea5",
-  "size": 654677,
-  "notes": "Надійніший канал оновлень: перебір джерел (заданий канал → тунель → GitHub raw → jsDelivr), невалідний маніфест більше не зупиняє перевірку.",
+  "version": "2.42.25",
+  "code": 100,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v100/FunaChat.apk",
+  "md5": "5e10e06af1108c0dcd7c2f058d6eb6b8",
+  "size": 658773,
+  "notes": "Діагностична телеметрія: перемикач у Довідці (типово увімкнений), знеособлений звіт раз на добу, Termux-релей telemetry.sh у Telegram, токен поза APK.",
   "date": "2026-11-02"
 }
