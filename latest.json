@@ -1,9 +1,9 @@
 {
-  "version": "2.42.22",
-  "code": 97,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v97/FunaChat.apk",
-  "md5": "a00325104afce4b3266d4919a59c6ad8",
-  "size": 646485,
-  "notes": "Вимкнення публічного доступу (403), ключі fk- + 48 hex, кілька ключів із терміном дії, адреса тунелю лише для читання.",
+  "version": "2.42.23",
+  "code": 98,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v98/FunaChat.apk",
+  "md5": "617e70075ad47bc138f155098a290dbb",
+  "size": 654677,
+  "notes": "Аудит злитих API-ключів: POST /v1/audit/key (info/revoke/notify), секрет пристрою або підпис розробника, журнал і webhook, CLI audit-key.sh.",
   "date": "2026-11-02"
 }
