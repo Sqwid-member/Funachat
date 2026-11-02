@@ -1,9 +1,9 @@
 {
-  "version": "2.42.28",
-  "code": 103,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v103/FunaChat.apk",
-  "md5": "69d8dad43b4c2d0613d02da4d4c6c119",
+  "version": "2.42.29",
+  "code": 104,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v104/FunaChat.apk",
+  "md5": "b16e77afcebece6b883729efe5e55585",
   "size": 662869,
-  "notes": "Діагностика бере останні 150 рядків логу з файлу (історія не губиться після перезапуску), плюс текст збою; розмір підганяється під ліміт.",
+  "notes": "Повідомлення містить підсумок і хвіст логу, повний JSON прикріплюється документом — логи більше не ріжуться лімітом Telegram. Кількість рядків логу рахується правильно.",
   "date": "2026-11-02"
 }
