@@ -341,7 +341,9 @@ cd ~/downloads/funachat
 - показують Toast на пристрої;
 - якщо в налаштуваннях заданий webhook, надсилають туди JSON:
   `{"text":"…","content":"…","message":"…","event":"revoke","key":{…},"owner":{…},"note":"…","ip":"…","ts":…}`.
-  Підходить для ntfy, Slack, Discord та інших простих приймачів.
+  Підходить для ntfy, Slack, Discord та інших простих приймачів. Якщо задано
+  контакт власника, він додається як `chat_id` — це сумісно з Telegram Bot
+  API (`https://api.telegram.org/bot<token>/sendMessage`).
 
 Аудит не працює, коли в застосунку вимкнено **«Дозволити доступ із
 публічної мережі»** (запит із тунелю отримає `403 public_access_disabled`).

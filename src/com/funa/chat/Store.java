@@ -843,6 +843,10 @@ public class Store implements Guard.State {
             body.put("note", note == null ? "" : note);
             body.put("ip", ip == null ? "" : ip);
             body.put("ts", System.currentTimeMillis());
+            // Telegram Bot API принимает chat_id; для ntfy/Slack/Discord
+            // лишнее поле безвредно.
+            String contact = auditContact();
+            if (!contact.isEmpty()) body.put("chat_id", contact);
             byte[] data = body.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
             java.net.HttpURLConnection c = (java.net.HttpURLConnection) u.openConnection();
             c.setConnectTimeout(5000);
