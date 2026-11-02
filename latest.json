@@ -1,9 +1,9 @@
 {
-  "version": "2.42.27",
-  "code": 102,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v102/FunaChat.apk",
-  "md5": "3fa2838a832cb0715c0c7863e650396c",
+  "version": "2.42.28",
+  "code": 103,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v103/FunaChat.apk",
+  "md5": "69d8dad43b4c2d0613d02da4d4c6c119",
   "size": 662869,
-  "notes": "Діагностика містить останні 120 рядків логу та текст збою; виправлено час (більше не 1970); адреса приймача прибрана з інтерфейсу; повідомлення обрізається до ліміту Telegram.",
+  "notes": "Діагностика бере останні 150 рядків логу з файлу (історія не губиться після перезапуску), плюс текст збою; розмір підганяється під ліміт.",
   "date": "2026-11-02"
 }
