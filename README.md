@@ -36,7 +36,9 @@ Android SDK platform 35. Ключ підпису — поза репозитор
 ## Оновлення
 
 `latest.json` у корені `main` — стабільний маніфест (raw.githubusercontent.com
-віддає `Access-Control-Allow-Origin: *`, тому перевірка працює із WebView):
+і jsDelivr віддають `Access-Control-Allow-Origin: *`, тому перевірка працює із
+WebView). Застосунок пробує джерела по черзі: заданий канал → тунель → raw →
+jsDelivr, тож закешований raw не ховає нову версію:
 
 ```json
 {"version":"2.42.24","code":99,"url":"…/FunaChat.apk","md5":"…","size":642389,"notes":"…"}
