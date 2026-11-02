@@ -308,7 +308,7 @@ async function handleCommand(env, update) {
   const from = String((msg.from || {}).id || '');
   const chatId = String((msg.chat || {}).id || '');
   const isPrivateOwner = from === ownerId(env);
-  const inDiagChat = chatId === String(env.TELEGRAM_CHAT_ID || '');
+  const inDiagChat = chatCandidates(env.TELEGRAM_CHAT_ID).includes(chatId);
   if (!isPrivateOwner && !inDiagChat) return;
 
   if (!env.STATE) {
