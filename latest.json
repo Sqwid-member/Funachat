@@ -1,9 +1,9 @@
 {
-  "version": "2.42.25",
-  "code": 100,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v100/FunaChat.apk",
-  "md5": "5e10e06af1108c0dcd7c2f058d6eb6b8",
-  "size": 658773,
-  "notes": "Діагностична телеметрія: перемикач у Довідці (типово увімкнений), знеособлений звіт раз на добу, Termux-релей telemetry.sh у Telegram, токен поза APK.",
+  "version": "2.42.26",
+  "code": 101,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v101/FunaChat.apk",
+  "md5": "87c53e5c848dd61591686e04d3184912",
+  "size": 662869,
+  "notes": "Діагностика надсилається напряму на Cloudflare Worker (токен лише в секретах Worker), при помилці — локальна черга для Termux. URL приймача можна змінити в Довідці.",
   "date": "2026-11-02"
 }
