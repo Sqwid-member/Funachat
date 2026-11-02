@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0F1216">
+<link rel="stylesheet" href="katex/katex.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="4.2" rx="2"/><rect x="4" y="11" width="16" height="4.2" rx="2"/><rect x="4" y="17" width="10" height="2.6" rx="1.3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.4"/><path d="M15 6.6V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h.6"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 4l1.7 4.6L18 10.3l-4.3 1.7L12 16.6l-1.7-4.6L6 10.3l4.3-1.7z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c2.4 2.4 3.6 5 3.6 8s-1.2 5.6-3.6 8c-2.4-2.4-3.6-5-3.6-8S9.6 6.4 12 4z"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2.4h5.5A2.5 2.5 0 0 1 20 9.9v7.6A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5z"/></symbol>
+  <symbol id="i-term" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M7.5 10l2.6 2.4-2.6 2.4M12.5 15h4"/></symbol>
+  <symbol id="i-plan" viewBox="0 0 24 24"><path d="M5 6.5h14M5 12h14M5 17.5h9"/><circle cx="19" cy="17.5" r="1.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 24 24"><path d="M4 6h8M8 6c0 4.5-1.8 8-4 10"/><path d="M6 12c1.4 2.6 3.4 3.8 6 4.4"/><path d="M13.5 20l4-9 4 9M15.2 17h4.6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 4h6l-1 6 3.5 3.5H6.5L10 10z"/><path d="M12 13.5V21"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M5 19h14"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.4" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c.7-3.4 3.3-5.4 6.5-5.4s5.8 2 6.5 5.4"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M16 16l4.2 4.2"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-regen" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8-8a3.3 3.3 0 0 1 4.7 4.7l-8 8a1.7 1.7 0 0 1-2.4-2.4l7.3-7.3"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3.5h7l5 5v12H6z"/><path d="M13 3.5V9h5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4.5 17l4.5-4.5 3.5 3.5 3-3 4 4"/></symbol>
+  <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v6H4V5h6"/></symbol>
+  <symbol id="i-page" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><path d="M3.5 9h17M8 6.8h.01M11 6.8h.01"/></symbol>
+</svg>
+
+<div id="app">
+  <header class="appbar">
+    <button class="ibtn" id="menuBtn" aria-label="menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+    <div class="tbar">
+      <div class="ttl" id="htitle">FunaChat</div>
+      <div class="sub" id="hsub"></div>
+    </div>
+    <button class="ibtn" id="findBtn" aria-label="search"><svg class="ic"><use href="#i-search"/></svg></button>
+    <button class="ibtn" id="memBtn" aria-label="memory"><svg class="ic"><use href="#i-cards"/></svg></button>
+    <button class="ibtn" id="newBtn" aria-label="new chat"><svg class="ic"><use href="#i-add"/></svg></button>
+    <button class="ibtn" id="setBtn" aria-label="settings"><svg class="ic"><use href="#i-tune"/></svg></button>
+  </header>
+
+  <div class="findbar" id="findBar">
+    <svg class="ic"><use href="#i-search"/></svg>
+    <input id="findInput" class="findinput" autocomplete="off" spellcheck="false">
+    <span class="fcount" id="findCount"></span>
+    <button class="fbtn" id="findPrev"><svg class="ic"><use href="#i-up"/></svg></button>
+    <button class="fbtn" id="findNext"><svg class="ic"><use href="#i-up" style="transform:rotate(180deg)"/></svg></button>
+    <button class="fbtn" id="findClose"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+
+  <main id="scroll"><div id="msgs"></div></main>
+
+  <section id="welcome">
+    <div class="wicon"><svg class="ic"><use href="#i-spark"/></svg></div>
+    <h1 data-i18n="welcomeTitle">FunaChat</h1>
+    <p data-i18n="welcomeSub">DeepSeek з інструментами</p>
+    <div class="quick" id="quick"></div>
+  </section>
+
+  <button id="toBottom" class="toBottom" aria-label="bottom"><svg class="ic"><use href="#i-down"/></svg></button>
+
+  <footer id="composer">
+    <div class="editbar" id="editBar">
+      <svg class="ic"><use href="#i-edit"/></svg>
+      <span data-i18n="editing">Редагування повідомлення</span>
+      <span class="grow"></span>
+      <button class="editcancel" id="editCancel" aria-label="cancel"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="queuebar" id="queueBar" role="list" aria-live="polite"></div>
+    <div class="chips">
+      <button class="chip" id="chipThink"><svg class="ic"><use href="#i-spark"/></svg><span data-i18n="thinking"></span></button>
+      <button class="chip" id="chipSearch"><svg class="ic"><use href="#i-globe"/></svg><span data-i18n="search"></span></button>
+      <span class="grow"></span>
+      <button class="chip ghost" id="chipCtx" aria-label="context"><svg class="ic"><use href="#i-expand"/></svg><span id="ctxLabel">0</span></button>
+      <button class="chip ghost" id="chipMem"><svg class="ic"><use href="#i-cards"/></svg><span id="memChipLabel">0</span></button>
+      <span class="hint" id="hint"></span>
+    </div>
+    <div class="attachbar" id="attachBar"></div>
+    <div class="inputbar">
+      <button class="abtn" id="attach" aria-label="attach"><svg class="ic"><use href="#i-clip"/></svg></button>
+      <textarea id="input" rows="1" data-i18n-ph="placeholder"></textarea>
+      <button id="stopBtn" class="fab stopmini" aria-label="stop"><svg class="ic"><use href="#i-stop"/></svg></button>
+      <button id="send" class="fab" disabled><svg class="ic"><use href="#i-send"/></svg></button>
+    </div>
+  </footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<aside id="drawer">
+  <div class="dhead">
+    <div class="ttl" data-i18n="sessions">Sessions</div>
+    <button class="ibtn" id="drawerClose"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+  <button class="dnew" id="drawerNew"><svg class="ic"><use href="#i-add"/></svg><span data-i18n="newChat"></span></button>
+  <div class="dsearch"><input id="sSearch" class="field" data-i18n-ph="searchSessions"></div>
+  <div class="foldrow" id="foldRow"></div>
+  <div class="sessions" id="sessionList"></div>
+  <div class="dfoot">
+    <button class="dfoot-item" id="drawerMem"><svg class="ic"><use href="#i-cards"/></svg><span data-i18n="memory"></span><b id="dfootMem"></b></button>
+    <button class="dfoot-item" id="drawerLang"><svg class="ic"><use href="#i-lang"/></svg><span data-i18n="language"></span><b id="dfootLang"></b></button>
+    <button class="dfoot-item" id="drawerHelp"><svg class="ic"><use href="#i-search"/></svg><span data-i18n="help"></span></button>
+  </div>
+</aside>
+
+<section class="screen intro" id="intro">
+  <div class="introbody">
+    <div class="introhero">
+      <div class="authlogo">F</div>
+      <h1 data-i18n="introTitle"></h1>
+      <p class="muted" data-i18n="introSub"></p>
+    </div>
+    <div class="introsteps">
+      <div class="istep"><b>1</b><div><strong data-i18n="introS1t"></strong><p data-i18n="introS1b"></p></div></div>
+      <div class="istep"><b>2</b><div><strong data-i18n="introS2t"></strong><p data-i18n="introS2b"></p></div></div>
+      <div class="istep"><b>3</b><div><strong data-i18n="introS3t"></strong><p data-i18n="introS3b"></p></div></div>
+      <div class="istep"><b>4</b><div><strong data-i18n="introS4t"></strong><p data-i18n="introS4b"></p></div></div>
+      <div class="istep"><b>5</b><div><strong data-i18n="introS5t"></strong><p data-i18n="introS5b"></p></div></div>
+    </div>
+    <div class="introfoot">
+      <button class="btn filled" id="introStart" data-i18n="introStart"></button>
+      <button class="btn text" id="introSkip" data-i18n="introSkip"></button>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="auth">
+  <header class="appbar">
+    <button class="ibtn" id="authBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" data-i18n="authTitle"></div></div>
+  </header>
+  <div class="sbody authbody">
+    <div class="authhero">
+      <div class="authlogo">D</div>
+      <h2 id="authHead" data-i18n="dsLoginTitle"></h2>
+      <p class="muted small" id="authSub" data-i18n="dsSub"></p>
+    </div>
+
+    <div id="authLogin">
+      <button class="btn filled" id="authSite"><svg class="ic"><use href="#i-globe"/></svg><span data-i18n="authSite"></span></button>
+      <p class="muted small authhint" data-i18n="authSiteHint"></p>
+
+      <button class="btn tonal" id="authKey"><svg class="ic"><use href="#i-upload"/></svg><span data-i18n="authKey"></span></button>
+      <p class="muted small authhint" data-i18n="authKeyHint"></p>
+
+      <div class="authmsg" id="loginMsg"></div>
+      <button class="btn text" id="btnImport"><svg class="ic"><use href="#i-download"/></svg><span data-i18n="import"></span></button>
+      <button class="btn text" id="authDocs" data-i18n="openDocs"></button>
+      <button class="btn text authlater" id="authSkip" data-i18n="authLater"></button>
+    </div>
+
+    <div id="authUnlock" style="display:none">
+      <div class="unlockbox">
+        <input id="uPass" class="field" type="password" data-i18n-ph="authPass"
+               autocomplete="current-password">
+        <div class="authmsg" id="unlockMsg"></div>
+        <button class="btn filled" id="unlockBtn" data-i18n="authUnlock"></button>
+        <button class="btn text" id="authSwitch" data-i18n="authSwitch"></button>
+        <button class="btn text" id="unlockForgot" data-i18n="lockForget"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="settings">
+  <header class="appbar">
+    <button class="ibtn" id="setClose"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar">
+      <div class="ttl" id="setTitle">Settings</div>
+      <div class="sub" id="setSub"></div>
+    </div>
+  </header>
+
+  <div class="sbody sethome on" id="setHome">
+    <div class="setcats" id="setCats"></div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="sbody setpages" id="setPages">
+    <div class="setpage" data-cat="account">
+      <div class="sect">
+        <div class="slabel" data-i18n="authProfile"></div>
+        <div class="profcard" id="profCard"></div>
+        <div class="srow">
+          <button class="btn tonal" id="profCheck"><svg class="ic"><use href="#i-check"/></svg><span data-i18n="check"></span></button>
+          <button class="btn tonal" id="accAdd"><svg class="ic"><use href="#i-add"/></svg><span data-i18n="addAccount"></span></button>
+        </div>
+        <label class="switch"><span data-i18n="authLock"></span><input type="checkbox" id="fAuthLock"><i></i></label>
+        <p class="muted small" data-i18n="authSub"></p>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="accountsAll"></div>
+        <div class="acclist" id="accList"></div>
+        <p class="muted small" data-i18n="accHint"></p>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="guard">Account protection</div>
+        <label class="switch"><span data-i18n="guardOn"></span><input type="checkbox" id="fGuardOn"><i></i></label>
+        <div class="slabel second" data-i18n="guardGap"></div>
+        <input id="fGuardGap" class="field" type="number" inputmode="numeric" min="0" max="60" spellcheck="false">
+        <div class="slabel second" data-i18n="guardPerMin"></div>
+        <input id="fGuardMin" class="field" type="number" inputmode="numeric" min="1" max="600" spellcheck="false">
+        <div class="slabel second" data-i18n="guardPerDay"></div>
+        <input id="fGuardDay" class="field" type="number" inputmode="numeric" min="1" max="100000" spellcheck="false">
+        <div class="status" id="guardStatus">—</div>
+        <div class="srow">
+          <button class="btn text" id="guardReset"><span data-i18n="guardReset"></span></button>
+        </div>
+        <p class="muted small" data-i18n="guardHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="chat">
+      <div class="sect">
+        <div class="slabel" data-i18n="basePrompt">System prompt</div>
+        <textarea id="fBase" class="field area" rows="8" spellcheck="false"></textarea>
+        <div class="srow">
+          <button class="btn text" id="btnBaseReset"><span data-i18n="reset"></span></button>
+          <span class="grow"></span>
+          <span class="muted" id="baseCount"></span>
+        </div>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="model">Model</div>
+        <select id="fModel" class="field">
+          <option value="default">DeepSeek V4.1 Flash</option>
+          <option value="expert">DeepSeek V4.1 Flash · Expert</option>
+        </select>
+        <label class="switch"><span data-i18n="thinkingDefault"></span><input type="checkbox" id="fThink"><i></i></label>
+        <label class="switch"><span data-i18n="searchDefault"></span><input type="checkbox" id="fSearch"><i></i></label>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="ctxLimit">Context limit</div>
+        <select id="fCtx" class="field">
+          <option value="60000">60K</option>
+          <option value="128000">128K</option>
+          <option value="256000">256K</option>
+          <option value="512000">512K</option>
+          <option value="1000000">1M</option>
+        </select>
+        <p class="muted small" data-i18n="ctxLimitHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="api">
+      <div class="sect">
+        <div class="slabel" data-i18n="localApi">Local API</div>
+        <label class="switch"><span data-i18n="apiAuto"></span><input type="checkbox" id="fApiOn"><i></i></label>
+        <div class="srow">
+          <input id="fApiPort" class="field" type="number" inputmode="numeric" min="1024" max="65535" spellcheck="false">
+          <button class="btn tonal" id="apiToggle"><span data-i18n="apiStart"></span></button>
+        </div>
+        <label class="switch"><span data-i18n="apiLan"></span><input type="checkbox" id="fApiLan"><i></i></label>
+        <label class="switch"><span data-i18n="apiDel"></span><input type="checkbox" id="fApiDel"><i></i></label>
+        <div class="slabel second" data-i18n="apiKey">API key</div>
+        <div class="srow">
+          <input id="fApiKey" class="field" readonly spellcheck="false" autocomplete="off">
+          <button class="ibtn boxed" id="apiCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
+        </div>
+        <div class="srow">
+          <button class="btn text" id="apiNewKey"><span data-i18n="apiRegen"></span></button>
+        </div>
+        <div class="status" id="apiStatus">—</div>
+        <p class="muted small" id="apiHint"></p>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="pubTitle"></div>
+        <div class="srow">
+          <input id="fPubUrl" class="field" placeholder="https://…" spellcheck="false" autocomplete="off" inputmode="url">
+          <button class="ibtn boxed" id="pubCopy" aria-label="copy"><svg class="ic"><use href="#i-copy"/></svg></button>
+        </div>
+        <div class="srow">
+          <button class="btn tonal" id="pubFile"><span data-i18n="pubFile"></span></button>
+          <button class="btn tonal" id="pubCheck"><span data-i18n="pubCheck"></span></button>
+        </div>
+        <div class="status" id="pubStatus">—</div>
+        <button class="btn text" id="pubClient"><span data-i18n="pubClient"></span></button>
+        <p class="muted small" data-i18n="pubHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="data">
+      <div class="sect">
+        <div class="slabel" data-i18n="files">Storage access</div>
+        <div class="status" id="permStatus">—</div>
+        <button class="btn tonal" id="btnPerm"><span data-i18n="grant"></span></button>
+        <p class="muted small" data-i18n="filesHint"></p>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="pages">Saved pages</div>
+        <button class="btn tonal" id="btnPages"><svg class="ic"><use href="#i-page"/></svg><span data-i18n="openPages"></span></button>
+        <p class="muted small" data-i18n="pagesHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="look">
+      <div class="sect">
+        <div class="slabel" data-i18n="language">Language</div>
+        <div class="seg" id="langSeg">
+          <button data-lang="uk">Українська</button>
+          <button data-lang="en">English</button>
+          <button data-lang="ru">Русский</button>
+        </div>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="chat">Chat</div>
+        <label class="switch"><span data-i18n="foldAll"></span><input type="checkbox" id="fFoldAll"><i></i></label>
+        <p class="muted small" data-i18n="foldAllHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="stats">
+      <div class="sect">
+        <div class="slabel" data-i18n="aiStats"></div>
+        <div class="statgrid" id="statGrid"></div>
+        <div class="srow">
+          <span class="muted small" id="statLast"></span>
+          <span class="grow"></span>
+          <button class="btn text" id="statReset"><span data-i18n="statReset"></span></button>
+        </div>
+        <p class="muted small" data-i18n="statHint"></p>
+      </div>
+    </div>
+
+    <div class="setpage" data-cat="help">
+      <div class="sect">
+        <div class="slabel" data-i18n="help">Help &amp; logs</div>
+        <button class="btn tonal" id="btnHelp"><svg class="ic"><use href="#i-search"/></svg><span data-i18n="openHelp"></span></button>
+        <button class="btn tonal" id="btnDocs"><svg class="ic"><use href="#i-file"/></svg><span data-i18n="openDocs"></span></button>
+        <button class="btn tonal" id="btnUpdates"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="updatesOpen"></span></button>
+        <p class="muted small" data-i18n="helpHint"></p>
+      </div>
+
+      <div class="sect">
+        <div class="slabel" data-i18n="about">About</div>
+        <p class="muted small"><span data-i18n="aboutText"></span></p>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+
+  <div class="setfoot" id="setFoot">
+    <button class="btn filled" id="btnSave"><span data-i18n="save"></span></button>
+  </div>
+</section>
+
+<section class="screen" id="docs">
+  <header class="appbar">
+    <button class="ibtn" id="docsBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" data-i18n="docsTitle"></div></div>
+  </header>
+  <div class="sbody">
+    <div id="docsBody" class="docbody"></div>
+    <div class="spacer"></div>
+  </div>
+</section>
+
+<section class="screen" id="updates">
+  <header class="appbar">
+    <button class="ibtn" id="updBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar">
+      <div class="ttl" data-i18n="updatesTitle"></div>
+      <div class="sub" data-i18n="updatesSub"></div>
+    </div>
+  </header>
+  <div class="sbody">
+    <p class="muted small" data-i18n="updatesHint"></p>
+    <div class="sect updchk">
+      <div class="srow">
+        <button class="btn tonal" id="updCheck"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="updCheck"></span></button>
+        <button class="btn filled" id="updGet" hidden><svg class="ic"><use href="#i-down"/></svg><span data-i18n="updDownload"></span></button>
+      </div>
+      <div class="status" id="updStatus">—</div>
+    </div>
+    <div id="updatesBody" class="updlist"></div>
+    <div class="spacer"></div>
+  </div>
+</section>
+
+<section class="screen" id="help">
+  <header class="appbar">
+    <button class="ibtn" id="helpBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" data-i18n="help">Help &amp; logs</div></div>
+    <button class="ibtn" id="helpRefresh" aria-label="refresh"><svg class="ic"><use href="#i-regen"/></svg></button>
+  </header>
+  <div class="sbody">
+    <p class="muted small" data-i18n="helpIntro"></p>
+    <div class="sect">
+      <div class="slabel" data-i18n="quickStart"></div>
+      <div class="quickacts" id="quickActs"></div>
+    </div>
+    <div id="diagList" class="diaglist"></div>
+
+    <div class="sect">
+      <div class="slabel" data-i18n="updatesTitle"></div>
+      <button class="btn tonal" id="helpUpdates"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="updatesOpen"></span></button>
+    </div>
+
+    <div class="sect">
+      <div class="slabel" data-i18n="logs"></div>
+      <div class="srow">
+        <button class="btn tonal" id="logEmail"><svg class="ic"><use href="#i-send"/></svg><span data-i18n="logEmail"></span></button>
+        <button class="btn tonal" id="logShare"><svg class="ic"><use href="#i-share"/></svg><span data-i18n="logShare"></span></button>
+      </div>
+      <div class="srow">
+        <button class="btn text" id="logPreview"><span data-i18n="logPreview"></span></button>
+        <span class="grow"></span>
+        <button class="btn text" id="logClear"><span data-i18n="logClear"></span></button>
+      </div>
+      <p class="muted small" data-i18n="logsHint"></p>
+    </div>
+
+    <div class="sect">
+      <button class="btn tonal" id="introShow"><svg class="ic"><use href="#i-spark"/></svg><span data-i18n="introAgain"></span></button>
+    </div>
+    <div class="spacer"></div>
+  </div>
+</section>
+
+<section class="screen" id="memory">
+  <header class="appbar">
+    <button class="ibtn" id="memBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" data-i18n="memory">Memory</div></div>
+    <button class="ibtn" id="memAdd"><svg class="ic"><use href="#i-add"/></svg></button>
+  </header>
+  <div class="sbody">
+    <p class="muted small" id="memHint" data-i18n="memoryHint"></p>
+    <div class="dsearch"><input id="mSearch" class="field" data-i18n-ph="searchCards"></div>
+    <div id="memList" class="memlist"></div>
+    <div id="memEmpty" class="empty">
+      <svg class="ic"><use href="#i-cards"/></svg>
+      <div data-i18n="memoryEmpty"></div>
+      <button class="btn tonal" id="memEmptyAdd"><svg class="ic"><use href="#i-add"/></svg><span data-i18n="newCard"></span></button>
+    </div>
+    <div class="srow" style="margin-top:14px">
+      <button class="btn tonal" id="memExport"><svg class="ic"><use href="#i-upload"/></svg><span data-i18n="exportJson"></span></button>
+      <button class="btn tonal" id="memImport"><svg class="ic"><use href="#i-download"/></svg><span data-i18n="importJson"></span></button>
+    </div>
+    <div class="spacer"></div>
+  </div>
+</section>
+
+<div class="sheetwrap" id="keySheet">
+  <div class="sheet">
+    <div class="sheettop">
+      <div class="ttl" data-i18n="authKey"></div>
+      <button class="ibtn" id="keyClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheetbody">
+      <p class="muted small" data-i18n="authKeyHint"></p>
+      <textarea id="keyValue" class="field area" rows="4" spellcheck="false"
+                autocomplete="off" data-i18n-ph="authKeyPh"></textarea>
+      <div class="srow">
+        <span class="grow"></span>
+        <button class="btn filled" id="keySave" data-i18n="authKeySave"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="cardSheet">
+  <div class="sheet">
+    <div class="sheettop">
+      <div class="ttl" id="cardSheetTitle" data-i18n="newCard">New card</div>
+      <button class="ibtn" id="cardClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheetbody">
+      <input id="cTitle" class="field" data-i18n-ph="cardTitlePh">
+      <textarea id="cBody" class="field area" rows="6" data-i18n-ph="cardBodyPh"></textarea>
+      <input id="cTags" class="field" data-i18n-ph="cardTagsPh">
+      <div class="srow">
+        <button class="btn text danger" id="cardDelete"><svg class="ic"><use href="#i-trash"/></svg><span data-i18n="delete"></span></button>
+        <span class="grow"></span>
+        <button class="btn filled" id="cardSave"><span data-i18n="save"></span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="sheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" id="sheetTitle">—</div>
+    <button class="sheetbtn" id="sheetPin"><svg class="ic"><use href="#i-pin"/></svg><span id="sheetPinLabel" data-i18n="pin"></span></button>
+    <button class="sheetbtn" id="sheetFolder"><svg class="ic"><use href="#i-folder"/></svg><span data-i18n="folder"></span><b class="sbfold" id="sheetFolderName"></b></button>
+    <button class="sheetbtn" id="sheetExport"><svg class="ic"><use href="#i-share"/></svg><span data-i18n="exportChat"></span></button>
+    <button class="sheetbtn" id="sheetCompact"><svg class="ic"><use href="#i-cards"/></svg><span data-i18n="compactCtx">Compact context</span></button>
+    <button class="sheetbtn" id="sheetRename"><svg class="ic"><use href="#i-edit"/></svg><span data-i18n="rename"></span></button>
+    <button class="sheetbtn danger" id="sheetDelete"><svg class="ic"><use href="#i-trash"/></svg><span data-i18n="delete"></span></button>
+    <button class="sheetbtn cancel" id="sheetCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="msgSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" id="msgSheetTitle"></div>
+    <button class="sheetbtn" id="msgCopy"><svg class="ic"><use href="#i-copy"/></svg><span data-i18n="copy">Copy</span></button>
+    <button class="sheetbtn" id="msgRegen"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="regen">Regenerate</span></button>
+    <button class="sheetbtn" id="msgCont"><svg class="ic"><use href="#i-regen"/></svg><span data-i18n="continue">Continue</span></button>
+    <button class="sheetbtn" id="msgEdit"><svg class="ic"><use href="#i-edit"/></svg><span data-i18n="edit">Edit</span></button>
+    <button class="sheetbtn cancel" id="msgCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="queueSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" data-i18n="queueEdit">Queued message</div>
+    <textarea id="queueText" class="field area" rows="5" spellcheck="false"></textarea>
+    <button class="sheetbtn" id="queueSave"><svg class="ic"><use href="#i-edit"/></svg><span data-i18n="save">Save</span></button>
+    <button class="sheetbtn cancel" id="queueCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="folderSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" data-i18n="moveToFolder">Move to folder</div>
+    <div class="folderpick" id="folderPick"></div>
+    <button class="sheetbtn" id="folderNew"><svg class="ic"><use href="#i-add"/></svg><span data-i18n="newFolder"></span></button>
+    <button class="sheetbtn cancel" id="folderCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="nameSheet">
+  <div class="sheet bottom">
+    <div class="sheettop">
+      <div class="ttl" id="nameSheetTitle">—</div>
+      <button class="ibtn" id="nameClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheetbody">
+      <input id="nameInput" class="field" data-i18n-ph="folderNamePh" autocomplete="off" spellcheck="false">
+      <div class="srow namerow">
+        <button class="btn text danger" id="nameDelete"><svg class="ic"><use href="#i-trash"/></svg><span data-i18n="delete"></span></button>
+        <span class="grow"></span>
+        <button class="btn text" id="nameCancel" data-i18n="cancel">Cancel</button>
+        <button class="btn filled" id="nameSave" data-i18n="save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="fileSheet">
+  <div class="sheet bottom">
+    <div class="sheettop">
+      <div class="ttl" id="fileSheetTitle">—</div>
+      <button class="ibtn" id="fileClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="filemeta" id="fileSheetMeta">—</div>
+    <div class="filepreview" id="filePreview"></div>
+    <button class="sheetbtn" id="fileView"><svg class="ic"><use href="#i-page"/></svg><span data-i18n="viewFile">Open</span></button>
+    <button class="sheetbtn" id="fileOpen"><svg class="ic"><use href="#i-open"/></svg><span data-i18n="openWith">Open with</span></button>
+    <button class="sheetbtn" id="fileShare"><svg class="ic"><use href="#i-share"/></svg><span data-i18n="shareFile">Share</span></button>
+    <button class="sheetbtn" id="fileSave"><svg class="ic"><use href="#i-download"/></svg><span data-i18n="saveFile">Save a copy</span></button>
+    <button class="sheetbtn cancel" id="fileCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<section class="screen" id="viewer">
+  <header class="appbar">
+    <button class="ibtn" id="viewerBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" id="viewerName">—</div><div class="sub">FunaChat</div></div>
+    <button class="ibtn vact" id="viewerOpen" aria-label="open with"><svg class="ic"><use href="#i-open"/></svg></button>
+    <button class="ibtn vact" id="viewerShare" aria-label="share"><svg class="ic"><use href="#i-share"/></svg></button>
+    <button class="ibtn vact" id="viewerSave" aria-label="save"><svg class="ic"><use href="#i-download"/></svg></button>
+  </header>
+  <div class="vbody" id="viewerBody"></div>
+</section>
+
+<div class="artfull" id="artFull">
+  <div class="artfullbar">
+    <div class="ttl" data-i18n="interactive">Interactive page</div>
+    <span class="grow"></span>
+    <button class="ibtn" id="artFullDownload"><svg class="ic"><use href="#i-download"/></svg></button>
+    <button class="ibtn" id="artFullClose"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+  <iframe id="artFullFrame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-pointer-lock"></iframe>
+</div>
+
+<section class="screen" id="pages">
+  <header class="appbar">
+    <button class="ibtn" id="pagesBack"><svg class="ic"><use href="#i-back"/></svg></button>
+    <div class="tbar"><div class="ttl" data-i18n="pages">Saved pages</div></div>
+    <button class="ibtn" id="pagesRefresh"><svg class="ic"><use href="#i-regen"/></svg></button>
+  </header>
+  <div class="sbody">
+    <div id="pageList" class="pagelist"></div>
+    <div id="pageEmpty" class="empty">
+      <svg class="ic"><use href="#i-page"/></svg>
+      <div data-i18n="pagesEmpty"></div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+</section>
+
+<div class="sheetwrap" id="lockSheet">
+  <div class="sheet bottom">
+    <div class="sheettop">
+      <div class="ttl" data-i18n="lockTitle"></div>
+      <button class="ibtn" id="lockClose"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheetbody">
+      <p class="muted small lockhint" data-i18n="lockHint"></p>
+      <input id="lockPass" class="field" type="password" data-i18n-ph="authPass"
+             autocomplete="current-password">
+      <div class="authmsg" id="lockMsg"></div>
+      <button class="btn filled" id="lockSave" data-i18n="lockEnable"></button>
+      <button class="btn text" id="lockForget" data-i18n="lockForget"></button>
+      <button class="sheetbtn cancel" id="lockCancel" data-i18n="cancel"></button>
+    </div>
+  </div>
+</div>
+
+<div class="sheetwrap" id="repSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" data-i18n="reportTitle"></div>
+    <pre class="reptext" id="repText"></pre>
+    <div class="srow">
+      <button class="btn tonal" id="repEmail"><svg class="ic"><use href="#i-send"/></svg><span data-i18n="logEmail"></span></button>
+      <button class="btn tonal" id="repShare"><svg class="ic"><use href="#i-share"/></svg><span data-i18n="logShare"></span></button>
+    </div>
+    <button class="sheetbtn cancel" id="repClose" data-i18n="close"></button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="ctxSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" data-i18n="context">Context</div>
+    <div class="ctxbox">
+      <div class="ctxrow"><span data-i18n="ctxUsed">Used</span><b id="ctxUsed">—</b></div>
+      <div class="ctxbar"><i id="ctxBar"></i></div>
+      <div class="ctxrow"><span data-i18n="ctxMessages">Messages</span><b id="ctxMsgs">0</b></div>
+      <div class="ctxrow"><span data-i18n="ctxThinking">Thinking</span><b id="ctxThink">0</b></div>
+      <div class="ctxrow"><span data-i18n="ctxChars">Characters</span><b id="ctxChars">0</b></div>
+      <p class="muted small" data-i18n="ctxHint"></p>
+    </div>
+    <button class="sheetbtn" id="ctxCompact"><svg class="ic"><use href="#i-cards"/></svg><span data-i18n="compactCtx">Compact context</span></button>
+    <button class="sheetbtn cancel" id="ctxClose" data-i18n="close">Close</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="pickSheet">
+  <div class="sheet bottom">
+    <div class="sheettitle" id="pickTitle">—</div>
+    <div class="picklist" id="pickList"></div>
+    <button class="sheetbtn cancel" id="pickCancel" data-i18n="cancel">Cancel</button>
+  </div>
+</div>
+
+<div class="sheetwrap" id="subSheet">
+  <div class="sheet subview">
+    <div class="sheettop">
+      <button class="ibtn" id="subBack"><svg class="ic"><use href="#i-back"/></svg></button>
+      <div class="tbar"><div class="ttl" id="subTitle">—</div><div class="sub" id="subMeta"></div></div>
+      <button class="ibtn" id="subStop" aria-label="stop"><svg class="ic"><use href="#i-stop"/></svg></button>
+    </div>
+    <div class="subbody" id="subBody"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="katex/katex.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+build/
+dist/*.apk
+dist/latest.json
+dist/release-body.md
+tunnel/*.log
+tunnel/url*.txt
+*.keystore
