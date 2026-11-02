@@ -183,7 +183,7 @@ const I18N = {
     active: 'активний', 
     folders: 'Папки', allChats: 'Усі', unfiled: 'Без папки', newFolder: 'Нова папка',
     folderName: 'Назва папки', moveToFolder: 'Перемістити в папку', folder: 'Папка',
-    noFolder: 'Без папки', folderDelete: 'Видалити папку?', interactive: 'Інтерактивна сторінка',
+    noFolder: 'Без папки', folderDelete: 'Видалити папку?', interactive: 'Інтерактивна сторінка', buildingPage: 'Сторінка збирається…', showCode: 'Показати код', hideCode: 'Згорнути код', showFull: 'Показати повністю', showLess: 'Згорнути',
     folderNamePh: 'Назва папки', renameFolder: 'Перейменувати папку', createFolder: 'Нова папка',
     noFind: 'Немає збігів', continue: 'Продовжити', regen: 'Перегенерувати',
     regenHint: 'Перегенерувати відповідь', exportChat: 'Експорт у Markdown', chatExported: 'Чат збережено',
@@ -393,7 +393,7 @@ const I18N = {
     active: 'active', 
     folders: 'Folders', allChats: 'All', unfiled: 'Unfiled', newFolder: 'New folder',
     folderName: 'Folder name', moveToFolder: 'Move to folder', folder: 'Folder',
-    noFolder: 'No folder', folderDelete: 'Delete this folder?', interactive: 'Interactive page',
+    noFolder: 'No folder', folderDelete: 'Delete this folder?', interactive: 'Interactive page', buildingPage: 'Building the page…', showCode: 'Show code', hideCode: 'Hide code', showFull: 'Show full answer', showLess: 'Collapse',
     folderNamePh: 'Folder name', renameFolder: 'Rename folder', createFolder: 'New folder',
     noFind: 'No matches', continue: 'Continue', regen: 'Regenerate',
     regenHint: 'Regenerate answer', exportChat: 'Export as Markdown', chatExported: 'Chat saved',
@@ -603,7 +603,7 @@ const I18N = {
     active: 'активный', 
     folders: 'Папки', allChats: 'Все', unfiled: 'Без папки', newFolder: 'Новая папка',
     folderName: 'Название папки', moveToFolder: 'Переместить в папку', folder: 'Папка',
-    noFolder: 'Без папки', folderDelete: 'Удалить папку?', interactive: 'Интерактивная страница',
+    noFolder: 'Без папки', folderDelete: 'Удалить папку?', interactive: 'Интерактивная страница', buildingPage: 'Страница собирается…', showCode: 'Показать код', hideCode: 'Свернуть код', showFull: 'Показать полностью', showLess: 'Свернуть',
     folderNamePh: 'Название папки', renameFolder: 'Переименовать папку', createFolder: 'Новая папка',
     noFind: 'Нет совпадений', continue: 'Продолжить', regen: 'Перегенерировать',
     regenHint: 'Перегенерировать ответ', exportChat: 'Экспорт в Markdown', chatExported: 'Чат сохранён',
@@ -772,6 +772,36 @@ function artifactBlock(code) {
     'srcdoc="' + esc(withLinkHook(code)) + '"></iframe></div></div>';
 }
 
+/* Поки HTML-сторінка ще тече, не показуємо її код: інакше чат
+   перетворюється на простирадло тегів. Після a_end буде справжня картка. */
+function artifactPending() {
+  return '<div class="artifact pending"><div class="arthead">' + ic('i-page') +
+    '<span>' + esc(t('buildingPage')) + '</span><span class="grow"></span>' +
+    '<span class="typing"><i></i><i></i><i></i></span></div></div>';
+}
+
+/** Чи це повноцінний HTML-документ, а не шматок розмітки чи Markdown. */
+function looksLikeHtml(code) {
+  const s = String(code == null ? '' : code);
+  return looksLikeHtmlStart(s) && /<\/(?:html|svg)\s*>/i.test(s);
+}
+
+/** Під час стріму кінця ще немає: достатньо початку документа. */
+function looksLikeHtmlStart(code) {
+  const s = String(code == null ? '' : code);
+  return /^\s*(?:<!--[\s\S]*?-->\s*)*(?:<!doctype\s+html|<html[\s>]|<svg[\s>])/i.test(s);
+}
+
+function fmtCodeSize(n) {
+  n = Math.max(0, n || 0);
+  return n >= 1024 ? (n < 10240 ? (n / 1024).toFixed(1) : Math.round(n / 1024)) + ' KB' : n + ' B';
+}
+
+/** Підсвітка дорога на мегабайтах: великий код показуємо як є. */
+function codeHtml(code) {
+  return String(code).length > 50000 ? esc(code) : hl(code);
+}
+
 function userText(txt) {
   MATHQ = [];
   let src = esc(String(txt == null ? '' : txt));
@@ -820,9 +850,22 @@ function md(src, streaming) {
   MATHQ = [];
   const blocks = [];
   const attaches = [];
+  const htmls = [];
   src = String(src).replace(/```([^\n`]*)\n?([\s\S]*?)(?:```|$)/g, (_, lang, code) => {
     blocks.push({ lang: (lang || '').trim(), code: code.replace(/\n$/, '') });
     return '\u0000' + (blocks.length - 1) + '\u0000';
+  });
+  // Модель іноді віддає HTML без ```-огорожі. Такий документ теж має
+  // стати карткою, а не текстом із тегами.
+  src = src.replace(/<!doctype\s+html[\s\S]*?<\/html\s*>/gi, (m) => {
+    if (m.length < 400) return m;
+    htmls.push(m);
+    return '\n\n\u0004' + (htmls.length - 1) + '\u0004\n\n';
+  });
+  src = src.replace(/<html[\s>][\s\S]*?<\/html\s*>/gi, (m) => {
+    if (m.length < 400) return m;
+    htmls.push(m);
+    return '\n\n\u0004' + (htmls.length - 1) + '\u0004\n\n';
   });
   src = extractMath(src);
   const lines = esc(src).split('\n');
@@ -858,14 +901,34 @@ function md(src, streaming) {
         }
         continue;
       }
-      const isArtifact = /^(html|htm|funa-html)$/i.test(b.lang) &&
-        /<(!doctype|html|body|style|script|svg)/i.test(b.code);
-      if (isArtifact && !streaming) {
-        out.push(artifactBlock(b.code));
+      const langHtml = /^(html|htm|funa-html)$/i.test(b.lang);
+      // Явно позначений html-блок лишаємо карткою, навіть якщо це фрагмент
+      // без <html>; без позначки — лише повний документ.
+      const isArtifact = (langHtml &&
+          (streaming ? looksLikeHtmlStart(b.code) : looksLikeHtml(b.code)) ||
+          (langHtml && /<(!doctype|html|body|style|script|svg)/i.test(b.code))) ||
+        (b.lang === '' && (streaming ? looksLikeHtmlStart(b.code) : looksLikeHtml(b.code)));
+      if (isArtifact) {
+        out.push(streaming ? artifactPending() : artifactBlock(b.code));
+      } else if (b.code.length > 4000) {
+        // Довгий код не розгортаємо самі: у чаті він займає кілька екранів.
+        out.push('<div class="code folded"><div class="codehead"><span>' +
+          esc((b.lang || 'text') + ' · ' + fmtCodeSize(b.code.length)) + '</span>' +
+          '<span class="grow"></span>' +
+          '<button data-copy="1">' + esc(t('copy')) + '</button>' +
+          '<button data-fold="1">' + esc(t('showCode')) + '</button></div>' +
+          '<pre hidden><code>' + codeHtml(b.code) + '</code></pre></div>');
       } else {
         out.push('<div class="code"><div class="codehead"><span>' + esc(b.lang || 'text') + '</span>' +
-          '<button data-copy="1">' + esc(t('copy')) + '</button></div><pre><code>' + hl(b.code) + '</code></pre></div>');
+          '<button data-copy="1">' + esc(t('copy')) + '</button></div><pre><code>' + codeHtml(b.code) + '</code></pre></div>');
       }
+      continue;
+    }
+
+    if (/^\u0004\d+\u0004$/.test(line.trim())) {
+      flushAll();
+      const code = htmls[+line.trim().replace(/\u0004/g, '')] || '';
+      if (code) out.push(streaming ? artifactPending() : artifactBlock(code));
       continue;
     }
 
@@ -1429,6 +1492,14 @@ function paintAssistant(m) {
   if (m.status === 'STOPPED') body += '<div style="font-size:11.5px;color:var(--err);margin-top:8px">' + esc(t('stopped')) + '</div>';
   if (!m.streaming && m.text && m.status !== 'FINISHED' && m.id) {
     body += '<button class="contbtn" data-mcont="1">' + ic('i-regen') + '<span>' + esc(t('continue')) + '</span></button>';
+  }
+  // Дуже довга відповідь (простирадло тестів, таблиць, логу) не має
+  // розсувати чат на десятки екранів: показуємо початок і кнопку.
+  if (!m.streaming && body.length > 24000) {
+    const open = !!m.expanded;
+    body = '<div class="longmsg' + (open ? '' : ' folded') + '">' + body + '</div>' +
+      '<button class="longbtn" data-longmsg="1">' +
+      esc(t(open ? 'showLess' : 'showFull')) + '</button>';
   }
   m._md.innerHTML = head + body;
   hydrateNode(m._md);
@@ -4466,6 +4537,16 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v107", name: "2.42.32", title: "Довгі відповіді не розсувають чат",
+      p: "HTML-сторінка під час генерації показується компактною карткою, а не простирадлом тегів.",
+      li: [
+        "Поки HTML тече, видно картку «Сторінка збирається…», після завершення — готовий артефакт.",
+        "HTML без ```-огорожі теж стає інтерактивною карткою.",
+        "Код довший за 4 КБ згорнутий, його можна розгорнути кнопкою.",
+        "Відповідь довша за 24 КБ показується початком, повний текст — за кнопкою."
+      ]
+    },
+    {
       code: "v106", name: "2.42.31", title: "Перевірка акаунта DeepSeek",
       p: "Коли DeepSeek просить hCaptcha, застосунок більше не вважає це успіхом і показує кнопку перевірки.",
       li: [
@@ -4663,6 +4744,16 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v107", name: "2.42.32", title: "Long answers no longer flood the chat",
+      p: "An HTML page is shown as a compact card while it is being generated, not as a wall of tags.",
+      li: [
+        "While HTML streams, a “Building the page…” card is shown; it becomes the finished artifact afterwards.",
+        "HTML without a ``` fence also becomes an interactive card.",
+        "Code longer than 4 KB is folded and can be expanded with a button.",
+        "Answers longer than 24 KB show their beginning, with the full text behind a button."
+      ]
+    },
+    {
       code: "v106", name: "2.42.31", title: "DeepSeek account check",
       p: "When DeepSeek asks for hCaptcha, the app no longer treats it as success and offers a check button.",
       li: [
@@ -4859,6 +4950,16 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v107", name: "2.42.32", title: "Длинные ответы не растягивают чат",
+      p: "HTML-страница во время генерации показывается компактной карточкой, а не простынёй тегов.",
+      li: [
+        "Пока HTML течёт, видна карточка «Страница собирается…», после завершения — готовый артефакт.",
+        "HTML без ```-обёртки тоже становится интерактивной карточкой.",
+        "Код длиннее 4 КБ свёрнут, его можно развернуть кнопкой.",
+        "Ответ длиннее 24 КБ показывается началом, полный текст — за кнопкой."
+      ]
+    },
     {
       code: "v106", name: "2.42.31", title: "Проверка аккаунта DeepSeek",
       p: "Когда DeepSeek просит hCaptcha, приложение больше не считает это успехом и показывает кнопку проверки.",
@@ -5441,6 +5542,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mm) { const n = mm.closest('.msg'); if (n && n._m) openMsgSheet(n._m); return; }
     const um = ev.target.closest('.msg.user');
     if (um && um._m) { openMsgSheet(um._m); return; }
+    const lb = ev.target.closest('[data-longmsg]');
+    if (lb) {
+      const n = lb.closest('.msg');
+      if (n && n._m) { n._m.expanded = !n._m.expanded; paintAssistant(n._m); }
+      return;
+    }
+    const fb = ev.target.closest('[data-fold]');
+    if (fb) {
+      const pre = fb.closest('.code').querySelector('pre');
+      if (pre) {
+        const closed = pre.hasAttribute('hidden');
+        if (closed) pre.removeAttribute('hidden');
+        else pre.setAttribute('hidden', '');
+        fb.textContent = t(closed ? 'hideCode' : 'showCode');
+      }
+      return;
+    }
     const b = ev.target.closest('[data-copy]');
     if (b) {
       const pre = b.closest('.code').querySelector('pre');

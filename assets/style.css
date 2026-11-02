@@ -104,6 +104,15 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .md th,.md td{border:1px solid var(--outline);padding:6px 10px}
 .md th{background:var(--surf1);font-weight:600}
 
+/* very long answers: show the beginning, rest behind a button */
+.longmsg.folded{max-height:62vh;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to bottom,#000 88%,transparent);
+  mask-image:linear-gradient(to bottom,#000 88%,transparent)}
+.longbtn{display:inline-flex;align-items:center;gap:6px;margin:6px 0 2px;padding:7px 12px;
+  border:1px solid var(--outline);border-radius:11px;color:var(--primary);font-size:12.5px;
+  background:var(--surf1)}
+.longbtn:active{background:var(--surf3)}
+
 /* code */
 .code{margin:10px 0;border:1px solid var(--outline);border-radius:16px;overflow:hidden;background:var(--surf1)}
 .codehead{display:flex;align-items:center;justify-content:space-between;padding:6px 10px 6px 14px;
@@ -554,6 +563,8 @@ select.field{appearance:none;background-image:linear-gradient(45deg,transparent 
 .artbtn{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--var)}
 .artbtn .ic{width:15px;height:15px}
 .artbtn:active{background:var(--surf3);color:var(--on)}
+.artifact.pending .arthead{border-bottom:0}
+.artifact.pending .typing{padding:0}
 .artframe{width:100%;height:clamp(200px,42vh,420px);background:#fff;position:relative}
 .artframe iframe{width:100%;height:100%;border:0;display:block;background:#fff}
 
