@@ -441,6 +441,8 @@ public class ApiServer {
         if ("revoke".equals(action) || "notify".equals(action)) {
             st.auditNotify(action, info, req.optString("note", ""), ip);
             notified = true;
+        } else {
+            st.auditRecord("info", info, req.optString("note", ""), ip);
         }
         JSONObject r = new JSONObject();
         try {

@@ -802,11 +802,17 @@ public class Store implements Guard.State {
         }
     }
 
+    /** Записати подію без повідомлення (напр. звичайна перевірка info). */
+    public void auditRecord(String action, JSONObject key, String note, String ip) {
+        auditLogAdd(action, key, note, ip);
+    }
+
     /** Записати подію, показати Toast і (якщо задано) відправити webhook. */
     public void auditNotify(String action, JSONObject key, String note, String ip) {
         auditLogAdd(action, key, note, ip);
         String mask = key == null ? "" : key.optString("mask", "");
-        String verb = "revoke".equals(action) ? "відкликано" : "перевірено";
+        String verb = "revoke".equals(action) ? "відкликано"
+                : ("notify".equals(action) ? "перевірено, власника повідомлено" : "перевірено");
         toast("FunaChat: ключ " + mask + " " + verb + " через аудит");
         final String hook = auditHook();
         if (!hook.isEmpty()) {
