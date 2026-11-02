@@ -24,6 +24,14 @@ import java.util.Locale;
  */
 public final class Telemetry {
     public static final String DIR = Tools.ROOT + "/telemetry";
+
+    /**
+     * Типовий HTTPS-приймач (Cloudflare Worker). Порожній рядок — звіти
+     * йдуть лише в локальну чергу до Termux-релея. Після деплою Worker
+     * сюди вписується його URL і збирається наступний APK.
+     */
+    public static final String DEFAULT_URL = "";
+
     private static final int KEEP = 40;
     private static final String[] USAGE = {
             "q", "done", "stop", "ms", "tin", "tout", "edit", "regen", "tool", "err", "last"
@@ -109,10 +117,14 @@ public final class Telemetry {
 
     /** Записати знімок у чергу. Повертає ім'я файла. */
     public static String write(Context c, Store st, JSONObject usage, String source) throws Exception {
-        File dir = new File(DIR);
-        if (!dir.exists() && !dir.mkdirs()) throw new Exception("telemetry dir");
         JSONObject o = snapshot(c, st, usage);
         o.put("source", source == null ? "" : source);
+        return writeSnapshot(st, o);
+    }
+
+    public static String writeSnapshot(Store st, JSONObject o) throws Exception {
+        File dir = new File(DIR);
+        if (!dir.exists() && !dir.mkdirs()) throw new Exception("telemetry dir");
         prune(dir);
         String name = "t-" + System.currentTimeMillis() + "-"
                 + st.telemetryId().substring(0, 6) + ".json";
@@ -124,6 +136,37 @@ public final class Telemetry {
             out.close();
         }
         return name;
+    }
+
+    /**
+     * Пряма відправка на HTTPS-приймач (Cloudflare Worker). Токен бота
+     * лишається на приймачі, тому його немає ні в APK, ні в застосунку.
+     */
+    public static boolean post(String url, JSONObject o) {
+        if (url == null || url.isEmpty()) return false;
+        java.net.HttpURLConnection c = null;
+        try {
+            java.net.URL u = new java.net.URL(url);
+            String proto = u.getProtocol();
+            if (!"https".equals(proto) && !"http".equals(proto)) return false;
+            byte[] data = o.toString().getBytes(StandardCharsets.UTF_8);
+            if (data.length > 20000) return false;
+            c = (java.net.HttpURLConnection) u.openConnection();
+            c.setConnectTimeout(10000);
+            c.setReadTimeout(15000);
+            c.setRequestMethod("POST");
+            c.setDoOutput(true);
+            c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            c.setRequestProperty("User-Agent", "FunaChat/" + MainActivity.VERSION);
+            c.setRequestProperty("X-Funa-Telemetry", "1");
+            c.getOutputStream().write(data);
+            int code = c.getResponseCode();
+            return code >= 200 && code < 300;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (c != null) try { c.disconnect(); } catch (Exception ignored) {}
+        }
     }
 
     /** Не роздумуємо сховище, якщо Termux-релей довго не запускали. */
@@ -142,6 +185,7 @@ public final class Telemetry {
             o.put("on", st.telemetryOn());
             o.put("last", st.telemetryLast());
             o.put("pending", pending());
+            o.put("url", st.telemetryUrl());
         } catch (Exception ignored) {}
         return o;
     }

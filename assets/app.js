@@ -46,6 +46,9 @@ const I18N = {
     teleQueued: 'Діагностику додано в чергу.',
     teleError: 'Не вдалося зберегти діагностику.',
     teleNoRelay: 'Якщо Termux-релей не запущено, файли чекатимуть у Download/FunaFiles/telemetry.',
+    teleUrlPh: 'HTTPS-приймач (Cloudflare Worker)',
+    teleUrlHint: 'Порожньо — звіти йдуть у локальну чергу до Termux. Якщо вказано URL, застосунок надсилає звіт одразу, а при помилці зберігає його в чергу.',
+    teleSent: 'Діагностику надіслано.',
     pubNone: 'не налаштовано', pubChecking: 'Перевіряю…', pubOk: 'працює', pubBad: 'немає відповіді',
     pubCopied: 'Конфіг скопійовано',
     updCheck: 'Перевірити оновлення', updChecking: 'Перевіряю…',
@@ -252,6 +255,9 @@ const I18N = {
     teleQueued: 'Diagnostics queued.',
     teleError: 'Could not save diagnostics.',
     teleNoRelay: 'If the Termux relay is not running, files wait in Download/FunaFiles/telemetry.',
+    teleUrlPh: 'HTTPS receiver (Cloudflare Worker)',
+    teleUrlHint: 'Empty — reports go to the local queue for Termux. With a URL the app posts immediately and keeps the report in the queue on failure.',
+    teleSent: 'Diagnostics sent.',
     pubNone: 'not set', pubChecking: 'Checking…', pubOk: 'reachable', pubBad: 'no response',
     pubCopied: 'Config copied',
     updCheck: 'Check for updates', updChecking: 'Checking…',
@@ -458,6 +464,9 @@ const I18N = {
     teleQueued: 'Диагностика добавлена в очередь.',
     teleError: 'Не удалось сохранить диагностику.',
     teleNoRelay: 'Если Termux-релей не запущен, файлы ждут в Download/FunaFiles/telemetry.',
+    teleUrlPh: 'HTTPS-приёмник (Cloudflare Worker)',
+    teleUrlHint: 'Пусто — отчёты идут в локальную очередь для Termux. Если указан URL, приложение отправляет сразу, а при ошибке сохраняет отчёт в очередь.',
+    teleSent: 'Диагностика отправлена.',
     pubNone: 'не настроено', pubChecking: 'Проверяю…', pubOk: 'работает', pubBad: 'нет ответа',
     pubCopied: 'Конфиг скопирован',
     updCheck: 'Проверить обновления', updChecking: 'Проверяю…',
@@ -644,7 +653,7 @@ const S = {
   accounts: [], active: 0, folders: [], fmap: {}, folder: 'all',
   apiRunning: false, apiPort: 8787, apiKey: '', apiAuto: true, apiLan: false, apiDel: true,
   apiPublic: true, keys: [], auditMask: '', auditContact: '', auditHook: '', auditLog: [],
-  telemetryOn: true, telemetryLast: 0, telemetryPending: 0,
+  telemetryOn: true, telemetryLast: 0, telemetryPending: 0, telemetryUrl: '',
   guardOn: true, guardGap: 3, guardPerMin: 12, guardPerDay: 400, guardCount: 0, guardCool: 0, guardNote: '',
   guardCoolAt: 0,
   foldAll: false,
@@ -1655,6 +1664,8 @@ function renderTelemetry() {
   const cb = $('fTelemetry');
   if (!cb) return;
   cb.checked = S.telemetryOn !== false;
+  const url = $('fTeleUrl');
+  if (url && document.activeElement !== url) url.value = S.telemetryUrl || '';
   const st = $('teleStatus');
   if (S.telemetryOn === false) {
     st.textContent = t('teleOff');
@@ -3273,6 +3284,7 @@ window.__funa = function (raw) {
       S.auditHook = o.auditHook || ''; S.auditLog = [];
       S.telemetryOn = o.telemetryOn !== false;
       S.telemetryLast = +o.telemetryLast || 0; S.telemetryPending = +o.telemetryPending || 0;
+      S.telemetryUrl = o.telemetryUrl || '';
       S.guardOn = o.guardOn !== false; S.guardGap = o.guardGap || 0;
       S.guardPerMin = o.guardPerMin || 12; S.guardPerDay = o.guardPerDay || 400;
       S.guardCount = o.guardCount || 0; S.guardCool = o.guardCool || 0;
@@ -4042,6 +4054,8 @@ window.__funa = function (raw) {
       if (o.on != null) S.telemetryOn = !!o.on;
       if (o.last != null) S.telemetryLast = +o.last || 0;
       if (o.pending != null) S.telemetryPending = +o.pending || 0;
+      if (o.url != null) S.telemetryUrl = o.url;
+      if (o.sent === true) toast(t('teleSent'));
       if (o.preview) {
         $('teleText').textContent = o.text || '';
         $('teleSheet').classList.add('on');
@@ -5619,6 +5633,10 @@ document.addEventListener('DOMContentLoaded', () => {
     S.telemetryOn = $('fTelemetry').checked;
     api({ cmd: 'telemetry_apply', on: S.telemetryOn });
     renderTelemetry();
+  };
+  $('fTeleUrl').onchange = () => {
+    S.telemetryUrl = ($('fTeleUrl').value || '').trim();
+    api({ cmd: 'telemetry_url', url: S.telemetryUrl });
   };
   $('telePreview').onclick = () => api({ cmd: 'telemetry_preview', stats: statsGet() });
   $('teleSend').onclick = () => api({ cmd: 'telemetry_send', stats: statsGet() });

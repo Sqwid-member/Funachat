@@ -774,6 +774,10 @@ public class MainActivity extends Activity {
                 case "telemetry_auto":
                     telemetryAuto(c.optJSONObject("stats"));
                     break;
+                case "telemetry_url":
+                    store.setTelemetryUrl(c.optString("url", ""));
+                    telemetryState();
+                    break;
                 case "crash_seen": store.setCrashSeen(true); break;
                 case "intro_seen": store.setIntroSeen(true); break;
                 case "bridge_save": saveBridge(); break;
@@ -843,6 +847,7 @@ public class MainActivity extends Activity {
                 o.put("telemetryOn", store.telemetryOn());
                 o.put("telemetryLast", store.telemetryLast());
                 o.put("telemetryPending", Telemetry.pending());
+                o.put("telemetryUrl", store.telemetryUrl());
                 o.put("code", CODE);
                 o.put("pubUrl", store.pubUrl());
                 o.put("updUrl", store.updUrl());
@@ -992,6 +997,7 @@ public class MainActivity extends Activity {
                     o.put("on", store.telemetryOn());
                     o.put("last", store.telemetryLast());
                     o.put("pending", Telemetry.pending());
+                    o.put("url", store.telemetryUrl());
                 } catch (Exception ignored) {}
                 emit(o);
             }, "funa-telemetry").start();
@@ -1016,12 +1022,22 @@ public class MainActivity extends Activity {
             new Thread(() -> {
                 JSONObject o = new JSONObject();
                 boolean queued = false;
+                boolean sent = false;
                 String error = "";
                 try {
                     if (!store.telemetryOn()) throw new Exception("telemetry disabled");
-                    Telemetry.write(MainActivity.this, store, usage, manual ? "manual" : "auto");
+                    JSONObject snap = Telemetry.snapshot(MainActivity.this, store, usage);
+                    snap.put("source", manual ? "manual" : "auto");
+                    String url = store.telemetryUrl();
+                    if (!url.isEmpty() && Telemetry.post(url, snap)) {
+                        sent = true;
+                    } else {
+                        // Немає приймача або мережа впала — не втрачаємо звіт:
+                        // кладемо у файлову чергу для Termux-релея.
+                        Telemetry.writeSnapshot(store, snap);
+                        queued = true;
+                    }
                     store.telemetryMarkSent(System.currentTimeMillis());
-                    queued = true;
                 } catch (Exception e) {
                     error = e.getMessage() == null ? "error" : e.getMessage();
                     Log.e("telemetry", "queue failed", e);
@@ -1031,13 +1047,16 @@ public class MainActivity extends Activity {
                     o.put("on", store.telemetryOn());
                     o.put("last", store.telemetryLast());
                     o.put("pending", Telemetry.pending());
+                    o.put("url", store.telemetryUrl());
                     o.put("queued", queued);
+                    o.put("sent", sent);
                     if (!error.isEmpty()) o.put("error", error);
                 } catch (Exception ignored) {}
                 emit(o);
-                if (manual) toast(queued
-                        ? tr("Діагностику додано в чергу", "Diagnostics queued", "Диагностика добавлена в очередь")
-                        : tr("Не вдалося зберегти діагностику", "Could not queue diagnostics", "Не удалось сохранить диагностику"));
+                if (manual) toast(sent
+                        ? tr("Діагностику надіслано", "Diagnostics sent", "Диагностика отправлена")
+                        : (queued ? tr("Діагностику додано в чергу", "Diagnostics queued", "Диагностика добавлена в очередь")
+                        : tr("Не вдалося зберегти діагностику", "Could not queue diagnostics", "Не удалось сохранить диагностику")));
             }, "funa-telemetry").start();
         }
 
