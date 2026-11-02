@@ -152,7 +152,7 @@ https://github.com/Sqwid-member/Funachat/releases/latest/download/FunaChat.apk
 Публікація (потрібен токен з доступом до репозиторію):
 
 ```bash
-./tunnel/release-gh.sh 2.42.29 104 "коротко, що змінилось"
+./tunnel/release-gh.sh 2.42.30 105 "коротко, що змінилось"
 ```
 
 Скрипт бере токен із `~/.config/funachat/gh_token` (права 600, у репозиторій

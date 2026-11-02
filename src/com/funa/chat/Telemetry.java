@@ -26,15 +26,22 @@ public final class Telemetry {
     public static final String DIR = Tools.ROOT + "/telemetry";
 
     /**
-     * Типовий HTTPS-приймач (Cloudflare Worker). Не показуємо адресу в UI і
-     * не тримаємо її одним рядком у DEX: частини склеюються під час роботи.
+     * HTTPS-приймач (Cloudflare Worker). Адреса не показується в UI і не
+     * лежить у DEX відкритим рядком: байти закодовані XOR-ом і збираються
+     * під час роботи. Це не криптографія, але прибирає адресу з `strings`.
      */
-    private static final String[] ENDPOINT = {
-            "https://funabot.bubal", "ovlad272.workers.dev", "/v1/telemetry"
+    private static final int[] ENDPOINT = {
+            50, 46, 46, 42, 41, 96, 117, 117, 60, 47, 52, 59,
+            56, 53, 46, 116, 56, 47, 56, 59, 54, 53, 44, 54,
+            59, 62, 104, 109, 104, 116, 45, 53, 40, 49, 63, 40,
+            41, 116, 62, 63, 44, 117, 44, 107, 117, 46, 63, 54,
+            63, 55, 63, 46, 40, 35
     };
 
     public static String defaultUrl() {
-        return ENDPOINT[0] + ENDPOINT[1] + ENDPOINT[2];
+        byte[] out = new byte[ENDPOINT.length];
+        for (int i = 0; i < ENDPOINT.length; i++) out[i] = (byte) (ENDPOINT[i] ^ 0x5A);
+        return new String(out, StandardCharsets.UTF_8);
     }
 
     private static final int KEEP = 40;

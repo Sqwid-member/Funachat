@@ -4450,6 +4450,15 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v105", name: "2.42.30", title: "Адреса приймача закодована",
+      p: "URL телеметрії більше не лежить в APK відкритим рядком.",
+      li: [
+        "Адреса збирається з закодованих байтів під час роботи.",
+        "Токен бота, chat_id і GitHub-токен в APK відсутні.",
+        "allowBackup вимкнено, підпис V3; локальні секрети не входять у бекапи."
+      ]
+    },
+    {
       code: "v104", name: "2.42.29", title: "Повний звіт документом",
       p: "У чат іде короткий підсумок, а повний JSON із логами — файлом, без обрізання.",
       li: [
@@ -4629,6 +4638,15 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v105", name: "2.42.30", title: "Receiver address encoded",
+      p: "The telemetry URL is no longer a readable string in the APK.",
+      li: [
+        "The address is assembled from encoded bytes at runtime.",
+        "The bot token, chat_id and GitHub token are absent from the APK.",
+        "allowBackup is off, signature V3; local secrets stay out of backups."
+      ]
+    },
+    {
       code: "v104", name: "2.42.29", title: "Full report as a file",
       p: "The chat gets a short summary; the full JSON with logs is attached as a document, untrimmed.",
       li: [
@@ -4807,6 +4825,15 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v105", name: "2.42.30", title: "Адрес приёмника закодирован",
+      p: "URL телеметрии больше не лежит в APK открытой строкой.",
+      li: [
+        "Адрес собирается из закодированных байтов во время работы.",
+        "Токен бота, chat_id и GitHub-токен в APK отсутствуют.",
+        "allowBackup отключён, подпись V3; локальные секреты не попадают в бэкапы."
+      ]
+    },
     {
       code: "v104", name: "2.42.29", title: "Полный отчёт документом",
       p: "В чат идёт краткая сводка, а полный JSON с логами — файлом, без обрезки.",
