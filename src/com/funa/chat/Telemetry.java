@@ -30,7 +30,7 @@ public final class Telemetry {
      * йдуть лише в локальну чергу до Termux-релея. Після деплою Worker
      * сюди вписується його URL і збирається наступний APK.
      */
-    public static final String DEFAULT_URL = "";
+    public static final String DEFAULT_URL = "https://funabot.bubalovlad272.workers.dev/v1/telemetry";
 
     private static final int KEEP = 40;
     private static final String[] USAGE = {

@@ -3,7 +3,7 @@
 Android-клієнт для DeepSeek V4.1 Flash: чат, інструменти, субагенти, пам'ять,
 локальний OpenAI-сумісний API і публічний доступ через тунель.
 
-- Версія: **2.42.25** (code 100)
+- Версія: **2.42.26** (code 101)
 - Мінімальний Android: 8.0 (API 26)
 - Мова інтерфейсу: українська, англійська, російська
 - APK: [releases](https://github.com/Sqwid-member/Funachat/releases/latest)
@@ -44,14 +44,14 @@ WebView). Застосунок пробує джерела по черзі: за
 jsDelivr, тож закешований raw не ховає нову версію:
 
 ```json
-{"version":"2.42.25","code":100,"url":"…/FunaChat.apk","md5":"…","size":642389,"notes":"…"}
+{"version":"2.42.26","code":101,"url":"…/FunaChat.apk","md5":"…","size":642389,"notes":"…"}
 ```
 
 Публікація релізу:
 
 ```bash
-./tunnel/publish.sh /sdcard/Download/FunaChat.apk 2.42.25 100 "що змінилось"
-./tunnel/release-gh.sh 2.42.25 100 "що змінилось"
+./tunnel/publish.sh /sdcard/Download/FunaChat.apk 2.42.26 101 "що змінилось"
+./tunnel/release-gh.sh 2.42.26 101 "що змінилось"
 ```
 
 Скрипт бере токен із `~/.config/funachat/gh_token` (права `600`, у репозиторій

@@ -4460,6 +4460,16 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v101", name: "2.42.26", title: "Телеметрія від усіх інсталяцій",
+      p: "Діагностика йде напряму на Cloudflare Worker; токен бота не входить в APK.",
+      li: [
+        "Звіт надсилається на HTTPS-приймач одразу; при помилці лишається в локальній черзі.",
+        "URL приймача видно й можна змінити в Довідка → «Діагностичні дані».",
+        "Токен бота зберігається лише в секретах Cloudflare, не в застосунку.",
+        "Склад звіту не змінився: версія, пристрій, дозволи й лічильники, без токенів і тексту чатів."
+      ]
+    },
+    {
       code: "v100", name: "2.42.25", title: "Діагностична телеметрія",
       p: "Знеособлений звіт раз на добу допомагає швидше знаходити збої; надсилається через Termux-релей у Telegram.",
       li: [
@@ -4601,6 +4611,16 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v101", name: "2.42.26", title: "Telemetry from every install",
+      p: "Diagnostics go straight to a Cloudflare Worker; the bot token is not in the APK.",
+      li: [
+        "The report is posted to the HTTPS receiver immediately; on failure it stays in the local queue.",
+        "The receiver URL is visible and editable in Help → “Diagnostic data”.",
+        "The bot token lives only in Cloudflare secrets, not in the app.",
+        "The report contents are unchanged: version, device, permissions and counters, no tokens or chat text."
+      ]
+    },
+    {
       code: "v100", name: "2.42.25", title: "Diagnostic telemetry",
       p: "An anonymised daily report helps find crashes faster; a Termux relay sends it to Telegram.",
       li: [
@@ -4741,6 +4761,16 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v101", name: "2.42.26", title: "Телеметрия от всех установок",
+      p: "Диагностика идёт напрямую на Cloudflare Worker; токен бота не входит в APK.",
+      li: [
+        "Отчёт отправляется на HTTPS-приёмник сразу; при ошибке остаётся в локальной очереди.",
+        "URL приёмника виден и редактируется в Помощь → «Диагностические данные».",
+        "Токен бота хранится только в секретах Cloudflare, не в приложении.",
+        "Состав отчёта не изменился: версия, устройство, разрешения и счётчики, без токенов и текста чатов."
+      ]
+    },
     {
       code: "v100", name: "2.42.25", title: "Диагностическая телеметрия",
       p: "Обезличенный отчёт раз в сутки помогает быстрее находить сбои; отправляется через Termux-релей в Telegram.",
