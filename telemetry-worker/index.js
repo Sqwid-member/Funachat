@@ -81,11 +81,17 @@ function valid(d) {
   return true;
 }
 
+function logRows(d) {
+  const logs = typeof d.logs === 'string' ? d.logs : '';
+  return logs.split('\n').filter(l => l.length > 0);
+}
+
 function message(d) {
   const app = d.app || {};
   const dev = d.device || {};
   const st = d.state || {};
   const use = d.usage || {};
+  const rows = logRows(d);
   const when = new Date(epoch(d.ts)).toISOString().replace('T', ' ').slice(0, 16);
   const lines = [
     `<b>FunaChat ${esc(app.version)}</b> · ${esc(d.source || 'auto')}` +
@@ -93,22 +99,42 @@ function message(d) {
     `${esc(dev.manufacturer)} ${esc(dev.model)} · Android ${esc(dev.release)} (${num(dev.sdk)})`,
     `${esc(dev.locale)} · ${esc(dev.tz)} · storage: ${st.storage ? 'yes' : 'no'} · termux: ${st.termux ? 'yes' : 'no'}`,
     `requests ${num(use.q)} · done ${num(use.done)} · errors ${num(use.err)} · tools ${num(use.tool)} · edits ${num(use.edit)}`,
-    `accounts ${num(st.accounts)} · keys ${num((d.api || {}).keys)} · public ${((d.api || {}).public) ? 'on' : 'off'} · logs ${num(st.logLines)}`,
+    `accounts ${num(st.accounts)} · keys ${num((d.api || {}).keys)} · public ${((d.api || {}).public) ? 'on' : 'off'} · log lines ${rows.length}`,
     `<code>${esc(d.id).slice(0, 12)}…</code> · ${esc(when)} UTC`
   ];
   const header = lines.join('\n');
 
-  const logs = typeof d.logs === 'string' ? d.logs : '';
-  const crashText = typeof d.crashText === 'string' ? d.crashText : '';
+  // У чат — лише хвіст, повний звіт іде документом.
   let tail = '';
-  if (crashText) {
-    tail += '<b>CRASH</b>\n<pre>' + escTail(crashText, 1600) + '</pre>\n';
-  }
-  if (logs) {
-    const room = Math.max(400, 3850 - header.length - tail.length);
-    tail += '<pre>' + escTail(logs, room) + '</pre>';
+  if (rows.length) {
+    const head = rows.slice(0, 12);
+    const last = rows.slice(-12);
+    const sample = rows.length > 24
+      ? head.concat(['…']).concat(last)
+      : rows.slice(-24);
+    tail = '<pre>' + escTail(sample.join('\n'), 1600) + '</pre>';
   }
   return tail ? header + '\n' + tail : header;
+}
+
+function caption(d) {
+  const app = d.app || {};
+  const dev = d.device || {};
+  const st = d.state || {};
+  const device = [dev.manufacturer, dev.model].filter(Boolean).join(' ');
+  const parts = [
+    'FunaChat ' + str(app.version, 40),
+    device,
+    str(d.source || 'auto', 20)
+  ];
+  if (st.crash) parts.push('CRASH');
+  return parts.filter(Boolean).join(' · ').slice(0, 1000) || 'FunaChat diagnostics';
+}
+
+function fileName(d) {
+  const version = str((d.app || {}).version, 20).replace(/[^0-9A-Za-z._-]/g, '');
+  const id = str(d.id, 64).slice(0, 8).replace(/[^0-9A-Za-z]/g, '');
+  return 'funachat-' + (version || 'report') + '-' + (id || 'install') + '.json';
 }
 
 /**
@@ -144,15 +170,42 @@ async function telegramOnce(token, chatId, text, silent) {
   return { ok: r.ok, desc };
 }
 
-async function sendTelegram(env, text) {
-  const silent = env.TELEGRAM_SILENT !== '0';
+async function withChat(env, fn) {
   let last = { ok: false, desc: '' };
   for (const chatId of chatCandidates(env.TELEGRAM_CHAT_ID)) {
-    last = await telegramOnce(env.TELEGRAM_BOT_TOKEN, chatId, text, silent);
-    if (last.ok) return true;
+    last = await fn(chatId);
+    if (last.ok) return last;
     if (!/chat not found/i.test(last.desc)) break;
   }
-  return false;
+  return last;
+}
+
+async function sendTelegram(env, text) {
+  const silent = env.TELEGRAM_SILENT !== '0';
+  return withChat(env, chatId => telegramOnce(env.TELEGRAM_BOT_TOKEN, chatId, text, silent));
+}
+
+/** Повний звіт документом: логи не обрізаються лімітом повідомлення. */
+async function sendDocument(env, d) {
+  const silent = env.TELEGRAM_SILENT !== '0';
+  const json = JSON.stringify(d, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  return withChat(env, async chatId => {
+    const fd = new FormData();
+    fd.append('chat_id', chatId);
+    fd.append('caption', caption(d));
+    if (silent) fd.append('disable_notification', 'true');
+    fd.append('document', blob, fileName(d));
+    const r = await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendDocument', {
+      method: 'POST',
+      body: fd
+    });
+    let desc = '';
+    if (!r.ok) {
+      try { desc = (await r.json()).description || ''; } catch (e) {}
+    }
+    return { ok: r.ok, desc };
+  });
 }
 
 export default {
@@ -181,8 +234,10 @@ export default {
       return json({ ok: false, error: 'rate_limited' }, 429);
     }
     try {
-      const sent = await sendTelegram(env, message(d));
-      if (!sent) return json({ ok: false, error: 'telegram_failed' }, 502);
+      const msg = await sendTelegram(env, message(d));
+      if (!msg.ok) return json({ ok: false, error: 'telegram_failed' }, 502);
+      const doc = await sendDocument(env, d);
+      if (!doc.ok) return json({ ok: false, error: 'telegram_failed' }, 502);
     } catch (e) {
       return json({ ok: false, error: 'telegram_failed' }, 502);
     }

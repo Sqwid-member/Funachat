@@ -4450,6 +4450,15 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v104", name: "2.42.29", title: "Повний звіт документом",
+      p: "У чат іде короткий підсумок, а повний JSON із логами — файлом, без обрізання.",
+      li: [
+        "Повідомлення містить підсумок і хвіст логу; повний звіт прикріплюється документом.",
+        "Кількість рядків логу рахується за реальним вмістом, а не за памʼяттю запуску.",
+        "Логи беруться з файлу, тому історія зберігається між запусками."
+      ]
+    },
+    {
       code: "v103", name: "2.42.28", title: "Історія логів у звіті",
       p: "Діагностика бере логи з файлу, тому після перезапуску історія не губиться.",
       li: [
@@ -4620,6 +4629,15 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v104", name: "2.42.29", title: "Full report as a file",
+      p: "The chat gets a short summary; the full JSON with logs is attached as a document, untrimmed.",
+      li: [
+        "The message shows a summary and the log tail; the full report is attached as a file.",
+        "Log line count comes from the actual report, not from the current session buffer.",
+        "Logs are read from disk, so history survives restarts."
+      ]
+    },
+    {
       code: "v103", name: "2.42.28", title: "Log history in reports",
       p: "Diagnostics read logs from disk, so history survives restarts.",
       li: [
@@ -4789,6 +4807,15 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v104", name: "2.42.29", title: "Полный отчёт документом",
+      p: "В чат идёт краткая сводка, а полный JSON с логами — файлом, без обрезки.",
+      li: [
+        "Сообщение содержит сводку и хвост лога; полный отчёт прикрепляется документом.",
+        "Количество строк лога считается по реальному содержимому, а не по памяти запуска.",
+        "Логи берутся из файла, поэтому история сохраняется между запусками."
+      ]
+    },
     {
       code: "v103", name: "2.42.28", title: "История логов в отчёте",
       p: "Диагностика берёт логи из файла, поэтому после перезапуска история не теряется.",

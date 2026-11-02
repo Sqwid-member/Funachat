@@ -111,6 +111,12 @@ public final class Telemetry {
                 String crash = o.optString("crashText", "");
                 if (crash.length() > 800) o.put("crashText", crash.substring(0, 800) + "\n…");
             }
+            // Не показуємо «logs 3» з памʼяті: рахуємо реальні рядки звіту.
+            int rows = 0;
+            if (!logs.isEmpty()) {
+                for (String row : logs.split("\n")) if (!row.isEmpty()) rows++;
+            }
+            s.put("logLines", rows);
         } catch (Exception ignored) {}
         return o;
     }
