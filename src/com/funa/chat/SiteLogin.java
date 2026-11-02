@@ -31,12 +31,16 @@ public class SiteLogin extends Activity {
     public static final String EXTRA_TOKEN = "token";
     public static final String EXTRA_COOKIE = "cookie";
     public static final String EXTRA_INFO = "info";
+    public static final String EXTRA_VERIFY = "verify";
 
     private static final String START = "https://chat.deepseek.com/sign_in";
+    private static final String START_CHAT = "https://chat.deepseek.com/";
     private static final String BG = "#0F1216";
 
     private WebView web;
     private volatile boolean done;
+    /** true — режим перевірки hCaptcha: не закриваємо вікно автоматично. */
+    private boolean verify;
     /**
      * Одноразовий ключ сторінки DeepSeek. JS-міст видно будь-якій сторінці
      * цього WebView, тож без ключа сторонній сайт міг би підсунути свій
@@ -58,7 +62,8 @@ public class SiteLogin extends Activity {
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
-        Log.add("auth", "site login opened");
+        verify = getIntent() != null && getIntent().getBooleanExtra(EXTRA_VERIFY, false);
+        Log.add("auth", verify ? "site verify opened" : "site login opened");
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -70,7 +75,9 @@ public class SiteLogin extends Activity {
         bar.setPadding(dp(14), dp(12), dp(8), dp(10));
 
         TextView title = new TextView(this);
-        title.setText(tr("Вхід у DeepSeek", "Sign in to DeepSeek", "Вход в DeepSeek"));
+        title.setText(verify
+                ? tr("Перевірка DeepSeek", "DeepSeek check", "Проверка DeepSeek")
+                : tr("Вхід у DeepSeek", "Sign in to DeepSeek", "Вход в DeepSeek"));
         title.setTextColor(0xFFE6EDF3);
         title.setTextSize(17);
         title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -95,12 +102,19 @@ public class SiteLogin extends Activity {
         root.addView(bar);
 
         TextView hint = new TextView(this);
-        hint.setText(tr("Увійди як на сайті. Пароль і код нікуди не передаються — "
-                        + "застосунок забирає лише токен сесії.",
-                "Sign in as on the site. The password and code are not sent anywhere — "
-                        + "the app only takes the session token.",
-                "Войди как на сайте. Пароль и код никуда не передаются — "
-                        + "приложение забирает только токен сессии."));
+        hint.setText(verify
+                ? tr("Напиши будь-яке повідомлення на сайті й пройди перевірку. "
+                                + "Потім натисни «Імпортувати» — застосунок підхопить оновлену сесію.",
+                        "Send any message on the site and complete the check. "
+                                + "Then tap “Import” — the app will pick up the refreshed session.",
+                        "Напиши любое сообщение на сайте и пройди проверку. "
+                                + "Потом нажми «Импортировать» — приложение подхватит обновлённую сессию.")
+                : tr("Увійди як на сайті. Пароль і код нікуди не передаються — "
+                                + "застосунок забирає лише токен сесії.",
+                        "Sign in as on the site. The password and code are not sent anywhere — "
+                                + "the app only takes the session token.",
+                        "Войди как на сайте. Пароль и код никуда не передаются — "
+                                + "приложение забирает только токен сессии."));
         hint.setTextColor(0xFF8A99A8);
         hint.setTextSize(12.5f);
         hint.setPadding(dp(14), 0, dp(14), dp(8));
@@ -171,7 +185,7 @@ public class SiteLogin extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
         setContentView(root);
 
-        web.loadUrl(START);
+        web.loadUrl(verify ? START_CHAT : START);
         watchdog();
     }
 
@@ -226,7 +240,7 @@ public class SiteLogin extends Activity {
             "if(!v)continue;var t2='';try{var o2=JSON.parse(v);t2=jwt((o2&&o2.value)||(o2&&o2.token)||'');}catch(e){}" +
             "if(!t2)t2=jwt(v);if(t2)return[t2,v];}}catch(e){}return null;}" +
             "var authed=0;" +
-            "function fromHeader(v){if(!v)return;var t=jwt(String(v));if(t){authed=1;FunaSite.token(t,'header',window.__funaN||'');}}" +
+            "function fromHeader(v){if(!v||window.__funaAuto===false)return;var t=jwt(String(v));if(t){authed=1;FunaSite.token(t,'header',window.__funaN||'');}}" +
             "try{var so=XMLHttpRequest.prototype.setRequestHeader;" +
             "XMLHttpRequest.prototype.setRequestHeader=function(k,v){try{" +
             "if(String(k).toLowerCase()==='authorization')fromHeader(v);}catch(e){}return so.apply(this,arguments);};}catch(e){}" +
@@ -238,6 +252,7 @@ public class SiteLogin extends Activity {
             "var iv=setInterval(function(){n++;if(n>2400){clearInterval(iv);return;}" +
             // на сторінці входу старий токен із localStorage не чіпаємо: інакше
             // вікно закриється з простроченою сесією ще до входу
+            "if(window.__funaAuto===false)return;" +
             "var onAuth=/sign_?in|sign_?up|log_?in|register/i.test(location.pathname);" +
             "var p=(authed||!onAuth)?pick():null;if(p){clearInterval(iv);FunaSite.token(p[0],p[1],window.__funaN||'');}},600);" +
             "})();";
@@ -260,7 +275,10 @@ public class SiteLogin extends Activity {
         // не може прочитати змінну чужого origin, тому його виклики
         // FunaSite.token(...) відхиляються.
         nonce = java.util.UUID.randomUUID().toString().replace("-", "");
-        v.evaluateJavascript("window.__funaN='" + nonce + "';" + HOOK, null);
+        // У режимі перевірки не забираємо сесію автоматично: вікно має
+        // лишатися відкритим, поки користувач проходить hCaptcha.
+        v.evaluateJavascript("window.__funaN='" + nonce + "';window.__funaAuto="
+                + (!verify) + ";" + HOOK, null);
     }
 
     private String currentCookie() {

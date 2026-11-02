@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.30";
-    static final int CODE = 105;
+    static final String VERSION = "2.42.31";
+    static final int CODE = 106;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -785,8 +785,9 @@ public class MainActivity extends Activity {
                 case "auth_lock": authSetLock(c); break;
                 case "auth_skip": auth.setSkipped(true); authEmit(new JSONObject(), "skip"); break;
                 case "auth_unlock": authUnlock(c); break;
-                case "auth_site": openSiteLogin(); break;
-                case "auth_forgot": auth.requestReset(); openSiteLogin(); break;
+                case "auth_site": openSiteLogin(false); break;
+                case "auth_verify": openSiteLogin(true); break;
+                case "auth_forgot": auth.requestReset(); openSiteLogin(false); break;
                 case "auth_key": importSession(c.optString("key", "").trim(),
                         c.optString("key", "").trim()); break;
                 default: break;
@@ -1350,12 +1351,23 @@ public class MainActivity extends Activity {
 
         /** Вхід на справжньому сайті DeepSeek у WebView (обходить risk/429). */
         private void openSiteLogin() {
+            openSiteLogin(false);
+        }
+
+        /**
+         * verify=true — не вхід, а перевірка hCaptcha (коди 40303/40304):
+         * сайт відкривається на чаті, користувач надсилає повідомлення й
+         * проходить капчу, потім імпортує оновлену сесію.
+         */
+        private void openSiteLogin(final boolean verify) {
             if (Looper.myLooper() != Looper.getMainLooper()) {
-                ui.post(this::openSiteLogin);
+                ui.post(() -> openSiteLogin(verify));
                 return;
             }
             try {
-                startActivityForResult(new Intent(MainActivity.this, SiteLogin.class), REQ_SITE);
+                Intent i = new Intent(MainActivity.this, SiteLogin.class);
+                if (verify) i.putExtra(SiteLogin.EXTRA_VERIFY, true);
+                startActivityForResult(i, REQ_SITE);
             } catch (Exception e) {
                 Log.e("auth", "site login failed to start", e);
                 toast(tr("Не вдалося відкрити сайт", "Could not open the site",

@@ -145,13 +145,20 @@ public class Net {
             JSONObject j;
             try { j = new JSONObject(text); }
             catch (JSONException e) { throw new ApiException(status, text.length() > 300 ? text.substring(0, 300) : text); }
+            JSONObject data = j.optJSONObject("data");
             int code = j.optInt("code", 0);
-            if (status >= 400 || code != 0) {
+            int bcode = data == null ? 0 : data.optInt("biz_code", 0);
+            if (status >= 400 || code != 0 || bcode != 0) {
                 // Для HTTP-помилок беремо саме статус: у тілі може бути свій
                 // biz-код (40003 тощо), і тоді 401/429 губились — локальний API
                 // віддавав 502 замість 401, а Guard не ставив паузу.
-                int ec = status >= 400 ? status : code;
-                throw new ApiException(ec != 0 ? ec : status, j.optString("msg", "HTTP " + status));
+                // Глобальний код DeepSeek (40303/40304 = hCaptcha) важливіший
+                // за статус 200: без нього перевірка виглядала як успіх.
+                int ec = code != 0 ? code : bcode;
+                if (ec == 0) ec = status;
+                String msg = data != null && !data.optString("biz_msg", "").isEmpty()
+                        ? data.optString("biz_msg") : j.optString("msg", "HTTP " + status);
+                throw new ApiException(ec != 0 ? ec : status, msg);
             }
             return j;
         } finally {
@@ -432,13 +439,21 @@ public class Net {
             String t = readAll(in);
             c.disconnect();
             String msg = "HTTP " + status;
+            int ec = status;
             try {
                 JSONObject j = new JSONObject(t);
                 JSONObject d = j.optJSONObject("data");
+                int gcode = j.optInt("code", 0);
+                int bcode = d == null ? 0 : d.optInt("biz_code", 0);
+                // 40303/40304 приходять із HTTP 200: сервер просить людину
+                // пройти hCaptcha. Раніше код губився, і застосунок вважав
+                // відповідь успішною або показував незрозуміле «HTTP 200».
+                if (gcode != 0) ec = gcode;
+                else if (bcode != 0) ec = bcode;
                 if (d != null && !d.optString("biz_msg", "").isEmpty()) msg = d.optString("biz_msg");
                 else if (!j.optString("msg", "").isEmpty()) msg = j.optString("msg");
             } catch (JSONException ignored) {}
-            throw new ApiException(status, msg);
+            throw new ApiException(ec, msg);
         }
         InputStream r = new BufferedInputStream(in, 8192);
         String event = "";

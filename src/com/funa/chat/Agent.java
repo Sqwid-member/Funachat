@@ -184,17 +184,27 @@ public class Agent {
     }
 
     private void error(String msg) {
-        error(msg, 0);
+        error(msg, 0, false);
     }
 
     private void error(String msg, int code) {
+        error(msg, code, false);
+    }
+
+    private void error(String msg, int code, boolean verify) {
         JSONObject o = ev("error");
         try {
             o.put("msg", msg);
             if (code != 0) o.put("code", code);
             if (code == 401) o.put("expired", true);
+            if (verify) o.put("verify", true);
         } catch (Exception ignored) {}
         push(o);
+    }
+
+    /** DeepSeek просить підтвердити людину (hCaptcha): коди 40303/40304. */
+    private static boolean challengeCode(int code) {
+        return code == 40303 || code == 40304;
     }
 
     private void run(String text, String prefix) {
@@ -356,11 +366,24 @@ public class Agent {
             Log.e("agent", "run: " + msg, e);
             if (stopped) msg = tr("зупинено", "stopped", "остановлено");
             int code = e instanceof Net.ApiException ? ((Net.ApiException) e).code : 0;
+            boolean challenge = challengeCode(code);
             if (code == 401) {
                 // токен більше не діє: позначаємо акаунт, щоб UI запропонував вхід через сайт
                 st.setStatus(aid, "expired");
+            } else if (challenge) {
+                // hCaptcha: акаунт живий, але DeepSeek вимагає пройти перевірку
+                // на сайті. Автоматично її не розв'язати, тому показуємо кнопку.
+                st.setStatus(aid, "challenge");
+                msg = tr("DeepSeek просить підтвердити, що ти людина. "
+                                + "Відкрий сайт, надішли будь-яке повідомлення й пройди перевірку, "
+                                + "потім повернись і повтори.",
+                        "DeepSeek asks you to confirm you are human. Open the site, send any message "
+                                + "and complete the check, then come back and try again.",
+                        "DeepSeek просит подтвердить, что ты человек. Открой сайт, отправь любое "
+                                + "сообщение и пройди проверку, потом вернись и повтори.")
+                        + " (" + code + ")";
             }
-            error(msg, code);
+            error(msg, code, challenge);
         } finally {
             notifyState();
             // Підсумок запиту для статистики: один рядок на всю роботу,

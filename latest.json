@@ -1,9 +1,9 @@
 {
-  "version": "2.42.30",
-  "code": 105,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v105/FunaChat.apk",
-  "md5": "431afaa1daf5bb2ed8325dec690dff08",
-  "size": 662869,
-  "notes": "URL телеметрії більше не лежить в APK відкритим рядком: байти закодовані й збираються під час роботи. Перевірено відсутність токена бота, chat_id, GitHub-токена й приватного ключа; allowBackup=false, підпис V3.",
+  "version": "2.42.31",
+  "code": 106,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v106/FunaChat.apk",
+  "md5": "03c0c12bcef45156738812ea5070e973",
+  "size": 666965,
+  "notes": "Коди 40303/40304 (hCaptcha) більше не губляться: акаунт отримує статус «потрібна перевірка», а кнопка «Пройти перевірку» відкриває сайт на чаті. Після капчі й «Імпортувати» сесія оновлюється. Підпис V3, секретів в APK немає.",
   "date": "2026-11-02"
 }
