@@ -1,9 +1,9 @@
 {
-  "version": "2.42.23",
-  "code": 98,
-  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v98/FunaChat.apk",
-  "md5": "79a30c968a5d601bbdd80321d3bc0eef",
+  "version": "2.42.24",
+  "code": 99,
+  "url": "https://github.com/Sqwid-member/Funachat/releases/download/v99/FunaChat.apk",
+  "md5": "ccba799a6305638ca77177344b714ea5",
   "size": 654677,
-  "notes": "Аудит злитих API-ключів: POST /v1/audit/key (info/revoke/notify), секрет пристрою або підпис розробника, журнал і webhook, CLI audit-key.sh.",
+  "notes": "Надійніший канал оновлень: перебір джерел (заданий канал → тунель → GitHub raw → jsDelivr), невалідний маніфест більше не зупиняє перевірку.",
   "date": "2026-11-02"
 }
