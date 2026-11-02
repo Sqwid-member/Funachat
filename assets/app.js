@@ -4450,10 +4450,19 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v103", name: "2.42.28", title: "Історія логів у звіті",
+      p: "Діагностика бере логи з файлу, тому після перезапуску історія не губиться.",
+      li: [
+        "Останні 150 рядків логу, включно з попередніми запусками.",
+        "Токени, ключі, cookie й підписи вирізаються ще до запису.",
+        "Розмір звіту автоматично підганяється під ліміт приймача."
+      ]
+    },
+    {
       code: "v102", name: "2.42.27", title: "Повний звіт і закрита адреса",
       p: "Діагностика тепер містить логи й текст збою, а адреса приймача більше не показується.",
       li: [
-        "У звіті останні 120 рядків логу та повний текст збою; токени й ключі вирізаються перед записом.",
+        "У звіті останні 150 рядків логу (разом з історією до перезапуску) та повний текст збою; токени й ключі вирізаються.",
         "Виправлено час звіту: раніше через обмеження Worker він показувався як 1970 рік.",
         "Адреса HTTPS-приймача прибрана з інтерфейсу й не повертається застосунком.",
         "Повідомлення в Telegram автоматично обрізається до ліміту, останні рядки логу зберігаються."
@@ -4611,10 +4620,19 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v103", name: "2.42.28", title: "Log history in reports",
+      p: "Diagnostics read logs from disk, so history survives restarts.",
+      li: [
+        "The last 150 log lines, including previous launches.",
+        "Tokens, keys, cookies and signatures are stripped before writing.",
+        "The report size is fitted to the receiver limit automatically."
+      ]
+    },
+    {
       code: "v102", name: "2.42.27", title: "Full report, hidden endpoint",
       p: "Diagnostics now include logs and crash text; the receiver address is no longer shown.",
       li: [
-        "The report carries the last 120 log lines and the full crash text; tokens and keys are stripped before writing.",
+        "The report carries the last 150 log lines (including history across restarts) and the full crash text; tokens and keys are stripped.",
         "Fixed the report timestamp: a Worker cap used to show it as 1970.",
         "The HTTPS receiver address is removed from the UI and no longer returned by the app.",
         "Telegram messages are trimmed to the limit, keeping the newest log lines."
@@ -4772,10 +4790,19 @@ const UPDATES = {
   ],
   ru: [
     {
+      code: "v103", name: "2.42.28", title: "История логов в отчёте",
+      p: "Диагностика берёт логи из файла, поэтому после перезапуска история не теряется.",
+      li: [
+        "Последние 150 строк лога, включая предыдущие запуски.",
+        "Токены, ключи, cookie и подписи вырезаются ещё до записи.",
+        "Размер отчёта автоматически подгоняется под лимит приёмника."
+      ]
+    },
+    {
       code: "v102", name: "2.42.27", title: "Полный отчёт и скрытый адрес",
       p: "Диагностика теперь содержит логи и текст сбоя, а адрес приёмника больше не показывается.",
       li: [
-        "В отчёте последние 120 строк лога и полный текст сбоя; токены и ключи вырезаются перед записью.",
+        "В отчёте последние 150 строк лога (включая историю до перезапуска) и полный текст сбоя; токены и ключи вырезаются.",
         "Исправлено время отчёта: раньше из-за ограничения Worker оно показывалось как 1970 год.",
         "Адрес HTTPS-приёмника убран из интерфейса и не возвращается приложением.",
         "Сообщение в Telegram автоматически обрезается до лимита, последние строки лога сохраняются."

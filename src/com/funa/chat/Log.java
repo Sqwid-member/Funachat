@@ -156,6 +156,28 @@ public final class Log {
         return sb.toString();
     }
 
+    /**
+     * Останні n рядків із файлу, а якщо його немає — з памʼяті. На відміну
+     * від tail(), не втрачає історію після перезапуску застосунку.
+     */
+    public static String history(int n) {
+        if (n <= 0) return "";
+        File f = file;
+        if (f != null && f.exists() && f.length() > 0) {
+            String all = readAll(f, 512 * 1024);
+            String[] rows = all.split("\n", -1);
+            int from = Math.max(0, rows.length - n);
+            StringBuilder sb = new StringBuilder();
+            for (int i = from; i < rows.length; i++) {
+                if (rows[i].isEmpty() && i == rows.length - 1) continue;
+                if (sb.length() > 0) sb.append('\n');
+                sb.append(rows[i]);
+            }
+            if (sb.length() > 0) return sb.toString();
+        }
+        return tail(n);
+    }
+
     public static int size() {
         synchronized (LOCK) { return BUF.size(); }
     }

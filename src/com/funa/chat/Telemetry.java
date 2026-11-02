@@ -93,7 +93,7 @@ public final class Telemetry {
 
             // Останні рядки логу та текст збою: без них звіт майже марний.
             // Log сам вирізає токени, ключі й cookie перед записом.
-            String logs = Log.tail(120);
+            String logs = Log.history(150);
             if (logs.length() > 6000) logs = "…\n" + logs.substring(logs.length() - 6000);
             o.put("logs", logs);
             if (Log.hasCrash()) {
