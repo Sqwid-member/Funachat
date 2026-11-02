@@ -38,6 +38,18 @@ cd ~/downloads/funachat/tunnel
 | Cloudflare named tunnel + `funachat.net.eu.org` | потрібен | ні | так | після делегування домену |
 | zrok Free | потрібен (myzrok.io) | ні | так, резервована назва | після `zrok enable` |
 
+### Перевірка каналу
+
+```bash
+U=$(cat url.txt)            # Cloudflare
+# U=$(cat url-zrok.txt)     # zrok
+curl -s "$U/updates/latest.json"
+curl -s -H "Authorization: Bearer fk-…" "$U/health"
+```
+
+`401` без ключа — це правильно: edge дійшов до застосунку. `502` означає,
+що FunaChat не запущений або його Local API вимкнено.
+
 ### zrok (резерв)
 
 ```bash

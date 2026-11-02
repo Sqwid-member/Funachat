@@ -24,7 +24,7 @@ fi
 
 if [ "$#" -ge 1 ] && [ "$1" = "enable" ]; then
   shift
-  Z enable "$@" || exit 1
+  Z enable "$@" --headless || exit 1
 fi
 
 mkdir -p "$DL/FunaFiles"
@@ -41,8 +41,8 @@ nohup proot-distro login "$DISTRO" -- "$ZROK" share public "http://127.0.0.1:$PO
 
 U=""
 for _ in $(seq 1 40); do
-  U=$(grep -oE 'https://[a-z0-9.-]+\.(share\.zrok\.io|zrok\.io)' zrok.log 2>/dev/null | head -1)
-  [ -n "$U" ] && break
+  U=$(grep -oE '[a-z0-9-]+\.(shares\.)?zrok\.io' zrok.log 2>/dev/null | head -1)
+  [ -n "$U" ] && { U="https://$U"; break; }
   sleep 2
 done
 
