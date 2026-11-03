@@ -200,6 +200,8 @@ const I18N = {
     pdfLimit: 'Показано перші {n} сторінок',
     compactCtx: 'Стиснути контекст', compacting: 'Стискаю контекст…', compacted: 'Контекст стиснуто',
     compactAuto: 'Контекст майже заповнений — стискаю…', compactError: 'Не вдалося стиснути контекст',
+    prioTitle: 'Чекає завершення', prioNow: 'Зараз', prioWait: 'Дочекатись',
+    toolStop: 'Зупинити',
     queueTitle: 'Черга', queueHint: 'піде після відповіді', queueAdded: 'Додано в чергу',
     queueEdit: 'Повідомлення в черзі', queueUp: 'Вище', queueDown: 'Нижче',
     queueRemove: 'Прибрати з черги', queuePaused: 'Черга на паузі',
@@ -415,6 +417,8 @@ const I18N = {
     pdfLimit: 'Showing the first {n} pages',
     compactCtx: 'Compact context', compacting: 'Compacting context…', compacted: 'Context compacted',
     compactAuto: 'Context is almost full — compacting…', compactError: 'Could not compact the context',
+    prioTitle: 'Waiting for the step to finish', prioNow: 'Send now', prioWait: 'Wait',
+    toolStop: 'Stop',
     queueTitle: 'Queue', queueHint: 'sends after the answer', queueAdded: 'Added to the queue',
     queueEdit: 'Queued message', queueUp: 'Move up', queueDown: 'Move down',
     queueRemove: 'Remove from queue', queuePaused: 'Queue paused',
@@ -630,6 +634,8 @@ const I18N = {
     pdfLimit: 'Показаны первые {n} страниц',
     compactCtx: 'Сжать контекст', compacting: 'Сжимаю контекст…', compacted: 'Контекст сжат',
     compactAuto: 'Контекст почти заполнен — сжимаю…', compactError: 'Не удалось сжать контекст',
+    prioTitle: 'Ждёт завершения', prioNow: 'Сейчас', prioWait: 'Дождаться',
+    toolStop: 'Остановить',
     queueTitle: 'Очередь', queueHint: 'уйдёт после ответа', queueAdded: 'Добавлено в очередь',
     queueEdit: 'Сообщение в очереди', queueUp: 'Выше', queueDown: 'Ниже',
     queueRemove: 'Убрать из очереди', queuePaused: 'Очередь на паузе',
@@ -680,6 +686,7 @@ const S = {
   find: '', findHits: [], findIdx: -1, findScope: 'all', findScopeLoaded: false, pages: [], att: [],
   compact: '', compactBusy: false, pendingSend: null, pendingResume: false, ctxFrom: 0,
   queue: [], queueHold: false, queueEdit: null, queueSeq: 0,
+  prioDismissed: 0, prioForce: 0, prioId: 0,
   view: null, viewSeq: 0, fileTarget: null, subs: {}, subView: null,
   subFollow: false, subTimer: 0,
   regenBackup: null, editBackup: null, pendingMsg: null,
@@ -1067,6 +1074,8 @@ function toolMsg(m) {
     '</div>' +
     (hint ? '<div class="toolhint"><b>' + esc(t(hint.t)) + '</b><p>' + esc(t(hint.b)) + '</p>' +
       '<button data-help="1">' + esc(t('openHelp')) + '</button></div>' : '') +
+    (m.status === 'run' ? '<div class="toolstoprow"><button type="button" class="toolsbn" data-toolstop="1">' +
+      ic('i-stop') + '<span>' + esc(t('toolStop')) + '</span></button></div>' : '') +
     '</div>';
   return node;
 }
@@ -1262,7 +1271,7 @@ function statsGet() {
   // збої не повинні виглядати як помилки нового APK — обнуляємо тільки err,
   // решта статистики лишається.
   if (S.version && st.v !== S.version) {
-    if (st.v) st.err = 0;
+    st.err = 0;
     st.v = S.version;
     statsSet(st);
   }
@@ -1504,7 +1513,7 @@ function closeSub() {
 function subHead(o) {
   if (!o) return;
   const st = subState(o.status);
-  const bits = [t('subReadonly'), st.label];
+  const bits = [st.label];
   if (o.status === 'run') {
     const p = subProg(o);
     if (p.length) bits.push(p.join(' · '));
@@ -1520,41 +1529,49 @@ function subHead(o) {
   if (showRetry) $('subRetry').disabled = false;
 }
 
-/** Картка виклику інструмента в сесії субагента. */
-function subToolNode(m) {
-  const run = m.status === 'run';
-  const bad = m.status === 'error';
-  const label = run ? t('subRunning') : (bad ? t('subFailed') : t('subDone'));
-  const long = (m.output || '').length + (m.args || '').length;
-  const open = run || long < 700;
-  const node = el('div', 'msg');
-  node.innerHTML =
-    '<div class="av">' + ic(toolIcon(m.name)) + '</div>' +
-    '<div class="body"><div class="name">' + esc(m.name || 'tool') + '</div>' +
-      '<div class="toolcard subcard-tool' + (open ? ' open' : '') + '">' +
-        '<button class="toolhead ' + (bad ? 'error' : (run ? 'run' : 'done')) + '">' +
-          '<span class="st"></span><b>' + esc(m.name || 'tool') + '</b><span class="grow"></span>' +
-          '<span class="tstat">' + esc(label) + '</span>' + ic('i-chevron', 'chev') + '</button>' +
-        '<div class="toolwrap"><div class="toolinner">' +
-          (m.args ? '<div class="toolargs">' + esc(m.args) + '</div>' : '') +
-          (m.output ? '<div class="toolbody"><pre>' + esc(m.output) + '</pre></div>' : '') +
-        '</div></div>' +
-      '</div></div>';
-  return node;
+/** Час у повідомленнях сесії субагента, як у звичайному чаті. */
+function subMeta(m) {
+  const bits = [];
+  if (m && m.ts) bits.push('<span class="mtime" title="' + esc(fmtFull(m.ts)) + '">' + esc(fmtClock(m.ts)) + '</span>');
+  if (m && m.ms) bits.push('<span class="mdur" title="' + esc(fmtMs(m.ms)) + '">' + esc(t('aiWork')) + ' ' + esc(fmtMs(m.ms)) + '</span>');
+  if (!bits.length) return '';
+  return '<div class="mmeta">' + bits.join('<span class="mdot">·</span>') + '</div>';
+}
+
+/** Блок «міркування» — той самий, що в звичайному чаті. */
+function subThinkHTML(text, open) {
+  if (!text) return '';
+  const len = text.length;
+  return '<div class="think' + (open ? ' open' : '') + '">' +
+    '<button class="thinkhead" data-think>' + ic('i-spark') + '<span>' + esc(t('thinking')) + '</span>' +
+    '<span class="sp"></span><span class="cnt">' + (len > 999 ? (len / 1000).toFixed(1) + 'k' : len) + '</span>' +
+    ic('i-chevron', 'chev') + '</button>' +
+    '<div class="thinkwrap"><div class="thinkinner"><div class="txt">' + esc(text) + '</div></div></div></div>';
 }
 
 /** Повідомлення помічника у вигляді звичайного чату. */
-function subAssistantNode(text, think) {
+function subAssistantNode(m) {
+  const node = el('div', 'msg');
+  const open = m.thinkOpen !== undefined ? !!m.thinkOpen : false;
+  node.innerHTML =
+    '<div class="av">' + ic('i-spark') + '</div>' +
+    '<div class="body"><div class="name">DeepSeek<span class="sp"></span>' +
+      '<button class="mact" data-subcopy="1" title="' + esc(t('copy')) + '">' + ic('i-copy') + '</button></div>' +
+    '<div class="md">' + subThinkHTML(m.think, open) + md(m.text || '', false) + '</div>' +
+    '<div class="mfoot">' + subMeta(m) + '</div></div>';
+  hydrateNode(node.querySelector('.md'));
+  return node;
+}
+
+/** Жива відповідь під час роботи: той самий вигляд, що у стрімі чату. */
+function subLiveNode(text) {
+  let body = text ? md(text, true) + '<span class="caret"></span>'
+                  : '<div class="typing"><i></i><i></i><i></i></div>';
   const node = el('div', 'msg');
   node.innerHTML =
     '<div class="av">' + ic('i-spark') + '</div>' +
-    '<div class="body"><div class="name">' + esc(t('subagent')) +
-      '<span class="sp"></span>' +
-      '<button class="mact" data-subcopy="1" title="' + esc(t('copy')) + '">' + ic('i-copy') + '</button></div>' +
-      '<div class="md">' + md(text || '', false) + '</div>' +
-      (think ? '<details class="subthink"><summary>' + esc(t('thinking')) + '</summary>' +
-        '<div class="subthinktxt">' + esc(think) + '</div></details>' : '') +
-    '</div>';
+    '<div class="body"><div class="name">DeepSeek<span class="sp"></span></div>' +
+      '<div class="md" id="subLiveMd">' + body + '</div></div>';
   return node;
 }
 
@@ -1573,8 +1590,8 @@ function renderSub(o) {
   const openThink = [];
   const openCards = [];
   const hadCards = b.querySelectorAll('.toolcard').length > 0;
-  const hadThink = b.querySelectorAll('details.subthink').length > 0;
-  b.querySelectorAll('details.subthink').forEach((d, i) => { if (d.open) openThink.push(i); });
+  const hadThink = b.querySelectorAll('.think').length > 0;
+  b.querySelectorAll('.think').forEach((d, i) => { if (d.classList.contains('open')) openThink.push(i); });
   b.querySelectorAll('.toolcard').forEach((d, i) => { if (d.classList.contains('open')) openCards.push(i); });
   const frag = document.createDocumentFragment();
   const msgs = o.messages || [];
@@ -1586,32 +1603,28 @@ function renderSub(o) {
   for (const m of msgs) {
     if (m.role === 'user') {
       const n = el('div', 'msg user');
-      n.innerHTML = '<div class="uwrap"><div class="bubble">' + userText(m.text || '') + '</div></div>';
+      n.innerHTML = '<div class="uwrap"><div class="bubble">' + userText(m.text || '') +
+        '</div><div class="mfoot">' + subMeta(m) + '</div></div>';
       frag.appendChild(n);
     } else if (m.role === 'assistant') {
-      frag.appendChild(subAssistantNode(m.text, m.think));
+      frag.appendChild(subAssistantNode(m));
     } else if (m.role === 'tool') {
-      frag.appendChild(subToolNode(m));
+      frag.appendChild(toolMsg(m));
     }
   }
   if (o.status === 'run') {
-    const n = el('div', 'msg');
-    n.innerHTML =
-      '<div class="av">' + ic('i-spark') + '</div>' +
-      '<div class="body"><div class="name">' + esc(t('subRunning')) + '</div>' +
-        '<div class="sublive" id="subLiveText">' + esc(o.live || '') + '</div></div>';
-    frag.appendChild(n);
+    frag.appendChild(subLiveNode(o.live || ''));
   } else if (o.error && o.status !== 'done') {
     const n = el('div', 'msg');
     n.innerHTML =
       '<div class="av err">' + ic('i-stop') + '</div>' +
       '<div class="body"><div class="name">' + esc(o.status === 'stopped' ? t('subStopped') : t('subFailed')) +
-        '</div><div class="toolcard"><div class="toolbody"><pre>' + esc(o.error) + '</pre></div></div></div>';
+        '</div><div class="toolcard open"><div class="toolbody"><pre>' + esc(o.error) + '</pre></div></div></div>';
     frag.appendChild(n);
   }
   b.innerHTML = '';
   b.appendChild(frag);
-  if (hadThink) b.querySelectorAll('details.subthink').forEach((d, i) => { d.open = openThink.includes(i); });
+  if (hadThink) b.querySelectorAll('.think').forEach((d, i) => { d.classList.toggle('open', openThink.includes(i)); });
   if (hadCards) b.querySelectorAll('.toolcard').forEach((d, i) => { d.classList.toggle('open', openCards.includes(i)); });
   if (follow) { S.subFollow = true; b.scrollTop = b.scrollHeight; }
   else b.scrollTop = Math.max(0, b.scrollHeight - gap);
@@ -2171,6 +2184,7 @@ function setBusy(on) {
   syncSend();
   if (!on && $('hint').textContent === t('answering')) $('hint').textContent = '';
   if (on) $('hint').textContent = t('answering');
+  renderPrio();
 }
 
 /* ---------------- sessions ---------------- */
@@ -2978,7 +2992,7 @@ function renderQueue() {
   if (!box) return;
   const n = S.queue.length;
   box.classList.toggle('on', n > 0);
-  if (!n) { box.innerHTML = ''; syncSend(); return; }
+  if (!n) { box.innerHTML = ''; renderPrio(); syncSend(); return; }
   const head = '<div class="qhead">' + ic('i-cards') +
     '<b>' + esc(t('queueTitle')) + ' · ' + n + '</b>' +
     '<span class="qnote">' + esc(S.queueHold ? t('queuePaused') : t('queueHint')) + '</span>' +
@@ -3001,19 +3015,73 @@ function renderQueue() {
       '</span></div>';
   }).join('');
   box.innerHTML = head + rows;
+  renderPrio();
   syncSend();
+}
+
+/**
+ * Смужка над полем введення: показати, що повідомлення чекає завершення
+ * поточної дії, і дати вибір — надіслати зараз чи дочекатись.
+ */
+function renderPrio() {
+  const box = $('prioBar');
+  if (!box) return;
+  const it = S.prioId ? S.queue.find(q => q.id === S.prioId) : null;
+  if (!it) { S.prioId = 0; box.classList.remove('on'); box.innerHTML = ''; return; }
+  const show = !!it && (S.busy || S.compactBusy) && S.prioDismissed !== it.id;
+  box.classList.toggle('on', show);
+  if (!show) { box.innerHTML = ''; return; }
+  const label = it.text ? esc(it.text) : (it.files && it.files.length ? '📎 ' + it.files.length : '');
+  box.innerHTML =
+    '<div class="priotxt"><b>' + esc(t('prioTitle')) + '</b><span>' + label + '</span></div>' +
+    '<button type="button" class="pribtn now" data-prionow="1">' + esc(t('prioNow')) + '</button>' +
+    '<button type="button" class="pribtn" data-priowait="1">' + esc(t('prioWait')) + '</button>';
+}
+
+/** «Надіслати зараз»: зупиняє поточну роботу й пускає це повідомлення першим. */
+function prioSendNow() {
+  const i = S.queue.findIndex(q => q.id === S.prioId);
+  if (i < 0) return;
+  const it = S.queue.splice(i, 1)[0];
+  S.queue.unshift(it);
+  S.prioDismissed = it.id;
+  S.prioForce = it.id;
+  S.prioId = 0;
+  renderQueue();
+  if (S.busy || S.compactBusy) {
+    S.stopByUser = false;
+    vibe(14);
+    api({ cmd: 'stop' });
+  } else {
+    S.queueHold = false;
+    pumpQueue();
+  }
+}
+
+/** Зупинка поточної роботи: кнопка внизу або «Стоп» на картці інструмента. */
+function stopRun(keepQueue) {
+  if (!S.busy) return;
+  // Явна зупинка не має нескінченно тягнути чергу: ставимо її на паузу,
+  // доки користувач сам не натисне «Запустити чергу».
+  S.stopByUser = !keepQueue;
+  S.prioForce = 0;
+  vibe(14);
+  api({ cmd: 'stop' });
 }
 
 /** Додає повідомлення в чергу; воно піде автоматично після поточної відповіді. */
 function enqueueMsg(it) {
   S.queueSeq = (S.queueSeq || 0) + 1;
+  const id = 'q' + S.queueSeq;
   S.queue.push({
-    id: 'q' + S.queueSeq,
+    id: id,
     text: it.text || '',
     files: it.files || [],
     thinking: it.thinking !== undefined ? !!it.thinking : !!S.thinking,
     search: it.search !== undefined ? !!it.search : !!S.search
   });
+  S.prioId = id;
+  S.prioDismissed = 0;
   renderQueue();
   toast(t('queueAdded'));
 }
@@ -3981,8 +4049,15 @@ window.__funa = function (raw) {
     case 'sub_live': {
       const s = S.subs[o.id];
       if (s) { s.live = o.text || ''; repaintSub(o.id); }
-      const lt = $('subLiveText');
-      if (lt && S.subView && S.subView.id === o.id) lt.textContent = o.text || '';
+      if (S.subView && S.subView.id === o.id) S.subView.live = o.text || '';
+      const lt = $('subLiveMd');
+      if (lt && S.subView && S.subView.id === o.id) {
+        const txt = o.text || '';
+        lt.innerHTML = txt ? md(txt, true) + '<span class="caret"></span>'
+                           : '<div class="typing"><i></i><i></i><i></i></div>';
+        const b = $('subBody');
+        if (b && S.subFollow) b.scrollTop = b.scrollHeight;
+      }
       break;
     }
     case 'sub_log': {
@@ -4391,10 +4466,12 @@ window.__funa = function (raw) {
         // Черга: після природного завершення одразу беремо наступне
         // повідомлення. Явний «Стоп» ставить чергу на паузу.
         const stopped = !!S.stopByUser;
+        const force = !!S.prioForce;
         S.stopByUser = false;
-        if (stopped && S.queue.length) S.queueHold = true;
+        S.prioForce = 0;
+        if (stopped && S.queue.length && !force) S.queueHold = true;
         renderQueue();
-        if (!stopped) pumpQueue();
+        if (!stopped || force) { if (force) S.queueHold = false; pumpQueue(); }
       }
       break;
     }
@@ -4874,6 +4951,19 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v113", name: "2.42.38", title: "Субагент як звичайний чат і вибір у черзі",
+      p: "Вікно субагента тепер виглядає як основний чат, а повідомлення під час роботи можна надіслати одразу або дочекатись.",
+      li: [
+        "Індикатор стану на картці субагента знову круглий і не стискається.",
+        "Сесія субагента: ті самі бульбашки, Markdown, мислення, картки інструментів і копіювання.",
+        "Живий текст субагента оновлюється просто під час стріму.",
+        "Повідомлення, надіслане під час роботи ШІ, показує вибір «Зараз» або «Дочекатись».",
+        "«Зараз» зупиняє поточну дію й пускає повідомлення першим.",
+        "На картці інструмента, що виконується, є кнопка «Зупинити».",
+        "Лічильник помилок тепер справді скидається при зміні версії."
+      ]
+    },
+    {
       code: "v112", name: "2.42.37", title: "Помилки рахуються за версією",
       p: "Багфікс: після оновлення старі помилки більше не тягнуться в нову версію.",
       li: [
@@ -5137,6 +5227,19 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v113", name: "2.42.38", title: "Subagent as a normal chat and a queue choice",
+      p: "The subagent window now looks like the main chat, and a message sent during work can go now or wait.",
+      li: [
+        "The subagent state dot is round again and no longer squashed.",
+        "The subagent session uses the same bubbles, Markdown, thinking, tool cards and copy.",
+        "Subagent live text updates while it streams.",
+        "A message sent while the AI works shows a choice: Send now or Wait.",
+        "Send now stops the current step and puts the message first.",
+        "A running tool card has its own Stop button.",
+        "The error counter now really resets when the version changes."
+      ]
+    },
+    {
       code: "v112", name: "2.42.37", title: "Errors are counted per version",
       p: "Bugfix: after an update, old errors no longer follow you into the new version.",
       li: [
@@ -5399,6 +5502,19 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v113", name: "2.42.38", title: "Субагент как обычный чат и выбор в очереди",
+      p: "Окно субагента теперь выглядит как основной чат, а сообщение во время работы можно отправить сразу или подождать.",
+      li: [
+        "Индикатор состояния на карточке субагента снова круглый и не сжимается.",
+        "Сессия субагента: те же пузыри, Markdown, мышление, карточки инструментов и копирование.",
+        "Живой текст субагента обновляется прямо во время стрима.",
+        "Сообщение, отправленное во время работы ИИ, показывает выбор «Сейчас» или «Дождаться».",
+        "«Сейчас» останавливает текущее действие и пускает сообщение первым.",
+        "На карточке выполняющегося инструмента есть кнопка «Остановить».",
+        "Счётчик ошибок теперь действительно сбрасывается при смене версии."
+      ]
+    },
     {
       code: "v112", name: "2.42.37", title: "Ошибки считаются по версии",
       p: "Багфикс: после обновления старые ошибки больше не тянутся в новую версию.",
@@ -5916,14 +6032,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('cardSheet').onclick = (ev) => { if (ev.target === $('cardSheet')) closeCard(); };
 
   $('send').onclick = () => submit();
-  $('stopBtn').onclick = () => {
-    if (!S.busy) return;
-    // Явна зупинка не має нескінченно тягнути чергу: ставимо її на паузу,
-    // доки користувач сам не натисне «Запустити чергу».
-    S.stopByUser = true;
-    vibe(14);
-    api({ cmd: 'stop' });
-  };
+  $('stopBtn').onclick = stopRun;
 
   const qbar = $('queueBar');
   qbar.addEventListener('click', (ev) => {
@@ -6009,6 +6118,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('msgs').addEventListener('click', (ev) => {
     const hp = ev.target.closest('[data-help]');
     if (hp) { openHelp(); return; }
+    if (ev.target.closest('[data-toolstop]')) { stopRun(false); return; }
     const th = ev.target.closest('[data-think]');
     if (th) {
       const w = th.closest('.think');
@@ -6315,13 +6425,33 @@ document.addEventListener('DOMContentLoaded', () => {
       toast(t('copied'));
       return;
     }
-    const head = ev.target.closest('.subcard-tool .toolhead');
+    if (ev.target.closest('[data-toolstop]')) {
+      if (S.subView) api({ cmd: 'sub_stop', id: S.subView.id });
+      return;
+    }
+    const th = ev.target.closest('[data-think]');
+    if (th) {
+      const w = th.closest('.think');
+      if (w) w.classList.toggle('open');
+      return;
+    }
+    const head = ev.target.closest('.toolcard .toolhead');
     if (head) {
       const card = head.closest('.toolcard');
       if (card) card.classList.toggle('open');
       return;
     }
   });
+  const pbar = $('prioBar');
+  if (pbar) pbar.addEventListener('click', (ev) => {
+    if (ev.target.closest('[data-prionow]')) { prioSendNow(); return; }
+    if (ev.target.closest('[data-priowait]')) {
+      if (S.prioId) S.prioDismissed = S.prioId;
+      renderPrio();
+      return;
+    }
+  });
+
   $('toBottom').onclick = () => {
     S.follow = true;
     try {

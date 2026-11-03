@@ -335,6 +335,7 @@ public final class SubTask {
         try {
             m.put("role", "user");
             m.put("text", task);
+            m.put("ts", System.currentTimeMillis());
         } catch (Exception ignored) {}
         put(m);
     }
@@ -349,6 +350,7 @@ public final class SubTask {
             // роздувати памʼять і кожен eval() у WebView
             m.put("text", clip(text, 20000));
             m.put("think", clip(thinkText, 20000));
+            m.put("ts", System.currentTimeMillis());
         } catch (Exception ignored) {}
         put(m);
     }
@@ -361,6 +363,7 @@ public final class SubTask {
             m.put("args", call == null ? "" : clip(call.toString(), 4000));
             m.put("status", "run");
             m.put("output", "");
+            m.put("ts", System.currentTimeMillis());
         } catch (Exception ignored) {}
         put(m);
     }

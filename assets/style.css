@@ -138,7 +138,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .toolhead{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:13px;color:var(--var)}
 .toolhead .ic{width:16px;height:16px;color:var(--primary)}
 .toolhead b{font-weight:500;color:var(--on)}
-.toolhead .st{width:7px;height:7px;border-radius:50%;background:var(--dim)}
+.toolhead .st{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:var(--dim)}
 .toolhead.run .st{background:#F5C97A;animation:pulse 1.1s infinite}
 .toolhead.done .st{background:var(--ok)}
 .toolhead.error .st{background:var(--err)}
@@ -250,6 +250,23 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .queuebar{display:none;flex-direction:column;gap:6px;min-width:0;
   margin:0 2px 8px;max-height:154px;overflow-y:auto;overscroll-behavior:contain}
 .queuebar.on{display:flex}
+.priobar{display:none;align-items:center;gap:8px;min-width:0;margin:0 2px 8px;
+  padding:7px 9px;border-radius:14px;background:var(--surf1);border:1px solid var(--outline);
+  animation:fade .16s ease}
+.priobar.on{display:flex}
+.priotxt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.priotxt b{font-size:11px;font-weight:600;color:var(--primary);white-space:nowrap}
+.priotxt span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:12px;color:var(--on2)}
+.pribtn{flex:0 0 auto;height:28px;padding:0 11px;border-radius:10px;font-size:12px;
+  background:var(--surf3);color:var(--on2)}
+.pribtn.now{background:var(--prim-c);color:var(--on);font-weight:600}
+.pribtn:active{filter:brightness(1.15)}
+.toolstoprow{padding:4px 10px 9px}
+.toolsbn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;
+  border-radius:10px;background:var(--surf3);color:var(--var);font-size:12px}
+.toolsbn .ic{width:14px;height:14px}
+.toolsbn:active{filter:brightness(1.15)}
 .qhead{display:flex;align-items:center;gap:6px;padding:1px 4px;min-width:0;
   font-size:11px;color:var(--dim)}
 .qhead .ic{width:14px;height:14px;color:var(--primary);flex:0 0 auto}

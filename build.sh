@@ -26,7 +26,7 @@ echo "== res =="
 aapt2 compile --dir res -o build/res.zip >/dev/null
 aapt2 link -o build/base.apk -I "$ANDROID" --manifest AndroidManifest.xml -A assets \
   --java build/gen build/res.zip --min-sdk-version 26 --target-sdk-version 34 \
-  --version-code 112 --version-name 2.42.37 >/dev/null
+  --version-code 113 --version-name 2.42.38 >/dev/null
 
 echo "== javac =="
 javac --release 8 -nowarn -cp "$ANDROID" -d build/classes $(find build/src -name '*.java')

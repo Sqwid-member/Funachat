@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.37";
-    static final int CODE = 112;
+    static final String VERSION = "2.42.38";
+    static final int CODE = 113;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
