@@ -192,13 +192,18 @@ public final class Telemetry {
      * лишається на приймачі, тому його немає ні в APK, ні в застосунку.
      */
     public static boolean post(String url, JSONObject o) {
-        if (url == null || url.isEmpty()) return false;
+        return o != null && post(url, o.toString());
+    }
+
+    /** Тіло звіту вже готове (файл із черги) — шлемо як є. */
+    public static boolean post(String url, String body) {
+        if (url == null || url.isEmpty() || body == null || body.isEmpty()) return false;
         java.net.HttpURLConnection c = null;
         try {
             java.net.URL u = new java.net.URL(url);
             String proto = u.getProtocol();
             if (!"https".equals(proto) && !"http".equals(proto)) return false;
-            byte[] data = o.toString().getBytes(StandardCharsets.UTF_8);
+            byte[] data = body.getBytes(StandardCharsets.UTF_8);
             if (data.length > 20000) return false;
             c = (java.net.HttpURLConnection) u.openConnection();
             c.setConnectTimeout(10000);
@@ -215,6 +220,45 @@ public final class Telemetry {
             return false;
         } finally {
             if (c != null) try { c.disconnect(); } catch (Exception ignored) {}
+        }
+    }
+
+    /**
+     * Дослати збережені звіти (не більше max). Файл видаляємо лише після
+     * успішної відповіді, тож черга не втрачається при обриві мережі.
+     */
+    public static int flush(String url, int max) {
+        if (url == null || url.isEmpty() || max <= 0) return 0;
+        File[] fs = spooled();
+        if (fs.length == 0) return 0;
+        Arrays.sort(fs, Comparator.comparingLong(File::lastModified));
+        int sent = 0;
+        for (File f : fs) {
+            if (sent >= max) break;
+            try {
+                String body = readFile(f);
+                if (body.isEmpty()) { f.delete(); continue; }
+                if (!post(url, body)) continue;
+                f.delete();
+                sent++;
+            } catch (Exception ignored) {}
+        }
+        return sent;
+    }
+
+    private static String readFile(File f) {
+        java.io.FileInputStream in = null;
+        try {
+            in = new java.io.FileInputStream(f);
+            java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+            byte[] chunk = new byte[4096];
+            int n;
+            while ((n = in.read(chunk)) > 0) buf.write(chunk, 0, n);
+            return new String(buf.toByteArray(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return "";
+        } finally {
+            if (in != null) try { in.close(); } catch (Exception ignored) {}
         }
     }
 

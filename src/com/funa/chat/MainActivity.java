@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends Activity {
-    static final String VERSION = "2.42.35";
-    static final int CODE = 110;
+    static final String VERSION = "2.42.36";
+    static final int CODE = 111;
 
     private static final int REQ_PICK = 11;
     private static final int REQ_ATTACH = 12;
@@ -1028,13 +1028,17 @@ public class MainActivity extends Activity {
                     String url = store.telemetryUrl();
                     if (!url.isEmpty() && Telemetry.post(url, snap)) {
                         sent = true;
+                        // Раніше позначка «надіслано» ставилася навіть при
+                        // збої, і звіт більше не пробували. Тепер — лише
+                        // після успіху, а чергу досилаємо одразу.
+                        store.telemetryMarkSent(System.currentTimeMillis());
+                        Telemetry.flush(url, 3);
                     } else {
                         // Немає приймача або мережа впала — не втрачаємо звіт:
-                        // кладемо у файлову чергу для Termux-релея.
+                        // кладемо у файлову чергу, наступний запуск повторить.
                         Telemetry.writeSnapshot(store, snap);
                         queued = true;
                     }
-                    store.telemetryMarkSent(System.currentTimeMillis());
                 } catch (Exception e) {
                     error = e.getMessage() == null ? "error" : e.getMessage();
                     Log.e("telemetry", "queue failed", e);

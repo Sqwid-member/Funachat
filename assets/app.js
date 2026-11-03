@@ -4865,6 +4865,17 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v111", name: "2.42.36", title: "Виправлено доставку діагностики",
+      p: "Багфікс: звіти більше не губляться, якщо мережа обірвалась під час відправки.",
+      li: [
+        "Невдала відправка більше не позначається як успішна.",
+        "Звіт, що не пішов, лягає в чергу й досилається наступного запуску.",
+        "Черга надсилається одразу після вдалого звіту — без ручних дій.",
+        "Файл із черги видаляється лише після підтвердження від приймача.",
+        "Адреса телеметрії тепер нейтральна: без імені акаунта Cloudflare."
+      ]
+    },
+    {
       code: "v110", name: "2.42.35", title: "Пошук з фільтрами й чат субагента",
       p: "Пошук тепер знаходить повідомлення користувача, відповіді, думки та інструменти — окремо або разом.",
       li: [
@@ -5107,6 +5118,17 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v111", name: "2.42.36", title: "Diagnostics delivery fixed",
+      p: "Bugfix: reports are no longer lost when the network drops mid-send.",
+      li: [
+        "A failed send is no longer marked as delivered.",
+        "A report that could not go out is queued and retried on the next launch.",
+        "The queue is flushed right after a successful report — no manual steps.",
+        "A queued file is deleted only after the receiver confirms it.",
+        "The telemetry address is neutral now: no Cloudflare account name."
+      ]
+    },
+    {
       code: "v110", name: "2.42.35", title: "Search filters and subagent chat",
       p: "Search now finds your messages, answers, thinking and tools — separately or together.",
       li: [
@@ -5348,6 +5370,17 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v111", name: "2.42.36", title: "Исправлена доставка диагностики",
+      p: "Багфикс: отчёты больше не теряются, если сеть оборвалась при отправке.",
+      li: [
+        "Неудачная отправка больше не помечается как успешная.",
+        "Отчёт, который не ушёл, попадает в очередь и досылается при следующем запуске.",
+        "Очередь отправляется сразу после удачного отчёта — без ручных действий.",
+        "Файл из очереди удаляется только после подтверждения от приёмника.",
+        "Адрес телеметрии теперь нейтральный: без имени аккаунта Cloudflare."
+      ]
+    },
     {
       code: "v110", name: "2.42.35", title: "Поиск с фильтрами и чат субагента",
       p: "Поиск теперь находит сообщения пользователя, ответы, мысли и инструменты — отдельно или вместе.",
