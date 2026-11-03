@@ -1250,14 +1250,23 @@ function switchVersion(m, dir) {
 
 /* Статистика ШІ зберігається окремо для кожного акаунта DeepSeek. */
 const STATS_DEF = { q: 0, done: 0, stop: 0, ms: 0, tin: 0, tout: 0,
-  edit: 0, regen: 0, tool: 0, err: 0, last: 0 };
+  edit: 0, regen: 0, tool: 0, err: 0, last: 0, v: '' };
 
 function statsKey() { return 'funa.stats.' + (S.activeId || 'anon'); }
 
 function statsGet() {
   let v = null;
   try { v = JSON.parse(localStorage.getItem(statsKey()) || '{}'); } catch (e) {}
-  return Object.assign({}, STATS_DEF, v || {});
+  const st = Object.assign({}, STATS_DEF, v || {});
+  // Лічильник помилок стосується конкретної версії. Після оновлення старі
+  // збої не повинні виглядати як помилки нового APK — обнуляємо тільки err,
+  // решта статистики лишається.
+  if (S.version && st.v !== S.version) {
+    if (st.v) st.err = 0;
+    st.v = S.version;
+    statsSet(st);
+  }
+  return st;
 }
 
 function statsSet(st) {
@@ -4865,6 +4874,16 @@ const DOCS = {"uk": [{"t": "Швидкий старт", "p": "П'ять крок
 const UPDATES = {
   uk: [
     {
+      code: "v112", name: "2.42.37", title: "Помилки рахуються за версією",
+      p: "Багфікс: після оновлення старі помилки більше не тягнуться в нову версію.",
+      li: [
+        "Лічильник помилок скидається при зміні версії застосунку.",
+        "Решта статистики лишається без змін.",
+        "Звіт показує реальний стан поточної версії, а не історію з минулих.",
+        "Скидання відбувається саме в статистиці, логи не чіпаються."
+      ]
+    },
+    {
       code: "v111", name: "2.42.36", title: "Виправлено доставку діагностики",
       p: "Багфікс: звіти більше не губляться, якщо мережа обірвалась під час відправки.",
       li: [
@@ -5118,6 +5137,16 @@ const UPDATES = {
   ],
   en: [
     {
+      code: "v112", name: "2.42.37", title: "Errors are counted per version",
+      p: "Bugfix: after an update, old errors no longer follow you into the new version.",
+      li: [
+        "The error counter resets when the app version changes.",
+        "The rest of the statistics stay as they were.",
+        "A report shows the real state of the current version, not old history.",
+        "Only the counter is reset; logs are untouched."
+      ]
+    },
+    {
       code: "v111", name: "2.42.36", title: "Diagnostics delivery fixed",
       p: "Bugfix: reports are no longer lost when the network drops mid-send.",
       li: [
@@ -5370,6 +5399,16 @@ const UPDATES = {
     }
   ],
   ru: [
+    {
+      code: "v112", name: "2.42.37", title: "Ошибки считаются по версии",
+      p: "Багфикс: после обновления старые ошибки больше не тянутся в новую версию.",
+      li: [
+        "Счётчик ошибок сбрасывается при смене версии приложения.",
+        "Остальная статистика остаётся как была.",
+        "Отчёт показывает реальное состояние текущей версии, а не старую историю.",
+        "Сбрасывается только счётчик, логи не трогаются."
+      ]
+    },
     {
       code: "v111", name: "2.42.36", title: "Исправлена доставка диагностики",
       p: "Багфикс: отчёты больше не теряются, если сеть оборвалась при отправке.",
